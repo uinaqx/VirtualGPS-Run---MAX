@@ -21,14 +21,19 @@
 ![截图1](screenshots/screenshot1.jpg)
 *地图选点、路线规划与循环跑步*
 
+## 下载安装
+
+**[>>> 点击下载最新版 APK <<<](../../raw/main/release/VirtualRun-v1.1.0.apk)**
+
+或者在 [release 目录](release/) 中查看所有版本。
+
 ## 使用方法
 
 ### 1. 安装与设置
 
-1. 下载最新版本的 APK（在 [Releases](../../releases) 页面）
-2. 安装 APK 到 Android 手机
-3. 打开应用，授予**位置权限**和**通知权限**
-4. 进入 **设置 → 系统 → 开发者选项 → 选择模拟位置信息应用**，选择「虚拟跑步」
+1. 下载上方 APK 并安装到 Android 手机
+2. 打开应用，授予**位置权限**和**通知权限**
+3. 进入 **设置 → 系统 → 开发者选项 → 选择模拟位置信息应用**，选择「虚拟跑步」
 
 > **提示**：如果找不到开发者选项，进入「关于手机」连续点击「版本号」7 次即可开启。
 
@@ -68,9 +73,7 @@ APK 将生成在 `app/build/outputs/apk/debug/app-debug.apk`
 
 ```
 app/src/main/java/com/virtualrun/app/
-├── MainActivity.kt                 # 主 Activity
-├── MainViewModel.kt                # 状态管理与业务逻辑
-├── CoordinateConverter.kt          # 坐标转换（GCJ-02 ↔ WGS-84）
+├── MainActivity.kt                 # 主 Activity，权限请求与 osmdroid 初始化
 ├── model/
 │   └── RoutePoint.kt               # 数据模型（路线点、路线、运动状态）
 ├── service/
@@ -78,10 +81,12 @@ app/src/main/java/com/virtualrun/app/
 ├── algorithm/
 │   └── TrajectoryInterpolator.kt   # 轨迹插值、平滑与速度扰动算法
 ├── ui/
-│   ├── MainScreen.kt               # Compose 主界面（底部控制面板）
+│   ├── MainViewModel.kt            # 状态管理与业务逻辑
+│   ├── NoMapScreen.kt              # 无地图时的备用界面
 │   └── OSMapScreen.kt              # osmdroid 地图界面
 └── map/
-    └── MapType.kt                  # 地图瓦片源配置
+    ├── ChinaMapTileSource.kt       # 腾讯地图瓦片源
+    └── MapType.kt                  # 坐标转换（GCJ-02 ↔ WGS-84）
 ```
 
 ## 技术栈

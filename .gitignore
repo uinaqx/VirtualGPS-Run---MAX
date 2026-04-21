@@ -27,6 +27,9 @@ captures/
 # Google Services (e.g. APIs or Firebase)
 google-services.json
 
+# Claude Code
+.claude/
+
 # OS-specific files
 .DS_Store
 Thumbs.db
@@ -34,10 +37,11 @@ Thumbs.db
 # Log files
 *.log
 
-# APK files (should be released via GitHub Releases, not in repo)
+# APK files (should be released via release/ folder, not in root)
 *.apk
 *.ap_
 *.aab
+!release/*.apk
 
 # lint
 lint/intermediates/
