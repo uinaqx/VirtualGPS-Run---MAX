@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm:*)",
+      "Bash(./gradlew assembleRelease 2>&1)",
+      "Bash(:)",
+      "Bash(./gradlew assembleRelease)",
+      "Bash(. /gradlew assembleRelease)",
+      "Bash(keytool:*)",
+      "Bash(echo:*)"
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">虚拟跑步</string>
+    <string name="select_location">选择起点</string>
+    <string name="draw_route">在地图上划线设置路线</string>
+    <string name="start_button">开始</string>
+    <string name="stop_button">停止</string>
+    <string name="speed_label">配速 (分钟/公里)</string>
+    <string name="mock_location_not_enabled">模拟位置未启用</string>
+    <string name="enable_mock_location">请前往开发者选项，将本应用设置为模拟位置应用</string>
+    <string name="open_settings">打开设置</string>
+    <string name="permission_required">需要位置权限</string>
+    <string name="grant_permission">授予权限</string>
+    <string name="route_distance">路线距离：</string>
+    <string name="route_duration">预计用时：</string>
+    <string name="current_location">当前位置</string>
+    <string name="clear_route">清除路线</string>
+    <string name="running">运行中</string>
+    <string name="stopped">已停止</string>
+</resources>
