@@ -18,8 +18,8 @@
 
 ## 截图
 
-![截图1](screenshots/screenshot1.png)
-*地图选点和路线规划*
+![截图1](screenshots/screenshot1.jpg)
+*地图选点、路线规划与循环跑步*
 
 ## 使用方法
 
