@@ -1,14 +1,20 @@
 # 虚拟跑步 (VirtualRun)
 
-一款免 Root 的 Android 虚拟跑步定位 App，支持在地图上规划路线并模拟真实跑步。
+一款免 Root 的 Android 虚拟跑步定位 App，支持在地图上规划路线并模拟真实跑步。无需任何 API Key，国内网络直连即可使用。
 
 ## 功能特性
 
 - **免 Root**：使用 Android 标准 Mock Location API，无需 Root 权限
-- **地图选点**：在 Google Maps 上点击选择起点、终点和途经点
+- **国内直连地图**：内置腾讯地图瓦片源，无需 VPN，无需 API Key，开箱即用
+- **地图选点**：在地图上点击设置起点、途经点和终点
+- **绕圈循环跑**：再次点击起点标记即可闭合路线，支持无限循环跑步
 - **配速调节**：可调节跑步配速（3-15 分钟/公里）
+- **实时调速**：跑步过程中可随时调整配速，即时生效
 - **速度扰动**：自动添加 ±15% 随机波动，模拟真实跑步的自然速度变化
-- **实时进度**：显示路线距离、预计用时和跑步进度
+- **路线偏离模拟**：每隔 5-10 秒随机偏离路线 0.5-3 米，持续 2-5 秒后回归，更贴近真人跑步轨迹
+- **轨迹平滑**：Catmull-Rom 样条插值 + 位置平滑，路线流畅自然
+- **后台保活**：前台服务 + 唤醒锁，APP 后台或锁屏时虚拟定位持续生效
+- **实时进度**：显示路线距离、预计用时、跑步进度和当前配速
 
 ## 截图
 
@@ -21,16 +27,26 @@
 
 1. 下载最新版本的 APK（在 [Releases](../../releases) 页面）
 2. 安装 APK 到 Android 手机
-3. 打开应用，授予位置权限和通知权限
-4. 进入 **设置 → 系统 → 开发者选项 → 模拟位置信息应用**，选择"虚拟跑步"
+3. 打开应用，授予**位置权限**和**通知权限**
+4. 进入 **设置 → 系统 → 开发者选项 → 选择模拟位置信息应用**，选择「虚拟跑步」
 
-### 2. 开始虚拟跑步
+> **提示**：如果找不到开发者选项，进入「关于手机」连续点击「版本号」7 次即可开启。
 
-1. 在地图上点击设置起点
-2. 继续点击添加途经点
-3. 点击设置终点，形成完整路线
-4. 拖动滑块设置配速
-5. 点击"开始"按钮启动虚拟定位
+### 2. 规划路线
+
+1. 在地图上点击设置**起点**（显示为绿色标记）
+2. 继续点击添加**途经点**（显示为蓝色标记）
+3. 点击设置**终点**（显示为红色标记）
+4. **闭合路线**：再次点击**起点标记**，自动连接最后一个点与起点，形成闭环，支持循环跑步
+
+### 3. 开始虚拟跑步
+
+1. 拖动底部滑块设置目标配速（3-15 分/公里）
+2. 点击「开始」按钮启动虚拟定位
+3. 跑步过程中可随时拖动滑块**实时调整配速**
+4. 点击「停止」结束虚拟定位
+
+> **注意**：开始跑步后，即使返回桌面或锁屏，虚拟定位仍会继续运行。
 
 ## 构建项目
 
@@ -39,13 +55,6 @@
 - JDK 17+
 - Android SDK (API 34)
 - Android Studio Arctic Fox 或更高版本
-
-### 配置 Google Maps API Key
-
-1. 访问 [Google Cloud Console](https://console.cloud.google.com/)
-2. 创建新项目，启用 **Maps SDK for Android**
-3. 创建 API Key
-4. 编辑 `app/src/main/AndroidManifest.xml`，替换 `YOUR_API_KEY_HERE`
 
 ### 构建命令
 
@@ -59,22 +68,27 @@ APK 将生成在 `app/build/outputs/apk/debug/app-debug.apk`
 
 ```
 app/src/main/java/com/virtualrun/app/
-├── MainActivity.kt              # 主 Activity
+├── MainActivity.kt                 # 主 Activity
+├── MainViewModel.kt                # 状态管理与业务逻辑
+├── CoordinateConverter.kt          # 坐标转换（GCJ-02 ↔ WGS-84）
 ├── model/
-│   └── RoutePoint.kt            # 数据模型（路线点、路线、运动状态）
+│   └── RoutePoint.kt               # 数据模型（路线点、路线、运动状态）
 ├── service/
-│   └── MockLocationService.kt   # Mock Location 服务（核心功能）
+│   └── MockLocationService.kt      # Mock Location 前台服务（核心功能）
 ├── algorithm/
-│   └── TrajectoryInterpolator.kt # 轨迹插值与速度扰动算法
-└── ui/
-    └── MainScreen.kt            # Compose UI 界面
+│   └── TrajectoryInterpolator.kt   # 轨迹插值、平滑与速度扰动算法
+├── ui/
+│   ├── MainScreen.kt               # Compose 主界面（底部控制面板）
+│   └── OSMapScreen.kt              # osmdroid 地图界面
+└── map/
+    └── MapType.kt                  # 地图瓦片源配置
 ```
 
 ## 技术栈
 
 - **语言**：Kotlin
 - **UI 框架**：Jetpack Compose + Material 3
-- **地图**：Google Maps Android SDK + Maps Compose
+- **地图**：osmdroid + 腾讯地图瓦片源（国内直连，无需 API Key）
 - **架构**：MVVM
 - **异步**：Kotlin Coroutines + Flow
 - **最低版本**：Android 8.0 (API 26)
@@ -82,21 +96,23 @@ app/src/main/java/com/virtualrun/app/
 ## 核心技术实现
 
 ### Mock Location Service
-- 检查并引导用户启用模拟位置权限
-- 注册 Android TestProvider
+- 前台服务保活，确保 APP 后台时定位持续生效
+- 同时模拟 `GPS_PROVIDER`、`NETWORK_PROVIDER` 和 `fused` 三个定位源
+- 补全海拔、精度、方位角、卫星数量等字段，提高模拟真实性
 - 以 1Hz 频率发送虚拟位置数据
 
 ### 轨迹插值算法
-- 线性插值计算路线上任意位置
-- 速度扰动：±15% 随机浮动 + 正弦波自然变化
-- 避免绝对匀速，模拟真实跑步体验
+- Catmull-Rom 样条插值生成密集平滑点
+- 位置平滑（0.35）和航向平滑（0.25），避免抖动
+- 速度扰动：随机 ±8% + 正弦波 ±10%，总波动约 ±15%
+- 路线偏离：每隔 5-10 秒随机偏离 0.5-3 米，持续 2-5 秒后回归
 
 ## 注意事项
 
-1. **模拟位置权限**：使用前必须在开发者选项中将本应用设置为模拟位置应用
-2. **Google Maps API**：需要使用自己的 API Key 才能正常显示地图
-3. **后台限制**：部分 Android 系统可能限制后台位置更新
-4. **检测风险**：某些应用可能会检测到使用了 Mock Location
+1. **模拟位置权限**：使用前必须在开发者选项中将本应用设置为模拟位置应用，否则虚拟定位不会生效
+2. **后台限制**：部分国产 ROM（小米、华为等）可能会限制后台服务，如遇后台停止，请将本应用加入电池优化白名单或允许后台运行
+3. **检测风险**：某些应用可能会检测到使用了 Mock Location，请自行承担使用风险
+4. **坐标精度**：地图使用 GCJ-02 坐标系，虚拟定位自动转换为 WGS-84 发送给系统
 
 ## 开源协议
 
@@ -111,6 +127,15 @@ app/src/main/java/com/virtualrun/app/
 欢迎提交 Issue 和 Pull Request！
 
 ## 更新日志
+
+### v1.1.0 (2026-04-21)
+- 地图改为腾讯地图瓦片源，国内直连无需 API Key
+- 新增绕圈循环跑功能
+- 新增跑步中实时调速
+- 新增路线偏离模拟，轨迹更自然
+- 新增轨迹平滑（Catmull-Rom 插值）
+- 修复后台定位失效问题
+- 修复坐标转换精度问题
 
 ### v1.0.0 (2026-03-10)
 - 初始版本发布
