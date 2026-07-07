@@ -65,6 +65,12 @@ fun OSMapScreen(viewModel: MainViewModel) {
     var currentMarker by remember { mutableStateOf<Marker?>(null) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
+    fun animateToDeviceLocation(location: Location) {
+        // Android 系统定位返回 WGS-84；当前高德瓦片使用 GCJ-02，国内地图显示前必须转换，否则会偏移。
+        val gcjLocation = CoordinateConverter.wgs84ToGcj02(location.latitude, location.longitude)
+        mapView?.controller?.animateTo(GeoPoint(gcjLocation.first, gcjLocation.second), 18.0, 1000L)
+    }
+
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
@@ -208,10 +214,12 @@ fun OSMapScreen(viewModel: MainViewModel) {
                 val lm = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
                 val loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER) ?: lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
                 if (loc != null) {
-                    mapView?.controller?.animateTo(GeoPoint(loc.latitude, loc.longitude), 18.0, 1000L)
+                    animateToDeviceLocation(loc)
                 } else {
                     lm.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, object : LocationListener {
-                        override fun onLocationChanged(l: Location) { mapView?.controller?.animateTo(GeoPoint(l.latitude, l.longitude), 18.0, 1000L) }
+                        override fun onLocationChanged(l: Location) {
+                            animateToDeviceLocation(l)
+                        }
                         override fun onStatusChanged(p: String?, s: Int, e: Bundle?) {}
                         override fun onProviderEnabled(p: String) {}
                         override fun onProviderDisabled(p: String) {}
