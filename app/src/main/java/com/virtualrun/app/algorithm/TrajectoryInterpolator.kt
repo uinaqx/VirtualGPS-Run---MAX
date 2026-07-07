@@ -3,6 +3,7 @@ package com.virtualrun.app.algorithm
 import com.google.android.gms.maps.model.LatLng
 import com.virtualrun.app.map.CoordinateConverter
 import com.virtualrun.app.model.Route
+import com.virtualrun.app.model.RoutePoint
 import kotlin.math.*
 import kotlin.random.Random
 
@@ -10,10 +11,10 @@ import kotlin.random.Random
  * 轨迹插值与真实跑步动作模拟算法
  *
  * 特性：
- * 1. Catmull-Rom 样条平滑：路线更自然
- * 2. 速度波动：±15% 模拟真实配速变化
- * 3. 路线偏离：渐变式偏移，模拟真实跑步摆动
- * 4. 循环跑支持
+ * 1. 闭环路线使用 Chaikin 圆角化，把生硬折线处理成自然绕圈轨迹
+ * 2. 按真实时间差推进距离，避免后台卡顿时速度失真
+ * 3. 连续低频横向漂移，模拟真人每圈不会完全踩同一条线
+ * 4. 速度波动保持平滑，避免刻意的锯齿偏移
  * 5. WGS-84/GCJ-02 坐标转换
  */
 class TrajectoryInterpolator(
@@ -30,46 +31,32 @@ class TrajectoryInterpolator(
     private val totalDistance: Float
 
     // 当前状态
-    private var currentDistance: Float = 0f  // 已跑距离（米）
-    private var currentIndex: Int = 0        // 当前所在路段索引
+    private var currentDistance: Float = 0f
+    private var currentIndex: Int = 0
     private var isCompleted: Boolean = false
     private var lastLatitude: Double = 0.0
     private var lastLongitude: Double = 0.0
     private var displayedLatitude: Double = 0.0
     private var displayedLongitude: Double = 0.0
     private var smoothedBearing: Float = 0f
+    private var lastUpdateTimeMs: Long? = null
+
+    // 连续扰动相位。只在启动时随机一次，后续使用连续函数，避免一跳一跳的假轨迹。
     private var speedPhase = Random.nextDouble(0.0, Math.PI * 2)
+    private var lateralPhase = Random.nextDouble(0.0, Math.PI * 2)
 
     // 循环统计
     private var lapCount: Int = 0
 
-    // 偏离参数 - 改进为渐变式
-    private var deviationState = DeviationState.NONE
-    private var nextDeviationTime = System.currentTimeMillis() + Random.nextLong(5000, 11000)
-    private var deviationStartTime: Long = 0
-    private var deviationEndTime: Long = 0
-    private var deviationMaxDuration: Long = 0
-    private var currentDeviationAngle = 0.0
-    private var currentMaxDeviationDistance = 0.0
-
-    private enum class DeviationState {
-        NONE,       // 无偏移
-        ENTERING,   // 渐入偏移
-        HOLDING,    // 保持最大偏移
-        EXITING     // 渐出偏移
-    }
-
     init {
-        // 预处理：对原始路线做 Catmull-Rom 平滑，生成密集点
-        // 同时将GCJ-02坐标转为WGS-84（因为模拟定位需要WGS-84）
         val result = generateSmoothedPoints(route.points, isLoopMode)
         densePoints = result
         totalDistance = result.lastOrNull()?.distanceFromStart ?: 0f
     }
 
     fun updatePace(newPace: Float) {
-        this.basePace = newPace
-        this.baseSpeed = calculateBaseSpeed(newPace)
+        basePace = newPace
+        baseSpeed = calculateBaseSpeed(newPace)
     }
 
     private fun calculateBaseSpeed(pace: Float): Float {
@@ -77,11 +64,11 @@ class TrajectoryInterpolator(
     }
 
     fun calculateNextPosition(): PositionResult {
-        if (isCompleted || densePoints.isEmpty()) {
-            val lastPoint = densePoints.lastOrNull()
+        if (densePoints.isEmpty() || totalDistance < MIN_ROUTE_DISTANCE_METERS) {
+            val point = densePoints.firstOrNull()
             return PositionResult(
-                latitude = lastPoint?.lat ?: 0.0,
-                longitude = lastPoint?.lng ?: 0.0,
+                latitude = point?.lat ?: 0.0,
+                longitude = point?.lng ?: 0.0,
                 speed = 0f,
                 bearing = 0f,
                 isCompleted = true,
@@ -89,14 +76,24 @@ class TrajectoryInterpolator(
             )
         }
 
+        if (isCompleted) {
+            val lastPoint = densePoints.last()
+            return PositionResult(
+                latitude = lastPoint.lat,
+                longitude = lastPoint.lng,
+                speed = 0f,
+                bearing = 0f,
+                isCompleted = true,
+                progress = 1.0f,
+                lapCount = lapCount
+            )
+        }
+
         val now = System.currentTimeMillis()
+        val deltaSeconds = calculateDeltaSeconds(now)
         val instantaneousSpeed = calculateSpeedWithVariation(now)
+        currentDistance += instantaneousSpeed * deltaSeconds
 
-        // 假设每秒调用一次
-        val distanceToMove = instantaneousSpeed * 1.0f
-        currentDistance += distanceToMove
-
-        // 检查是否完成或需要循环
         if (currentDistance >= totalDistance) {
             if (isLoopMode) {
                 currentDistance %= totalDistance
@@ -117,28 +114,15 @@ class TrajectoryInterpolator(
             }
         }
 
-        // 找到基础位置
         val basePos = findPositionByDistance(currentDistance)
-        var finalLat = basePos.latitude
-        var finalLng = basePos.longitude
-
-        // 计算航向角
         val movementBearing = if (lastLatitude != 0.0 && lastLongitude != 0.0) {
-            calculateBearing(lastLatitude, lastLongitude, finalLat, finalLng)
+            calculateBearing(lastLatitude, lastLongitude, basePos.latitude, basePos.longitude)
         } else {
             estimatePathBearing(currentDistance)
         }
 
-        // 处理渐变式路线偏离
-        handleSmoothDeviation(now, movementBearing.toDouble())
-        val deviationOffset = calculateCurrentDeviation(now)
-        if (deviationOffset > 0.01) {
-            val offset = calculateLocationOffset(finalLat, finalLng, deviationOffset, currentDeviationAngle)
-            finalLat = offset.latitude
-            finalLng = offset.longitude
-        }
-
-        val smoothedPosition = smoothDisplayedPosition(finalLat, finalLng)
+        val naturalPosition = applyNaturalTrackVariation(basePos, movementBearing, now)
+        val smoothedPosition = smoothDisplayedPosition(naturalPosition.latitude, naturalPosition.longitude)
         val targetBearing = if (displayedLatitude != 0.0 && displayedLongitude != 0.0) {
             calculateBearing(displayedLatitude, displayedLongitude, smoothedPosition.latitude, smoothedPosition.longitude)
         } else {
@@ -157,97 +141,147 @@ class TrajectoryInterpolator(
             speed = instantaneousSpeed,
             bearing = finalBearing,
             isCompleted = false,
-            progress = if (totalDistance > 0) currentDistance / totalDistance else 0f,
+            progress = (currentDistance / totalDistance).coerceIn(0f, 1f),
             lapCount = lapCount
         )
     }
 
-    // ==================== Catmull-Rom 样条平滑 ====================
+    private fun calculateDeltaSeconds(now: Long): Float {
+        val last = lastUpdateTimeMs
+        lastUpdateTimeMs = now
+        if (last == null) return 0f
+        return ((now - last) / 1000f).coerceIn(0.2f, 2.5f)
+    }
+
+    // ==================== 路线平滑 ====================
 
     /**
-     * 对原始路线进行 Catmull-Rom 样条插值，生成平滑密集点
-     * 同时将GCJ-02坐标转换为WGS-84（用于模拟定位）
+     * 地图点击点是 GCJ-02。模拟定位需要 WGS-84。
+     * 闭环路线不再硬穿过每个尖角，而是先圆角化，再按距离重新采样。
      */
-    private fun generateSmoothedPoints(originalPoints: List<com.virtualrun.app.model.RoutePoint>, loop: Boolean): List<DensePoint> {
-        if (originalPoints.size < 2) {
-            return originalPoints.map {
-                // 地图点击的是GCJ-02，转为WGS-84存储
-                val wgs84 = CoordinateConverter.gcj02ToWgs84(it.lat, it.lng)
-                DensePoint(wgs84.first, wgs84.second, 0f)
-            }
-        }
+    private fun generateSmoothedPoints(originalPoints: List<RoutePoint>, loop: Boolean): List<DensePoint> {
+        if (originalPoints.isEmpty()) return emptyList()
 
-        val dense = mutableListOf<DensePoint>()
-        var cumulativeDist = 0f
-
-        // 先将所有点转为WGS-84
         val wgsPoints = originalPoints.map {
             val wgs84 = CoordinateConverter.gcj02ToWgs84(it.lat, it.lng)
-            com.virtualrun.app.model.RoutePoint(wgs84.first, wgs84.second)
+            RoutePoint(wgs84.first, wgs84.second)
         }
 
-        if (loop) {
-            val n = wgsPoints.size
-            val extended = mutableListOf<com.virtualrun.app.model.RoutePoint>()
-            extended.add(wgsPoints[n - 1])
-            extended.addAll(wgsPoints)
-            extended.add(wgsPoints[0])
-            extended.add(wgsPoints[1])
+        if (wgsPoints.size == 1) {
+            val point = wgsPoints.first()
+            return listOf(DensePoint(point.lat, point.lng, 0f))
+        }
 
-            for (seg in 0 until n) {
-                val p0 = extended[seg]
-                val p1 = extended[seg + 1]
-                val p2 = extended[seg + 2]
-                val p3 = extended[seg + 3]
-                val steps = 15
-
-                for (i in 0 until steps) {
-                    val t = i.toDouble() / steps
-                    val pt = catmullRom(p0, p1, p2, p3, t)
-                    if (dense.isNotEmpty()) {
-                        cumulativeDist += haversineDistance(dense.last().lat, dense.last().lng, pt.first, pt.second)
-                    }
-                    dense.add(DensePoint(pt.first, pt.second, cumulativeDist))
-                }
-            }
-            val firstPt = dense.first()
-            cumulativeDist += haversineDistance(dense.last().lat, dense.last().lng, firstPt.lat, firstPt.lng)
-            dense.add(DensePoint(firstPt.lat, firstPt.lng, cumulativeDist))
+        return if (loop) {
+            generateNaturalLoopPoints(removeDuplicateClosingPoint(wgsPoints))
         } else {
-            val padded = mutableListOf<com.virtualrun.app.model.RoutePoint>()
-            padded.add(wgsPoints.first())
-            padded.addAll(wgsPoints)
-            padded.add(wgsPoints.last())
+            generateOpenRoutePoints(wgsPoints)
+        }
+    }
 
-            for (seg in 0 until padded.size - 3) {
-                val p0 = padded[seg]
-                val p1 = padded[seg + 1]
-                val p2 = padded[seg + 2]
-                val p3 = padded[seg + 3]
-                val steps = 15
+    private fun removeDuplicateClosingPoint(points: List<RoutePoint>): List<RoutePoint> {
+        if (points.size < 2) return points
+        val first = points.first()
+        val last = points.last()
+        return if (haversineDistance(first.lat, first.lng, last.lat, last.lng) < 5f) {
+            points.dropLast(1)
+        } else {
+            points
+        }
+    }
 
-                for (i in 0 until steps) {
-                    val t = i.toDouble() / steps
-                    val pt = catmullRom(p0, p1, p2, p3, t)
-                    if (dense.isNotEmpty()) {
-                        cumulativeDist += haversineDistance(dense.last().lat, dense.last().lng, pt.first, pt.second)
-                    }
-                    dense.add(DensePoint(pt.first, pt.second, cumulativeDist))
-                }
-            }
-            val last = wgsPoints.last()
-            cumulativeDist += haversineDistance(dense.last().lat, dense.last().lng, last.lat, last.lng)
-            dense.add(DensePoint(last.lat, last.lng, cumulativeDist))
+    private fun generateNaturalLoopPoints(points: List<RoutePoint>): List<DensePoint> {
+        if (points.size < 3) {
+            return generateOpenRoutePoints(points)
         }
 
-        return dense
+        var smoothed = points
+        repeat(LOOP_SMOOTHING_ITERATIONS) {
+            smoothed = chaikinClosed(smoothed)
+        }
+
+        return resampleByDistance(smoothed + smoothed.first(), TARGET_SAMPLE_DISTANCE_METERS)
+    }
+
+    private fun generateOpenRoutePoints(points: List<RoutePoint>): List<DensePoint> {
+        if (points.size < 2) return points.map { DensePoint(it.lat, it.lng, 0f) }
+
+        val dense = mutableListOf<RoutePoint>()
+        val padded = mutableListOf<RoutePoint>().apply {
+            add(points.first())
+            addAll(points)
+            add(points.last())
+        }
+
+        for (seg in 0 until padded.size - 3) {
+            val p0 = padded[seg]
+            val p1 = padded[seg + 1]
+            val p2 = padded[seg + 2]
+            val p3 = padded[seg + 3]
+            for (i in 0 until OPEN_ROUTE_INTERPOLATION_STEPS) {
+                val t = i.toDouble() / OPEN_ROUTE_INTERPOLATION_STEPS
+                val point = catmullRom(p0, p1, p2, p3, t)
+                dense.add(RoutePoint(point.first, point.second))
+            }
+        }
+        dense.add(points.last())
+        return resampleByDistance(dense, TARGET_SAMPLE_DISTANCE_METERS)
+    }
+
+    private fun chaikinClosed(points: List<RoutePoint>): List<RoutePoint> {
+        val result = mutableListOf<RoutePoint>()
+        for (i in points.indices) {
+            val p0 = points[i]
+            val p1 = points[(i + 1) % points.size]
+            val q = RoutePoint(
+                lat = p0.lat * 0.75 + p1.lat * 0.25,
+                lng = p0.lng * 0.75 + p1.lng * 0.25
+            )
+            val r = RoutePoint(
+                lat = p0.lat * 0.25 + p1.lat * 0.75,
+                lng = p0.lng * 0.25 + p1.lng * 0.75
+            )
+            result.add(q)
+            result.add(r)
+        }
+        return result
+    }
+
+    private fun resampleByDistance(points: List<RoutePoint>, targetStepMeters: Float): List<DensePoint> {
+        if (points.isEmpty()) return emptyList()
+
+        val result = mutableListOf(DensePoint(points.first().lat, points.first().lng, 0f))
+        var cumulativeDistance = 0f
+
+        for (i in 0 until points.size - 1) {
+            val start = points[i]
+            val end = points[i + 1]
+            val segmentDistance = haversineDistance(start.lat, start.lng, end.lat, end.lng)
+            if (segmentDistance < 0.01f) continue
+
+            val steps = max(1, ceil(segmentDistance / targetStepMeters).toInt())
+            var prevLat = result.last().lat
+            var prevLng = result.last().lng
+
+            for (step in 1..steps) {
+                val ratio = step.toDouble() / steps
+                val lat = start.lat + (end.lat - start.lat) * ratio
+                val lng = start.lng + (end.lng - start.lng) * ratio
+                cumulativeDistance += haversineDistance(prevLat, prevLng, lat, lng)
+                result.add(DensePoint(lat, lng, cumulativeDistance))
+                prevLat = lat
+                prevLng = lng
+            }
+        }
+
+        return result
     }
 
     private fun catmullRom(
-        p0: com.virtualrun.app.model.RoutePoint,
-        p1: com.virtualrun.app.model.RoutePoint,
-        p2: com.virtualrun.app.model.RoutePoint,
-        p3: com.virtualrun.app.model.RoutePoint,
+        p0: RoutePoint,
+        p1: RoutePoint,
+        p2: RoutePoint,
+        p3: RoutePoint,
         t: Double
     ): Pair<Double, Double> {
         val t2 = t * t
@@ -255,16 +289,16 @@ class TrajectoryInterpolator(
 
         val lat = 0.5 * (
             (2.0 * p1.lat) +
-            (-p0.lat + p2.lat) * t +
-            (2.0 * p0.lat - 5.0 * p1.lat + 4.0 * p2.lat - p3.lat) * t2 +
-            (-p0.lat + 3.0 * p1.lat - 3.0 * p2.lat + p3.lat) * t3
+                (-p0.lat + p2.lat) * t +
+                (2.0 * p0.lat - 5.0 * p1.lat + 4.0 * p2.lat - p3.lat) * t2 +
+                (-p0.lat + 3.0 * p1.lat - 3.0 * p2.lat + p3.lat) * t3
         )
 
         val lng = 0.5 * (
             (2.0 * p1.lng) +
-            (-p0.lng + p2.lng) * t +
-            (2.0 * p0.lng - 5.0 * p1.lng + 4.0 * p2.lng - p3.lng) * t2 +
-            (-p0.lng + 3.0 * p1.lng - 3.0 * p2.lng + p3.lng) * t3
+                (-p0.lng + p2.lng) * t +
+                (2.0 * p0.lng - 5.0 * p1.lng + 4.0 * p2.lng - p3.lng) * t2 +
+                (-p0.lng + 3.0 * p1.lng - 3.0 * p2.lng + p3.lng) * t3
         )
 
         return Pair(lat, lng)
@@ -279,108 +313,59 @@ class TrajectoryInterpolator(
         return (r * c).toFloat()
     }
 
-    // ==================== 速度波动 ====================
+    // ==================== 速度与轨迹扰动 ====================
 
     private fun calculateSpeedWithVariation(now: Long): Float {
         val timeSec = now / 1000.0
-        speedPhase += Random.nextDouble(-0.02, 0.02)
-        val cadenceWave = 0.028 * sin(timeSec * 0.42 + speedPhase)
-        val breathWave = 0.02 * sin(timeSec * 0.11 + speedPhase * 0.45)
-        val strideWave = 0.01 * sin(timeSec * 1.6 + speedPhase * 1.5)
-        val terrainWave = 0.012 * sin(timeSec * 0.03 + 1.2)
-        val randomVariation = Random.nextDouble(-0.008, 0.008)
-        val totalVariation = cadenceWave + breathWave + strideWave + terrainWave + randomVariation
+        speedPhase += Random.nextDouble(-0.006, 0.006)
+        val cadenceWave = 0.025 * sin(timeSec * 0.42 + speedPhase)
+        val breathWave = 0.018 * sin(timeSec * 0.11 + speedPhase * 0.45)
+        val terrainWave = 0.012 * sin(timeSec * 0.035 + 1.2)
+        val totalVariation = cadenceWave + breathWave + terrainWave
         val variedSpeed = baseSpeed * (1 + totalVariation).toFloat()
-        return variedSpeed.coerceIn(baseSpeed * 0.92f, baseSpeed * 1.08f)
-    }
-
-    // ==================== 渐变式路线偏离 ====================
-
-    /**
-     * 处理渐变式路线偏离状态机
-     */
-    private fun handleSmoothDeviation(now: Long, currentBearing: Double) {
-        when (deviationState) {
-            DeviationState.NONE -> {
-                if (now >= nextDeviationTime) {
-                    // 开始新的偏离周期
-                    startNewDeviation(now, currentBearing)
-                }
-            }
-            DeviationState.ENTERING -> {
-                if (now >= deviationStartTime + ENTER_DURATION) {
-                    deviationState = DeviationState.HOLDING
-                }
-            }
-            DeviationState.HOLDING -> {
-                if (now >= deviationEndTime - EXIT_DURATION) {
-                    deviationState = DeviationState.EXITING
-                }
-            }
-            DeviationState.EXITING -> {
-                if (now >= deviationEndTime) {
-                    deviationState = DeviationState.NONE
-                    nextDeviationTime = now + Random.nextLong(6000, 12000)
-                }
-            }
-        }
+        return variedSpeed.coerceIn(baseSpeed * 0.93f, baseSpeed * 1.07f)
     }
 
     /**
-     * 开始新的偏离周期
+     * 真人绕圈不会走成尖锐折线，也不会每圈完全重合。
+     * 这里使用连续的横向漂移：每圈有不同的轻微内外偏移，再叠加低频波动。
      */
-    private fun startNewDeviation(now: Long, currentBearing: Double) {
-        deviationState = DeviationState.ENTERING
-        deviationStartTime = now
-        deviationMaxDuration = Random.nextLong(2500, 6000)
-        deviationEndTime = now + deviationMaxDuration
+    private fun applyNaturalTrackVariation(position: TargetPosition, bearing: Float, now: Long): TargetPosition {
+        val distance = currentDistance.toDouble()
+        val timeSec = now / 1000.0
+        val lapPhase = lateralPhase + lapCount * 1.37
 
-        // 偏离方向：垂直于当前航向（左右随机）±30度随机
-        val sideOffset = if (Random.nextBoolean()) 90 else -90
-        val randomAngle = Random.nextDouble(-30.0, 30.0)
-        currentDeviationAngle = (currentBearing + sideOffset + randomAngle) % 360
-
-        currentMaxDeviationDistance = Random.nextDouble(0.5, 3.0)
-    }
-
-    /**
-     * 计算当前时刻的偏移距离（带渐入渐出效果）
-     */
-    private fun calculateCurrentDeviation(now: Long): Double {
-        return when (deviationState) {
-            DeviationState.NONE -> 0.0
-            DeviationState.ENTERING -> {
-                val elapsed = now - deviationStartTime
-                val progress = (elapsed.toDouble() / ENTER_DURATION).coerceIn(0.0, 1.0)
-                // 使用easeInOut函数让过渡更平滑
-                val easedProgress = easeInOutCubic(progress)
-                currentMaxDeviationDistance * easedProgress
-            }
-            DeviationState.HOLDING -> {
-                // 保持阶段添加轻微摆动
-                val timeInHold = now - (deviationStartTime + ENTER_DURATION)
-                val breathe = sin(timeInHold * 0.003) * 0.3 // ±30%的呼吸效果
-                currentMaxDeviationDistance * (1 + breathe)
-            }
-            DeviationState.EXITING -> {
-                val timeToEnd = deviationEndTime - now
-                val progress = (timeToEnd.toDouble() / EXIT_DURATION).coerceIn(0.0, 1.0)
-                val easedProgress = easeInOutCubic(progress)
-                currentMaxDeviationDistance * easedProgress
-            }
-        }
-    }
-
-    /**
-     * Cubic ease-in-out 缓动函数
-     */
-    private fun easeInOutCubic(t: Double): Double {
-        return if (t < 0.5) {
-            4.0 * t * t * t
+        val lateralMeters = if (isLoopMode) {
+            val lapLaneOffset = ((lapCount % 5) - 2) * 0.55
+            val longWave = sin(distance / 34.0 + lapPhase) * 1.10
+            val mediumWave = sin(distance / 13.0 + lapPhase * 0.7) * 0.45
+            val slowBodyDrift = sin(timeSec * 0.18 + lapPhase) * 0.35
+            (lapLaneOffset + longWave + mediumWave + slowBodyDrift).coerceIn(-2.6, 2.6)
         } else {
-            val v = -2.0 * t + 2.0
-            1.0 - (v * v * v) / 2.0
+            val softWobble = sin(distance / 22.0 + lapPhase) * 0.65 + sin(timeSec * 0.15 + lapPhase) * 0.25
+            softWobble.coerceIn(-1.2, 1.2)
         }
+
+        val sideBearing = if (lateralMeters >= 0) bearing + 90.0 else bearing - 90.0
+        var shifted = if (abs(lateralMeters) > 0.01) {
+            calculateLocationOffset(position.latitude, position.longitude, abs(lateralMeters), sideBearing)
+        } else {
+            position
+        }
+
+        if (isLoopMode) {
+            val forwardMeters = sin(distance / 17.0 + lapPhase * 0.5) * 0.18
+            if (abs(forwardMeters) > 0.01) {
+                shifted = calculateLocationOffset(
+                    shifted.latitude,
+                    shifted.longitude,
+                    abs(forwardMeters),
+                    if (forwardMeters >= 0) bearing.toDouble() else bearing + 180.0
+                )
+            }
+        }
+
+        return shifted
     }
 
     private fun calculateBearing(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Float {
@@ -427,7 +412,7 @@ class TrajectoryInterpolator(
     private fun calculateLocationOffset(lat: Double, lng: Double, distanceMeters: Double, bearingDegrees: Double): TargetPosition {
         val radiusEarth = 6378137.0
         val distRatio = distanceMeters / radiusEarth
-        val bearingRad = Math.toRadians(bearingDegrees)
+        val bearingRad = Math.toRadians((bearingDegrees + 360.0) % 360.0)
         val latRad = Math.toRadians(lat)
         val lngRad = Math.toRadians(lng)
 
@@ -439,7 +424,12 @@ class TrajectoryInterpolator(
 
     private fun estimatePathBearing(distance: Float): Float {
         val current = findPositionByDistance(distance)
-        val lookAhead = findPositionByDistance((distance + LOOKAHEAD_DISTANCE_METERS).coerceAtMost(totalDistance))
+        val lookAheadDistance = if (isLoopMode) {
+            (distance + LOOKAHEAD_DISTANCE_METERS) % totalDistance
+        } else {
+            (distance + LOOKAHEAD_DISTANCE_METERS).coerceAtMost(totalDistance)
+        }
+        val lookAhead = findPositionByDistance(lookAheadDistance)
         return calculateBearing(current.latitude, current.longitude, lookAhead.latitude, lookAhead.longitude)
     }
 
@@ -474,19 +464,21 @@ class TrajectoryInterpolator(
         displayedLatitude = 0.0
         displayedLongitude = 0.0
         smoothedBearing = 0f
+        lastUpdateTimeMs = null
         speedPhase = Random.nextDouble(0.0, Math.PI * 2)
+        lateralPhase = Random.nextDouble(0.0, Math.PI * 2)
         lapCount = 0
-        deviationState = DeviationState.NONE
-        nextDeviationTime = System.currentTimeMillis() + Random.nextLong(5000, 11000)
     }
 
     fun isCompleted(): Boolean = isCompleted
     fun getLapCount(): Int = lapCount
 
     companion object {
-        private const val ENTER_DURATION = 1200L
-        private const val EXIT_DURATION = 1200L
-        private const val POSITION_SMOOTHING_FACTOR = 0.35f
+        private const val MIN_ROUTE_DISTANCE_METERS = 8f
+        private const val TARGET_SAMPLE_DISTANCE_METERS = 3f
+        private const val LOOP_SMOOTHING_ITERATIONS = 4
+        private const val OPEN_ROUTE_INTERPOLATION_STEPS = 20
+        private const val POSITION_SMOOTHING_FACTOR = 0.52f
         private const val BEARING_SMOOTHING_FACTOR = 0.25f
         private const val MAX_BEARING_STEP_DEGREES = 15f
         private const val LOOKAHEAD_DISTANCE_METERS = 4f
