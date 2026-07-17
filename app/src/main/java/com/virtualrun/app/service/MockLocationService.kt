@@ -24,6 +24,10 @@ import com.virtualrun.app.algorithm.TrajectoryInterpolator
 import com.virtualrun.app.model.Route
 import kotlinx.coroutines.*
 import java.util.Locale
+import kotlin.math.cos
+import kotlin.math.ln
+import kotlin.math.sqrt
+import kotlin.random.Random
 
 /**
  * 虚拟定位 Mock Location Service
@@ -84,6 +88,22 @@ class MockLocationService : Service() {
     private var currentRoutePoints: ArrayList<LatLng>? = null
     private var currentIsLoop = false
     private var lastResult: com.virtualrun.app.algorithm.PositionResult? = null
+    private var metadataSampleCount = 0
+    private var horizontalAccuracyMeters = 2.4f
+    private var altitudeMeters = 45.0
+    private var verticalAccuracyMetersState = 3.5f
+    private var speedAccuracyMetersPerSecondState = 0.24f
+    private var bearingAccuracyDegreesState = 2.8f
+    private var satelliteCount = 12
+
+    private data class SensorMetadata(
+        val horizontalAccuracyMeters: Float,
+        val altitudeMeters: Double,
+        val verticalAccuracyMeters: Float,
+        val speedAccuracyMetersPerSecond: Float,
+        val bearingAccuracyDegrees: Float,
+        val satellites: Int
+    )
 
     private val providers = listOf(
         LocationManager.GPS_PROVIDER,
@@ -189,28 +209,34 @@ class MockLocationService : Service() {
         val now = System.currentTimeMillis()
         val elapsedNanos = SystemClock.elapsedRealtimeNanos()
         val worker = workerHandler ?: return
+        val metadata = evolveSensorMetadata()
 
         activeProviders.forEach { provider ->
+            val providerAccuracy = when (provider) {
+                LocationManager.NETWORK_PROVIDER -> (metadata.horizontalAccuracyMeters + 2.2f).coerceAtMost(8.0f)
+                "fused" -> (metadata.horizontalAccuracyMeters + 0.35f).coerceAtMost(6.0f)
+                else -> metadata.horizontalAccuracyMeters
+            }
             worker.post {
                 try {
                     val loc = Location(provider).apply {
                         latitude = result.latitude
                         longitude = result.longitude
-                        altitude = 20.0
+                        altitude = metadata.altitudeMeters
                         speed = result.speed
                         bearing = result.bearing
-                        accuracy = if (provider == LocationManager.NETWORK_PROVIDER) 3.5f else 1.2f
+                        accuracy = providerAccuracy
                         time = now
                         elapsedRealtimeNanos = elapsedNanos
 
                         val extras = Bundle()
-                        extras.putInt("satellites", 12)
+                        extras.putInt("satellites", metadata.satellites)
                         this.extras = extras
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            verticalAccuracyMeters = 2.5f
-                            bearingAccuracyDegrees = 1.5f
-                            speedAccuracyMetersPerSecond = 0.15f
+                            verticalAccuracyMeters = metadata.verticalAccuracyMeters
+                            bearingAccuracyDegrees = metadata.bearingAccuracyDegrees
+                            speedAccuracyMetersPerSecond = metadata.speedAccuracyMetersPerSecond
                         }
                     }
                     locationManager.setTestProviderLocation(provider, loc)
@@ -219,6 +245,57 @@ class MockLocationService : Service() {
                 }
             }
         }
+    }
+
+    /**
+     * 真实 GNSS 精度和卫星可见数会缓慢变化，而不是每秒完全相同。
+     * 各状态使用均值回归，避免逐点独立随机数造成不自然的闪烁。
+     */
+    private fun evolveSensorMetadata(): SensorMetadata {
+        metadataSampleCount++
+        horizontalAccuracyMeters = evolveValue(horizontalAccuracyMeters, 2.6f, 0.10f, 0.14f, 1.6f, 5.5f)
+        altitudeMeters = evolveValue(altitudeMeters.toFloat(), 45.0f, 0.025f, 0.16f, 40.0f, 50.0f).toDouble()
+        verticalAccuracyMetersState = evolveValue(verticalAccuracyMetersState, 4.0f, 0.08f, 0.20f, 2.5f, 7.0f)
+        speedAccuracyMetersPerSecondState = evolveValue(
+            speedAccuracyMetersPerSecondState,
+            0.28f,
+            0.12f,
+            0.018f,
+            0.12f,
+            0.55f
+        )
+        bearingAccuracyDegreesState = evolveValue(bearingAccuracyDegreesState, 3.4f, 0.08f, 0.22f, 1.5f, 8.0f)
+
+        if (metadataSampleCount % 5 == 0) {
+            satelliteCount = (satelliteCount + Random.nextInt(-1, 2)).coerceIn(8, 16)
+        }
+
+        return SensorMetadata(
+            horizontalAccuracyMeters = horizontalAccuracyMeters,
+            altitudeMeters = altitudeMeters,
+            verticalAccuracyMeters = verticalAccuracyMetersState,
+            speedAccuracyMetersPerSecond = speedAccuracyMetersPerSecondState,
+            bearingAccuracyDegrees = bearingAccuracyDegreesState,
+            satellites = satelliteCount
+        )
+    }
+
+    private fun evolveValue(
+        current: Float,
+        target: Float,
+        meanReversion: Float,
+        noiseScale: Float,
+        minimum: Float,
+        maximum: Float
+    ): Float {
+        val next = current + (target - current) * meanReversion + randomGaussian().toFloat() * noiseScale
+        return next.coerceIn(minimum, maximum)
+    }
+
+    private fun randomGaussian(): Double {
+        val first = Random.nextDouble().coerceAtLeast(1e-12)
+        val second = Random.nextDouble()
+        return sqrt(-2.0 * ln(first)) * cos(2.0 * Math.PI * second)
     }
 
     private fun broadcastUpdate(result: com.virtualrun.app.algorithm.PositionResult) {
