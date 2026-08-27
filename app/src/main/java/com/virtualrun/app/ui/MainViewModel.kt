@@ -23,6 +23,9 @@ class MainViewModel : ViewModel() {
     private val _isRunning = MutableStateFlow(false)
     val isRunning: StateFlow<Boolean> = _isRunning.asStateFlow()
 
+    private val _isStopping = MutableStateFlow(false)
+    val isStopping: StateFlow<Boolean> = _isStopping.asStateFlow()
+
     private val _basePace = MutableStateFlow(6.0f)
     val basePace: StateFlow<Float> = _basePace.asStateFlow()
 
@@ -44,19 +47,43 @@ class MainViewModel : ViewModel() {
     private val stateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == MockLocationService.BROADCAST_ACTION_STATE_UPDATE) {
-                val lat = intent.getDoubleExtra(MockLocationService.BROADCAST_EXTRA_LAT, 0.0)
-                val lng = intent.getDoubleExtra(MockLocationService.BROADCAST_EXTRA_LNG, 0.0)
+                val hasLocation = intent.getBooleanExtra(MockLocationService.BROADCAST_EXTRA_HAS_LOCATION, true)
                 val prog = intent.getFloatExtra(MockLocationService.BROADCAST_EXTRA_PROGRESS, 0f)
                 val lap = intent.getIntExtra(MockLocationService.BROADCAST_EXTRA_LAP, 0)
                 val spd = intent.getFloatExtra(MockLocationService.BROADCAST_EXTRA_SPEED, 0f)
                 val completed = intent.getBooleanExtra(MockLocationService.BROADCAST_EXTRA_COMPLETED, false)
+                val running = intent.getBooleanExtra(MockLocationService.BROADCAST_EXTRA_RUNNING, !completed)
+                val stopping = intent.getBooleanExtra(MockLocationService.BROADCAST_EXTRA_STOPPING, false)
 
-                _currentLocation.value = LatLng(lat, lng)
-                _progress.value = prog
-                _lapCount.value = lap
-                _speed.value = spd
+                if (hasLocation) {
+                    val lat = intent.getDoubleExtra(MockLocationService.BROADCAST_EXTRA_LAT, 0.0)
+                    val lng = intent.getDoubleExtra(MockLocationService.BROADCAST_EXTRA_LNG, 0.0)
+                    _currentLocation.value = LatLng(lat, lng)
+                    _progress.value = prog
+                    _lapCount.value = lap
+                    _speed.value = spd
+                }
+
+                val restoredPoints = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableArrayListExtra(MockLocationService.EXTRA_ROUTE_POINTS, LatLng::class.java)
+                } else {
+                    @Suppress("DEPRECATION")
+                    intent.getParcelableArrayListExtra(MockLocationService.EXTRA_ROUTE_POINTS)
+                }
+                restoredPoints?.let { _routePoints.value = it }
+                if (intent.hasExtra(MockLocationService.EXTRA_PACE)) {
+                    _basePace.value = intent.getFloatExtra(MockLocationService.EXTRA_PACE, _basePace.value)
+                }
+                if (intent.hasExtra(MockLocationService.EXTRA_IS_LOOP)) {
+                    _isLoopMode.value = intent.getBooleanExtra(MockLocationService.EXTRA_IS_LOOP, false)
+                }
+
+                _isRunning.value = running
+                _isStopping.value = stopping
 
                 if (completed) {
+                    _speed.value = 0f
+                    _isStopping.value = false
                     _isRunning.value = false
                 }
             }
@@ -84,7 +111,7 @@ class MainViewModel : ViewModel() {
         val currentPoints = _routePoints.value
 
         // 检查点击的是否是起点，如果是，则闭合曲线进入循环模式
-        if (currentPoints.size >= 2) {
+        if (currentPoints.size >= 3) {
             val start = currentPoints[0]
             val distanceToStart = TrajectoryUtils.calculateDistance(latLng, start)
 
@@ -109,7 +136,7 @@ class MainViewModel : ViewModel() {
      */
     fun closeLoop() {
         val currentPoints = _routePoints.value
-        if (currentPoints.size < 2) return
+        if (currentPoints.size < 3) return
         val start = currentPoints[0]
         val last = currentPoints.last()
         // 只有最后一点和起点还没重合时才闭合
@@ -125,6 +152,9 @@ class MainViewModel : ViewModel() {
         _progress.value = 0f
         _lapCount.value = 0
         _isLoopMode.value = false
+        _currentLocation.value = null
+        _speed.value = 0f
+        _isStopping.value = false
     }
 
     fun setBasePace(pace: Float, context: Context? = null) {
@@ -156,7 +186,11 @@ class MainViewModel : ViewModel() {
                 putParcelableArrayListExtra(MockLocationService.EXTRA_ROUTE_POINTS, ArrayList(_routePoints.value))
             }
             context.startForegroundService(serviceIntent)
+            _progress.value = 0f
+            _currentLocation.value = null
+            _speed.value = 0f
             _isRunning.value = true
+            _isStopping.value = false
             _lapCount.value = 0
         } catch (e: Exception) {
             Log.e("MainViewModel", "Error starting run", e)
@@ -165,7 +199,8 @@ class MainViewModel : ViewModel() {
     }
 
     fun stopRunning(context: Context) {
-        _isRunning.value = false
+        if (!_isRunning.value || _isStopping.value) return
+        _isStopping.value = true
         try {
             val serviceIntent = Intent(context, MockLocationService::class.java).apply {
                 action = MockLocationService.ACTION_STOP_MOCK
@@ -173,10 +208,8 @@ class MainViewModel : ViewModel() {
             context.startService(serviceIntent)
         } catch (e: Exception) {
             Log.e("MainViewModel", "Error stopping service", e)
+            _isStopping.value = false
         }
-
-        _progress.value = 0f
-        _currentLocation.value = null
     }
 
     fun getCurrentRouteDistance(): Float {

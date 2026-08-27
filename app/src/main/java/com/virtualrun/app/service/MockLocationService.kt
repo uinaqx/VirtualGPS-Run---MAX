@@ -62,6 +62,9 @@ class MockLocationService : Service() {
         const val BROADCAST_EXTRA_LAP = "extra_lap"
         const val BROADCAST_EXTRA_SPEED = "extra_speed"
         const val BROADCAST_EXTRA_COMPLETED = "extra_completed"
+        const val BROADCAST_EXTRA_RUNNING = "extra_running"
+        const val BROADCAST_EXTRA_STOPPING = "extra_stopping"
+        const val BROADCAST_EXTRA_HAS_LOCATION = "extra_has_location"
 
         fun isMockEnabled(context: Context): Boolean {
             val lm = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -88,6 +91,7 @@ class MockLocationService : Service() {
     private var currentRoutePoints: ArrayList<LatLng>? = null
     private var currentIsLoop = false
     private var lastResult: com.virtualrun.app.algorithm.PositionResult? = null
+    private var terminalStateBroadcast = false
     private var metadataSampleCount = 0
     private var horizontalAccuracyMeters = 2.4f
     private var altitudeMeters = 45.0
@@ -134,10 +138,12 @@ class MockLocationService : Service() {
                 if (points != null && points.size >= 2) {
                     val route = Route.fromLatLngPoints(points)
                     trajectoryInterpolator = TrajectoryInterpolator(route, currentPace, currentIsLoop)
+                    terminalStateBroadcast = false
                     startForeground(NOTIFICATION_ID, buildNotification())
                     setupMockProviders()
                     startLoop()
                 } else {
+                    broadcastTerminalState()
                     stopSelf()
                 }
             }
@@ -159,10 +165,17 @@ class MockLocationService : Service() {
             }
             ACTION_STOP_MOCK -> {
                 Log.d(TAG, "Action: STOP_MOCK")
-                stopSelf()
+                val interpolator = trajectoryInterpolator
+                if (interpolator != null) {
+                    interpolator.requestStop()
+                } else {
+                    broadcastTerminalState()
+                    stopSelf()
+                }
             }
         }
-        return START_REDELIVER_INTENT
+        // 未持久化运动状态时不自动重放起跑 Intent，避免进程恢复后瞬移回路线起点。
+        return START_NOT_STICKY
     }
 
     private fun setupMockProviders() {
@@ -299,16 +312,38 @@ class MockLocationService : Service() {
     }
 
     private fun broadcastUpdate(result: com.virtualrun.app.algorithm.PositionResult) {
+        val running = !result.isCompleted
+        val stopping = running && trajectoryInterpolator?.isStopping() == true
         val intent = Intent(BROADCAST_ACTION_STATE_UPDATE).apply {
             setPackage(packageName)
+            putExtra(BROADCAST_EXTRA_HAS_LOCATION, true)
             putExtra(BROADCAST_EXTRA_LAT, result.latitude)
             putExtra(BROADCAST_EXTRA_LNG, result.longitude)
             putExtra(BROADCAST_EXTRA_PROGRESS, result.progress)
             putExtra(BROADCAST_EXTRA_LAP, result.lapCount)
             putExtra(BROADCAST_EXTRA_SPEED, result.speed)
             putExtra(BROADCAST_EXTRA_COMPLETED, result.isCompleted)
+            putExtra(BROADCAST_EXTRA_RUNNING, running)
+            putExtra(BROADCAST_EXTRA_STOPPING, stopping)
+            putExtra(EXTRA_PACE, currentPace)
+            putExtra(EXTRA_IS_LOOP, currentIsLoop)
+            putParcelableArrayListExtra(EXTRA_ROUTE_POINTS, currentRoutePoints)
         }
+        if (result.isCompleted) terminalStateBroadcast = true
         sendBroadcast(intent)
+    }
+
+    private fun broadcastTerminalState() {
+        if (terminalStateBroadcast) return
+        terminalStateBroadcast = true
+        sendBroadcast(Intent(BROADCAST_ACTION_STATE_UPDATE).apply {
+            setPackage(packageName)
+            putExtra(BROADCAST_EXTRA_HAS_LOCATION, false)
+            putExtra(BROADCAST_EXTRA_COMPLETED, true)
+            putExtra(BROADCAST_EXTRA_RUNNING, false)
+            putExtra(BROADCAST_EXTRA_STOPPING, false)
+            putExtra(BROADCAST_EXTRA_SPEED, 0f)
+        })
     }
 
     private fun removeMockProviders() {
@@ -326,6 +361,7 @@ class MockLocationService : Service() {
 
     override fun onDestroy() {
         Log.d(TAG, "Service Destroyed")
+        if (!terminalStateBroadcast) broadcastTerminalState()
         removeMockProviders()
         releaseWakeLock()
         workerHandler?.removeCallbacksAndMessages(null)

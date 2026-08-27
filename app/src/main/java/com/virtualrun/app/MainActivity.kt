@@ -11,14 +11,27 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.virtualrun.app.ui.MainViewModel
 import com.virtualrun.app.ui.OSMapScreen
 import org.osmdroid.config.Configuration
 import java.io.File
+
+private val VirtualRunColors = lightColorScheme(
+    primary = Color(0xFF1E88E5),
+    onPrimary = Color.White,
+    secondary = Color(0xFF2EAD65),
+    onSecondary = Color.White,
+    tertiary = Color(0xFFFF7043),
+    background = Color(0xFFF5F7FA),
+    surface = Color.White,
+    onSurface = Color(0xFF20252B)
+)
 
 class MainActivity : ComponentActivity() {
 
@@ -61,7 +74,7 @@ class MainActivity : ComponentActivity() {
         requestPermissions()
 
         setContent {
-            MaterialTheme {
+            MaterialTheme(colorScheme = VirtualRunColors) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
