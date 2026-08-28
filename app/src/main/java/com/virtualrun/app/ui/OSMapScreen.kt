@@ -54,6 +54,8 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.google.android.gms.maps.model.LatLng
+import com.virtualrun.app.map.CHINA_MAP_MAX_ZOOM_LEVEL
+import com.virtualrun.app.map.CHINA_MAP_MIN_ZOOM_LEVEL
 import com.virtualrun.app.map.ChinaMapTileSource
 import com.virtualrun.app.map.CoordinateConverter
 import com.virtualrun.app.service.MockLocationService
@@ -338,6 +340,8 @@ fun OSMapScreen(viewModel: MainViewModel) {
             factory = { ctx ->
                 MapView(ctx).apply {
                     setTileSource(ChinaMapTileSource())
+                    setMinZoomLevel(CHINA_MAP_MIN_ZOOM_LEVEL.toDouble())
+                    setMaxZoomLevel(CHINA_MAP_MAX_ZOOM_LEVEL.toDouble())
                     setMultiTouchControls(true)
                     zoomController.setVisibility(org.osmdroid.views.CustomZoomButtonsController.Visibility.NEVER)
                     controller.setZoom(16.0)
@@ -407,7 +411,19 @@ fun OSMapScreen(viewModel: MainViewModel) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             SmallFloatingActionButton(
-                onClick = { mapView?.controller?.zoomIn() },
+                onClick = {
+                    mapView?.let { mv ->
+                        if (mv.canZoomIn()) {
+                            mv.controller.zoomIn()
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "已达到地图最大缩放级别",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                },
                 shape = CircleShape,
                 containerColor = Color.White.copy(alpha = 0.86f)
             ) { Icon(Icons.Default.Add, "放大") }
