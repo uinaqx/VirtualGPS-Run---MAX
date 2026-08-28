@@ -201,7 +201,7 @@ fun OSMapScreen(viewModel: MainViewModel) {
                 routePoints.forEach { addPoint(GeoPoint(it.latitude, it.longitude)) }
                 outlinePaint.apply {
                     color = PlannedRouteColor.toArgb()
-                    strokeWidth = 10f
+                    strokeWidth = 6f
                 }
             }.also(mv.overlays::add)
         }
@@ -216,8 +216,8 @@ fun OSMapScreen(viewModel: MainViewModel) {
                         icon = android.graphics.drawable.GradientDrawable().apply {
                             shape = android.graphics.drawable.GradientDrawable.OVAL
                             setColor(if (index == 0) android.graphics.Color.parseColor("#2EAD65") else android.graphics.Color.parseColor("#1E88E5"))
-                            setStroke(if (index == 0) 5 else 3, android.graphics.Color.WHITE)
-                            val targetDp = if (index == 0) 48 else 40
+                            setStroke(if (index == 0) 3 else 2, android.graphics.Color.WHITE)
+                            val targetDp = if (index == 0) 28 else 22
                             val targetPx = (targetDp * context.resources.displayMetrics.density).roundToInt()
                             setSize(targetPx, targetPx)
                         }

@@ -127,6 +127,58 @@ class TrajectoryInterpolatorTest {
     }
 
     @Test
+    fun steadyRunningSpeedStaysWithinFifteenPercentOfTarget() {
+        val start = RoutePoint(0.0, 0.0)
+        val loopRoute = Route(
+            points = listOf(
+                start,
+                RoutePoint(0.0, 0.001),
+                RoutePoint(0.001, 0.001),
+                RoutePoint(0.001, 0.0),
+                start
+            ),
+            totalDistance = 444f,
+            totalDuration = 160L
+        )
+        val targetSpeed = 1000f / (6f * 60f)
+        val lowerBound = targetSpeed * 0.85f
+        val upperBound = targetSpeed * 1.15f
+
+        listOf(31, 37, 41).forEach { seed ->
+            val interpolator = TrajectoryInterpolator(
+                loopRoute,
+                6f,
+                isLoopMode = true,
+                random = Random(seed)
+            )
+            var now = 250_000L
+            var previous = interpolator.calculateNextPosition(now)
+
+            repeat(180) { second ->
+                now += 1_000L
+                val result = interpolator.calculateNextPosition(now)
+                if (second >= 14) {
+                    assertTrue(
+                        "reported speed ${result.speed}m/s left the ±15% band for seed=$seed second=$second",
+                        result.speed in lowerBound..upperBound
+                    )
+                    val derivedSpeed = distanceMeters(
+                        previous.latitude,
+                        previous.longitude,
+                        result.latitude,
+                        result.longitude
+                    )
+                    assertTrue(
+                        "coordinate-derived speed ${derivedSpeed}m/s left the ±15% band for seed=$seed second=$second",
+                        derivedSpeed in lowerBound..upperBound
+                    )
+                }
+                previous = result
+            }
+        }
+    }
+
+    @Test
     fun openRouteBrakesBeforePublishingFinalStationarySamples() {
         val shortRoute = Route(
             points = listOf(RoutePoint(0.0, 0.0), RoutePoint(0.0, 0.0009)),

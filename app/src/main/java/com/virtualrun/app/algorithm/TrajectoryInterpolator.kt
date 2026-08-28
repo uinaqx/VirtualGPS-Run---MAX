@@ -120,7 +120,12 @@ class TrajectoryInterpolator(
 
         val naturalPosition = applyNaturalTrackVariation(basePos, movementBearing, nowMs)
         val smoothedPosition = smoothPathPosition(naturalPosition.latitude, naturalPosition.longitude, deltaSeconds)
-        val observedPosition = applyGpsMeasurementNoise(smoothedPosition, deltaSeconds)
+        val noisyObservedPosition = applyGpsMeasurementNoise(smoothedPosition, deltaSeconds)
+        val observedPosition = constrainCruiseObservationSpeed(
+            noisyObservedPosition,
+            movementBearing,
+            deltaSeconds
+        )
         val targetBearing = if (hasObservedPosition && currentSpeed >= BEARING_FROM_OBSERVATION_MIN_SPEED_MPS) {
             val observedBearing = calculateBearing(
                 observedLatitude,
@@ -392,9 +397,16 @@ class TrajectoryInterpolator(
         updateCorrelatedSpeedNoise(deltaSeconds)
         if (stopRequested) return 0f
 
-        val variedCruiseSpeed = baseSpeed * (1f + (slowSpeedNoise + fastSpeedNoise).toFloat()).coerceIn(0.92f, 1.08f)
+        val variedCruiseSpeed = baseSpeed *
+            (1f + (slowSpeedNoise + fastSpeedNoise).toFloat()).coerceIn(
+                1f - MAX_CRUISE_NOISE_RATIO,
+                1f + MAX_CRUISE_NOISE_RATIO
+            )
         val turnFactor = 1f - MAX_CORNER_SPEED_REDUCTION * previewTurnSeverity(currentDistance)
-        var desiredSpeed = variedCruiseSpeed * turnFactor
+        var desiredSpeed = (variedCruiseSpeed * turnFactor).coerceIn(
+            baseSpeed * MIN_CRUISE_SPEED_RATIO,
+            baseSpeed * MAX_CRUISE_SPEED_RATIO
+        )
 
         if (!isLoopMode) {
             val remainingDistance = (totalDistance - currentDistance).coerceAtLeast(0f)
@@ -607,6 +619,60 @@ class TrajectoryInterpolator(
         return observed
     }
 
+    /**
+     * Keep coordinate-derived cruise speed inside the same ±15% band as the reported speed. GPS drift is
+     * still free to change direction, but it cannot make adjacent observations imply an implausible surge
+     * or slowdown. Start-up, requested stopping and natural endpoint braking retain their real transitions.
+     */
+    private fun constrainCruiseObservationSpeed(
+        candidate: TargetPosition,
+        fallbackBearing: Float,
+        deltaSeconds: Float
+    ): TargetPosition {
+        if (
+            !hasObservedPosition ||
+            deltaSeconds <= 0f ||
+            stopRequested ||
+            endpointBraking
+        ) {
+            return candidate
+        }
+
+        val minimumCruiseSpeed = baseSpeed * MIN_CRUISE_SPEED_RATIO
+        val maximumCruiseSpeed = baseSpeed * MAX_CRUISE_SPEED_RATIO
+        if (currentSpeed !in minimumCruiseSpeed..maximumCruiseSpeed) return candidate
+
+        val observedStepMeters = haversineDistance(
+            observedLatitude,
+            observedLongitude,
+            candidate.latitude,
+            candidate.longitude
+        )
+        // Keep a tiny guard inside the public band to absorb the difference between the spherical
+        // distance formula and the WGS-84 radius used when applying the offset.
+        val minimumStepMeters = minimumCruiseSpeed * deltaSeconds * (1f + OBSERVATION_BAND_GUARD_RATIO)
+        val maximumStepMeters = maximumCruiseSpeed * deltaSeconds * (1f - OBSERVATION_BAND_GUARD_RATIO)
+        val boundedStepMeters = observedStepMeters.coerceIn(minimumStepMeters, maximumStepMeters)
+        if (abs(boundedStepMeters - observedStepMeters) < 0.001f) return candidate
+
+        val stepBearing = if (observedStepMeters >= MIN_BEARING_STEP_METERS) {
+            calculateBearing(
+                observedLatitude,
+                observedLongitude,
+                candidate.latitude,
+                candidate.longitude
+            )
+        } else {
+            fallbackBearing
+        }
+        return calculateLocationOffset(
+            observedLatitude,
+            observedLongitude,
+            boundedStepMeters.toDouble(),
+            stepBearing.toDouble()
+        )
+    }
+
     private fun randomGaussian(): Double {
         val first = random.nextDouble().coerceAtLeast(1e-12)
         val second = random.nextDouble()
@@ -739,7 +805,11 @@ class TrajectoryInterpolator(
         private val TURN_LOOKAHEAD_SAMPLES_METERS = floatArrayOf(4f, 8f, 12f, 15f)
         private const val TURN_RESPONSE_START_DEGREES = 12f
         private const val TURN_RESPONSE_FULL_DEGREES = 85f
-        private const val MAX_CORNER_SPEED_REDUCTION = 0.22f
+        private const val MIN_CRUISE_SPEED_RATIO = 0.85f
+        private const val MAX_CRUISE_SPEED_RATIO = 1.15f
+        private const val MAX_CRUISE_NOISE_RATIO = 0.05f
+        private const val OBSERVATION_BAND_GUARD_RATIO = 0.002f
+        private const val MAX_CORNER_SPEED_REDUCTION = 0.08f
         private const val SLOW_SPEED_NOISE_TIME_CONSTANT_SECONDS = 32.0
         private const val SLOW_SPEED_NOISE_STANDARD_DEVIATION = 0.025
         private const val FAST_SPEED_NOISE_TIME_CONSTANT_SECONDS = 6.0
@@ -759,8 +829,8 @@ class TrajectoryInterpolator(
         private const val MIN_BEARING_STEP_METERS = 0.15f
         private const val BEARING_FROM_OBSERVATION_MIN_SPEED_MPS = 1.2f
         private const val OBSERVED_BEARING_WEIGHT = 0.18f
-        private const val GPS_ERROR_TIME_CONSTANT_SECONDS = 6.5
-        private const val GPS_ERROR_STANDARD_DEVIATION_METERS = 1.25
+        private const val GPS_ERROR_TIME_CONSTANT_SECONDS = 10.0
+        private const val GPS_ERROR_STANDARD_DEVIATION_METERS = 0.45
     }
 }
 
