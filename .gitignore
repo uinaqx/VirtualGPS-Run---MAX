@@ -37,11 +37,10 @@ Thumbs.db
 # Log files
 *.log
 
-# APK files (should be released via release/ folder, not in root)
+# APK files (publish binaries through GitHub Releases, not the source tree)
 *.apk
 *.ap_
 *.aab
-!release/*.apk
 
 # lint
 lint/intermediates/

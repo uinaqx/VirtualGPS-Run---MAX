@@ -25,8 +25,8 @@
 
 ## 截图
 
-![截图1](screenshots/screenshot1.jpg)
-*地图选点、路线规划与循环跑步*
+![最新版路线规划界面](screenshots/route-planning.png)
+*最新版八点闭环路线规划界面*
 
 ## 下载安装
 
@@ -96,11 +96,10 @@ app/src/main/java/com/virtualrun/app/
 │   └── TrajectoryInterpolator.kt   # 定长圆角、等距重采样、自然漂移与速度控制算法
 ├── ui/
 │   ├── MainViewModel.kt            # 状态管理与业务逻辑
-│   ├── NoMapScreen.kt              # 无地图时的备用界面
 │   └── OSMapScreen.kt              # osmdroid 地图界面与中国地图定位偏移修正
 └── map/
     ├── ChinaMapTileSource.kt       # 高德地图瓦片源与原生缩放上限
-    └── MapType.kt                  # 坐标转换（GCJ-02 ↔ WGS-84）
+    └── CoordinateConverter.kt      # 坐标转换（GCJ-02 ↔ WGS-84）
 ```
 
 ## 技术栈
