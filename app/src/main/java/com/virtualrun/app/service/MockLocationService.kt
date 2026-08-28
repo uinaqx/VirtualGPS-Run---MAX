@@ -63,13 +63,23 @@ class MockLocationService : Service() {
         const val BROADCAST_EXTRA_SPEED = "extra_speed"
         const val BROADCAST_EXTRA_COMPLETED = "extra_completed"
         const val BROADCAST_EXTRA_RUNNING = "extra_running"
-        const val BROADCAST_EXTRA_STOPPING = "extra_stopping"
         const val BROADCAST_EXTRA_HAS_LOCATION = "extra_has_location"
 
         fun isMockEnabled(context: Context): Boolean {
             val lm = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
             return try {
-                lm.addTestProvider("test_check", false, false, false, false, false, false, false, 0, 5)
+                lm.addTestProvider(
+                    "test_check",
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    ProviderProperties.POWER_USAGE_LOW,
+                    ProviderProperties.ACCURACY_FINE
+                )
                 lm.removeTestProvider("test_check")
                 true
             } catch (e: SecurityException) {
@@ -165,13 +175,7 @@ class MockLocationService : Service() {
             }
             ACTION_STOP_MOCK -> {
                 Log.d(TAG, "Action: STOP_MOCK")
-                val interpolator = trajectoryInterpolator
-                if (interpolator != null) {
-                    interpolator.requestStop()
-                } else {
-                    broadcastTerminalState()
-                    stopSelf()
-                }
+                stopMockImmediately()
             }
         }
         // 未持久化运动状态时不自动重放起跑 Intent，避免进程恢复后瞬移回路线起点。
@@ -185,7 +189,8 @@ class MockLocationService : Service() {
                 try { locationManager.removeTestProvider(provider) } catch (e: Exception) {}
                 locationManager.addTestProvider(
                     provider, false, false, false, false, true, true, true,
-                    1, 1
+                    ProviderProperties.POWER_USAGE_LOW,
+                    ProviderProperties.ACCURACY_FINE
                 )
                 locationManager.setTestProviderEnabled(provider, true)
                 locationManager.setTestProviderStatus(provider, 2, null, System.currentTimeMillis())
@@ -214,6 +219,18 @@ class MockLocationService : Service() {
             }
             stopSelf()
         }
+    }
+
+    private fun stopMockImmediately() {
+        updateJob?.cancel()
+        updateJob = null
+        workerHandler?.removeCallbacksAndMessages(null)
+        removeMockProviders()
+        trajectoryInterpolator = null
+        lastResult = null
+        broadcastTerminalState()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
     }
 
     private fun pushLocation(result: com.virtualrun.app.algorithm.PositionResult) {
@@ -313,7 +330,6 @@ class MockLocationService : Service() {
 
     private fun broadcastUpdate(result: com.virtualrun.app.algorithm.PositionResult) {
         val running = !result.isCompleted
-        val stopping = running && trajectoryInterpolator?.isStopping() == true
         val intent = Intent(BROADCAST_ACTION_STATE_UPDATE).apply {
             setPackage(packageName)
             putExtra(BROADCAST_EXTRA_HAS_LOCATION, true)
@@ -324,7 +340,6 @@ class MockLocationService : Service() {
             putExtra(BROADCAST_EXTRA_SPEED, result.speed)
             putExtra(BROADCAST_EXTRA_COMPLETED, result.isCompleted)
             putExtra(BROADCAST_EXTRA_RUNNING, running)
-            putExtra(BROADCAST_EXTRA_STOPPING, stopping)
             putExtra(EXTRA_PACE, currentPace)
             putExtra(EXTRA_IS_LOOP, currentIsLoop)
             putParcelableArrayListExtra(EXTRA_ROUTE_POINTS, currentRoutePoints)
@@ -341,7 +356,6 @@ class MockLocationService : Service() {
             putExtra(BROADCAST_EXTRA_HAS_LOCATION, false)
             putExtra(BROADCAST_EXTRA_COMPLETED, true)
             putExtra(BROADCAST_EXTRA_RUNNING, false)
-            putExtra(BROADCAST_EXTRA_STOPPING, false)
             putExtra(BROADCAST_EXTRA_SPEED, 0f)
         })
     }

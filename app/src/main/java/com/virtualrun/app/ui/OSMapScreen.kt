@@ -72,6 +72,7 @@ private val PlannedRouteColor = Color(0xFF1E88E5)
 private val ActualTrailColor = Color(0xFFFF7043)
 private val RunGreen = Color(0xFF2EAD65)
 private val StopRed = Color(0xFFE04F5F)
+private const val MIN_CURRENT_PACE_DISPLAY_SPEED_MPS = 0.6f
 
 private enum class RunUiErrorAction {
     DISMISS,
@@ -92,7 +93,6 @@ fun OSMapScreen(viewModel: MainViewModel) {
 
     val routePoints by viewModel.routePoints.collectAsState()
     val isRunning by viewModel.isRunning.collectAsState()
-    val isStopping by viewModel.isStopping.collectAsState()
     val basePace by viewModel.basePace.collectAsState()
     val currentLocation by viewModel.currentLocation.collectAsState()
     val progress by viewModel.progress.collectAsState()
@@ -119,15 +119,11 @@ fun OSMapScreen(viewModel: MainViewModel) {
     var animatedProgressLap by remember { mutableIntStateOf(0) }
     val animatedSpeed by animateFloatAsState(
         targetValue = currentSpeed,
-        animationSpec = tween(durationMillis = 650, easing = LinearEasing),
+        animationSpec = tween(durationMillis = 180, easing = LinearEasing),
         label = "current speed"
     )
     val actionColor by animateColorAsState(
-        targetValue = when {
-            isStopping -> ActualTrailColor
-            isRunning -> StopRed
-            else -> RunGreen
-        },
+        targetValue = if (isRunning) StopRed else RunGreen,
         animationSpec = tween(250),
         label = "run action color"
     )
@@ -379,11 +375,7 @@ fun OSMapScreen(viewModel: MainViewModel) {
                 ) {
                     Icon(Icons.Default.DirectionsRun, contentDescription = null, tint = RunGreen)
                     Text(
-                        when {
-                            isStopping -> "正在平稳停止"
-                            isLoopMode -> "跑步中 · 第 ${lapCount + 1} 圈"
-                            else -> "跑步中"
-                        },
+                        if (isLoopMode) "跑步中 · 第 ${lapCount + 1} 圈" else "跑步中",
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -548,11 +540,7 @@ fun OSMapScreen(viewModel: MainViewModel) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text("目标配速: ${"%.1f".format(sliderPace)} 分/km", fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                        AnimatedVisibility(
-                            visible = isRunning && animatedSpeed > 0.1f,
-                            enter = fadeIn(tween(200)),
-                            exit = fadeOut(tween(140))
-                        ) {
+                        if (isRunning && animatedSpeed >= MIN_CURRENT_PACE_DISPLAY_SPEED_MPS) {
                             val currentPace = 1000f / (animatedSpeed.coerceAtLeast(0.1f) * 60f)
                             Text("当前: ${"%.1f".format(currentPace)} 分/km", fontSize = 14.sp, color = RunGreen)
                         }
@@ -561,7 +549,6 @@ fun OSMapScreen(viewModel: MainViewModel) {
                         value = sliderPace,
                         onValueChange = { sliderPace = it },
                         onValueChangeFinished = { viewModel.setBasePace(sliderPace, context) },
-                        enabled = !isStopping,
                         valueRange = 3f..15f,
                         steps = 11
                     )
@@ -602,14 +589,9 @@ fun OSMapScreen(viewModel: MainViewModel) {
                         }
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = actionColor),
-                    enabled = !isStopping,
                     modifier = Modifier.weight(1f).height(56.dp)
                 ) {
-                    val actionLabel = when {
-                        isStopping -> "减速中"
-                        isRunning -> "停止"
-                        else -> "开始"
-                    }
+                    val actionLabel = if (isRunning) "停止" else "开始"
                     Crossfade(targetState = actionLabel, animationSpec = tween(180), label = "run action") { label ->
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(if (label == "开始") Icons.Default.PlayArrow else Icons.Default.Stop, null)

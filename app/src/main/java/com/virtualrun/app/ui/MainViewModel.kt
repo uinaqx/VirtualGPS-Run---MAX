@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
@@ -22,9 +23,6 @@ class MainViewModel : ViewModel() {
 
     private val _isRunning = MutableStateFlow(false)
     val isRunning: StateFlow<Boolean> = _isRunning.asStateFlow()
-
-    private val _isStopping = MutableStateFlow(false)
-    val isStopping: StateFlow<Boolean> = _isStopping.asStateFlow()
 
     private val _basePace = MutableStateFlow(6.0f)
     val basePace: StateFlow<Float> = _basePace.asStateFlow()
@@ -53,7 +51,6 @@ class MainViewModel : ViewModel() {
                 val spd = intent.getFloatExtra(MockLocationService.BROADCAST_EXTRA_SPEED, 0f)
                 val completed = intent.getBooleanExtra(MockLocationService.BROADCAST_EXTRA_COMPLETED, false)
                 val running = intent.getBooleanExtra(MockLocationService.BROADCAST_EXTRA_RUNNING, !completed)
-                val stopping = intent.getBooleanExtra(MockLocationService.BROADCAST_EXTRA_STOPPING, false)
 
                 if (hasLocation) {
                     val lat = intent.getDoubleExtra(MockLocationService.BROADCAST_EXTRA_LAT, 0.0)
@@ -79,11 +76,9 @@ class MainViewModel : ViewModel() {
                 }
 
                 _isRunning.value = running
-                _isStopping.value = stopping
 
                 if (completed) {
                     _speed.value = 0f
-                    _isStopping.value = false
                     _isRunning.value = false
                 }
             }
@@ -92,11 +87,12 @@ class MainViewModel : ViewModel() {
 
     fun registerReceiver(context: Context) {
         val filter = IntentFilter(MockLocationService.BROADCAST_ACTION_STATE_UPDATE)
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            context.registerReceiver(stateReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
-        } else {
-            context.registerReceiver(stateReceiver, filter)
-        }
+        ContextCompat.registerReceiver(
+            context,
+            stateReceiver,
+            filter,
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
     }
 
     fun unregisterReceiver(context: Context) {
@@ -154,7 +150,6 @@ class MainViewModel : ViewModel() {
         _isLoopMode.value = false
         _currentLocation.value = null
         _speed.value = 0f
-        _isStopping.value = false
     }
 
     fun setBasePace(pace: Float, context: Context? = null) {
@@ -190,7 +185,6 @@ class MainViewModel : ViewModel() {
             _currentLocation.value = null
             _speed.value = 0f
             _isRunning.value = true
-            _isStopping.value = false
             _lapCount.value = 0
         } catch (e: Exception) {
             Log.e("MainViewModel", "Error starting run", e)
@@ -199,8 +193,9 @@ class MainViewModel : ViewModel() {
     }
 
     fun stopRunning(context: Context) {
-        if (!_isRunning.value || _isStopping.value) return
-        _isStopping.value = true
+        if (!_isRunning.value) return
+        _isRunning.value = false
+        _speed.value = 0f
         try {
             val serviceIntent = Intent(context, MockLocationService::class.java).apply {
                 action = MockLocationService.ACTION_STOP_MOCK
@@ -208,7 +203,7 @@ class MainViewModel : ViewModel() {
             context.startService(serviceIntent)
         } catch (e: Exception) {
             Log.e("MainViewModel", "Error stopping service", e)
-            _isStopping.value = false
+            context.stopService(Intent(context, MockLocationService::class.java))
         }
     }
 

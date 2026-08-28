@@ -49,7 +49,7 @@ class TrajectoryInterpolator(
     private var lastUpdateTimeMs: Long? = null
     private var currentSpeed: Float = 0f
     private var currentAcceleration: Float = 0f
-    private var stopRequested = false
+    private var rapidSpeedResponse = true
     private var endpointBraking = false
     private var stationarySampleCount = 0
 
@@ -72,10 +72,14 @@ class TrajectoryInterpolator(
     fun updatePace(newPace: Float) {
         basePace = newPace
         baseSpeed = calculateBaseSpeed(newPace)
+        rapidSpeedResponse = true
     }
 
     fun requestStop() {
-        stopRequested = true
+        currentSpeed = 0f
+        currentAcceleration = 0f
+        isCompleted = true
+        stationarySampleCount = REQUIRED_STATIONARY_SAMPLES
     }
 
     private fun calculateBaseSpeed(pace: Float): Float {
@@ -99,7 +103,7 @@ class TrajectoryInterpolator(
         if (!isCompleted) advanceMotion(deltaSeconds)
 
         val reachedOpenRouteEnd = !isLoopMode && currentDistance >= totalDistance - END_POSITION_TOLERANCE_METERS
-        if ((stopRequested || reachedOpenRouteEnd) && currentSpeed <= STATIONARY_SPEED_THRESHOLD_MPS) {
+        if (reachedOpenRouteEnd && currentSpeed <= STATIONARY_SPEED_THRESHOLD_MPS) {
             currentSpeed = 0f
             currentAcceleration = 0f
             stationarySampleCount++
@@ -395,8 +399,6 @@ class TrajectoryInterpolator(
 
     private fun calculateDesiredSpeed(deltaSeconds: Float): Float {
         updateCorrelatedSpeedNoise(deltaSeconds)
-        if (stopRequested) return 0f
-
         val variedCruiseSpeed = baseSpeed *
             (1f + (slowSpeedNoise + fastSpeedNoise).toFloat()).coerceIn(
                 1f - MAX_CRUISE_NOISE_RATIO,
@@ -493,19 +495,39 @@ class TrajectoryInterpolator(
     }
 
     private fun updateSpeedWithMotionLimits(desiredSpeed: Float, deltaSeconds: Float) {
-        val responseTime = if (desiredSpeed >= currentSpeed) ACCELERATION_RESPONSE_SECONDS else DECELERATION_RESPONSE_SECONDS
+        val useRapidResponse = rapidSpeedResponse && !endpointBraking
+        val responseTime = when {
+            useRapidResponse -> RAPID_SPEED_RESPONSE_SECONDS
+            desiredSpeed >= currentSpeed -> ACCELERATION_RESPONSE_SECONDS
+            else -> DECELERATION_RESPONSE_SECONDS
+        }
+        val maximumAcceleration = if (useRapidResponse) RAPID_MAX_ACCELERATION_MPS2 else MAX_ACCELERATION_MPS2
+        val maximumDeceleration = if (useRapidResponse) RAPID_MAX_DECELERATION_MPS2 else MAX_DECELERATION_MPS2
+        val maximumJerk = if (useRapidResponse) RAPID_MAX_JERK_MPS3 else MAX_JERK_MPS3
         val commandedAcceleration = ((desiredSpeed - currentSpeed) / responseTime).coerceIn(
-            -MAX_DECELERATION_MPS2,
-            MAX_ACCELERATION_MPS2
+            -maximumDeceleration,
+            maximumAcceleration
         )
-        val maximumAccelerationChange = MAX_JERK_MPS3 * deltaSeconds
+        val maximumAccelerationChange = maximumJerk * deltaSeconds
         currentAcceleration += (commandedAcceleration - currentAcceleration).coerceIn(
             -maximumAccelerationChange,
             maximumAccelerationChange
         )
-        currentAcceleration = currentAcceleration.coerceIn(-MAX_DECELERATION_MPS2, MAX_ACCELERATION_MPS2)
+        currentAcceleration = currentAcceleration.coerceIn(-maximumDeceleration, maximumAcceleration)
 
-        currentSpeed = (currentSpeed + currentAcceleration * deltaSeconds).coerceAtLeast(0f)
+        val previousError = desiredSpeed - currentSpeed
+        val nextSpeed = (currentSpeed + currentAcceleration * deltaSeconds).coerceAtLeast(0f)
+        val crossedDesiredSpeed = previousError != 0f && previousError * (desiredSpeed - nextSpeed) <= 0f
+        currentSpeed = if (useRapidResponse && crossedDesiredSpeed) desiredSpeed else nextSpeed
+
+        if (
+            useRapidResponse &&
+            abs(desiredSpeed - currentSpeed) <= RAPID_RESPONSE_SETTLE_TOLERANCE_MPS
+        ) {
+            currentSpeed = desiredSpeed
+            currentAcceleration = 0f
+            rapidSpeedResponse = false
+        }
         if (desiredSpeed <= 0f && currentSpeed < STATIONARY_SPEED_THRESHOLD_MPS) {
             currentSpeed = 0f
             currentAcceleration = 0f
@@ -622,7 +644,7 @@ class TrajectoryInterpolator(
     /**
      * Keep coordinate-derived cruise speed inside the same ±15% band as the reported speed. GPS drift is
      * still free to change direction, but it cannot make adjacent observations imply an implausible surge
-     * or slowdown. Start-up, requested stopping and natural endpoint braking retain their real transitions.
+     * or slowdown. Start-up and natural endpoint braking retain their real transitions.
      */
     private fun constrainCruiseObservationSpeed(
         candidate: TargetPosition,
@@ -632,7 +654,6 @@ class TrajectoryInterpolator(
         if (
             !hasObservedPosition ||
             deltaSeconds <= 0f ||
-            stopRequested ||
             endpointBraking
         ) {
             return candidate
@@ -777,7 +798,7 @@ class TrajectoryInterpolator(
         lastUpdateTimeMs = null
         currentSpeed = 0f
         currentAcceleration = 0f
-        stopRequested = false
+        rapidSpeedResponse = true
         endpointBraking = false
         stationarySampleCount = 0
         lateralPhase = random.nextDouble(0.0, Math.PI * 2)
@@ -789,7 +810,6 @@ class TrajectoryInterpolator(
     }
 
     fun isCompleted(): Boolean = isCompleted
-    fun isStopping(): Boolean = stopRequested
     fun getLapCount(): Int = lapCount
 
     companion object {
@@ -821,6 +841,11 @@ class TrajectoryInterpolator(
         private const val MAX_JERK_MPS3 = 0.72f
         private const val ACCELERATION_RESPONSE_SECONDS = 2.8f
         private const val DECELERATION_RESPONSE_SECONDS = 1.8f
+        private const val RAPID_SPEED_RESPONSE_SECONDS = 0.45f
+        private const val RAPID_MAX_ACCELERATION_MPS2 = 3.0f
+        private const val RAPID_MAX_DECELERATION_MPS2 = 3.0f
+        private const val RAPID_MAX_JERK_MPS3 = 12.0f
+        private const val RAPID_RESPONSE_SETTLE_TOLERANCE_MPS = 0.04f
         private const val ENDPOINT_MARGIN_METERS = 0.45f
         private const val MAX_STOPPING_PREDICTION_STEPS = 600
         private const val END_POSITION_TOLERANCE_METERS = 1.5f

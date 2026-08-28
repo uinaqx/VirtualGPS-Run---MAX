@@ -6,8 +6,10 @@ import org.osmdroid.util.MapTileIndex
 const val CHINA_MAP_MIN_ZOOM_LEVEL = 0
 
 // AutoNavi returns a tiny blank placeholder tile from z19 onward for this raster endpoint.
-// Advertising z20 made osmdroid accept unsupported zoom levels and rendered the whole map blank.
-const val CHINA_MAP_MAX_ZOOM_LEVEL = 18
+// Keep network requests capped at z18, then let osmdroid crop and enlarge cached parent tiles
+// for a few extra display levels instead of requesting those blank placeholders.
+const val CHINA_MAP_NATIVE_MAX_ZOOM_LEVEL = 18
+const val CHINA_MAP_MAX_ZOOM_LEVEL = 22
 
 /**
  * 高德地图 (AMap/AutoNavi) 瓦片源
@@ -15,7 +17,7 @@ const val CHINA_MAP_MAX_ZOOM_LEVEL = 18
  */
 class ChinaMapTileSource : OnlineTileSourceBase(
     "AMap",
-    CHINA_MAP_MIN_ZOOM_LEVEL, CHINA_MAP_MAX_ZOOM_LEVEL, 256, ".png",
+    CHINA_MAP_MIN_ZOOM_LEVEL, CHINA_MAP_NATIVE_MAX_ZOOM_LEVEL, 256, ".png",
     arrayOf(
         "https://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8",
         "https://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8",

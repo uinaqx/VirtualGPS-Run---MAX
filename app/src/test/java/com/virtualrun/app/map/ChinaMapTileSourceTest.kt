@@ -12,9 +12,11 @@ class ChinaMapTileSourceTest {
         val source = ChinaMapTileSource()
 
         assertEquals(CHINA_MAP_MIN_ZOOM_LEVEL, source.minimumZoomLevel)
-        assertEquals(CHINA_MAP_MAX_ZOOM_LEVEL, source.maximumZoomLevel)
+        assertEquals(CHINA_MAP_NATIVE_MAX_ZOOM_LEVEL, source.maximumZoomLevel)
+        assertEquals(22, CHINA_MAP_MAX_ZOOM_LEVEL)
+        assertTrue(CHINA_MAP_MAX_ZOOM_LEVEL > CHINA_MAP_NATIVE_MAX_ZOOM_LEVEL)
 
-        val tileIndex = MapTileIndex.getTileIndex(CHINA_MAP_MAX_ZOOM_LEVEL, 215_837, 99_333)
+        val tileIndex = MapTileIndex.getTileIndex(CHINA_MAP_NATIVE_MAX_ZOOM_LEVEL, 215_837, 99_333)
         val url = source.getTileURLString(tileIndex)
         assertTrue(url.contains("x=215837"))
         assertTrue(url.contains("y=99333"))

@@ -16,33 +16,36 @@ import org.junit.Test
 class TrajectoryInterpolatorTest {
 
     @Test
-    fun startAndPaceChangeRemainAccelerationLimited() {
-        val interpolator = TrajectoryInterpolator(straightRoute(), 6f, random = Random(7))
+    fun startAndPaceChangesReachTheTargetQuickly() {
+        val interpolator = TrajectoryInterpolator(straightRoute(), 10f, random = Random(7))
         var now = 1_000L
         val first = interpolator.calculateNextPosition(now)
         assertEquals(0f, first.speed, 0.001f)
         assertTrue("stationary first sample lost the route heading", first.bearing in 80f..100f)
 
-        val speeds = mutableListOf(first.speed)
-        repeat(8) {
+        val tenMinuteTargetSpeed = 1000f / (10f * 60f)
+        repeat(2) {
             now += 1_000L
-            speeds += interpolator.calculateNextPosition(now).speed
+            interpolator.calculateNextPosition(now)
         }
+        val accelerated = interpolator.calculateNextPosition(now).speed
+        assertTrue(
+            "start-up speed $accelerated did not rapidly reach the target $tenMinuteTargetSpeed",
+            accelerated in tenMinuteTargetSpeed * 0.85f..tenMinuteTargetSpeed * 1.15f
+        )
 
-        speeds.zipWithNext().forEach { (previous, next) ->
-            assertTrue("speed jump was ${next - previous} m/s", next - previous <= 0.70f)
-        }
-        assertTrue("runner never reached a steady jog", speeds.last() > 2.2f)
-
-        val beforePaceChange = speeds.last()
-        interpolator.updatePace(4f)
+        interpolator.updatePace(12f)
         now += 1_000L
         val afterPaceChange = interpolator.calculateNextPosition(now).speed
-        assertTrue(afterPaceChange - beforePaceChange <= 0.70f)
+        val twelveMinuteTargetSpeed = 1000f / (12f * 60f)
+        assertTrue(
+            "pace update speed $afterPaceChange did not settle near $twelveMinuteTargetSpeed within one second",
+            afterPaceChange in twelveMinuteTargetSpeed * 0.85f..twelveMinuteTargetSpeed * 1.15f
+        )
     }
 
     @Test
-    fun requestedStopDeceleratesBeforeCompletion() {
+    fun requestedStopCompletesImmediately() {
         val interpolator = TrajectoryInterpolator(straightRoute(), 6f, random = Random(11))
         var now = 10_000L
         interpolator.calculateNextPosition(now)
@@ -52,23 +55,11 @@ class TrajectoryInterpolatorTest {
         }
 
         interpolator.requestStop()
-        val stoppingSpeeds = mutableListOf<Float>()
-        var completed = false
-        repeat(12) {
-            now += 1_000L
-            val result = interpolator.calculateNextPosition(now)
-            stoppingSpeeds += result.speed
-            completed = completed || result.isCompleted
-            if (result.isCompleted) return@repeat
-        }
+        val stopped = interpolator.calculateNextPosition(now)
 
-        assertTrue("stop sequence did not complete", completed)
-        assertEquals(0f, stoppingSpeeds.last(), 0.001f)
-        assertTrue("manual stop incorrectly completed the route", interpolator.calculateNextPosition(now + 1_000L).progress < 1f)
-        assertTrue("stop was instantaneous", stoppingSpeeds.first() > 0.5f)
-        stoppingSpeeds.zipWithNext().forEach { (previous, next) ->
-            assertTrue("deceleration exceeded the hard limit", previous - next <= 0.95f)
-        }
+        assertTrue("stop did not complete immediately", stopped.isCompleted)
+        assertEquals(0f, stopped.speed, 0.001f)
+        assertTrue("manual stop incorrectly completed the route", stopped.progress < 1f)
     }
 
     @Test
