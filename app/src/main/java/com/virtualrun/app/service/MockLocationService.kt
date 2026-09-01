@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.location.Criteria
 import android.location.Location
 import android.location.LocationManager
 import android.location.provider.ProviderProperties
@@ -17,12 +16,15 @@ import android.os.Process
 import android.os.SystemClock
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.virtualrun.app.MainActivity
 import com.virtualrun.app.R
 import com.virtualrun.app.algorithm.TrajectoryInterpolator
 import com.virtualrun.app.model.Route
 import kotlinx.coroutines.*
+import kotlinx.coroutines.tasks.await
 import java.util.Locale
 import kotlin.math.cos
 import kotlin.math.ln
@@ -33,10 +35,11 @@ import kotlin.random.Random
  * 虚拟定位 Mock Location Service
  *
  * 核心功能：
- * 1. 同时模拟 GPS, NETWORK 和 FUSED provider
+ * 1. 同时模拟 GPS、NETWORK、系统 FUSED provider 和 Google Play FLP
  * 2. 模拟真实动作 (TrajectoryInterpolator 提供)
  * 3. 支持后台运行和实时参数更新
  */
+@SuppressLint("InlinedApi")
 class MockLocationService : Service() {
 
     companion object {
@@ -46,6 +49,7 @@ class MockLocationService : Service() {
         private const val UPDATE_INTERVAL_MS = 1000L
         private const val WAKELOCK_TIMEOUT_MS = 10 * 60 * 60 * 1000L
         private const val SERVICE_WATCHDOG_MS = 15_000L
+        private const val PLATFORM_FUSED_PROVIDER = "fused"
 
         const val ACTION_START_MOCK = "com.virtualrun.action.START_MOCK"
         const val ACTION_STOP_MOCK = "com.virtualrun.action.STOP_MOCK"
@@ -92,6 +96,7 @@ class MockLocationService : Service() {
 
     private val serviceScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
     private lateinit var locationManager: LocationManager
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var trajectoryInterpolator: TrajectoryInterpolator? = null
     private var updateJob: Job? = null
     private var wakeLock: android.os.PowerManager.WakeLock? = null
@@ -109,6 +114,9 @@ class MockLocationService : Service() {
     private var speedAccuracyMetersPerSecondState = 0.24f
     private var bearingAccuracyDegreesState = 2.8f
     private var satelliteCount = 12
+    @Volatile private var fusedMockModeRequested = false
+    @Volatile private var fusedMockModeEnabled = false
+    private var fusedDeliveryFailureCount = 0
 
     private data class SensorMetadata(
         val horizontalAccuracyMeters: Float,
@@ -119,16 +127,21 @@ class MockLocationService : Service() {
         val satellites: Int
     )
 
-    private val providers = listOf(
+    /**
+     * 这是 LocationManager 的 provider。Google Play FLP 是另一条独立通道，
+     * 不能靠添加一个同名的 "fused" 测试 provider 来替代。
+     */
+    private val platformProviders = listOf(
         LocationManager.GPS_PROVIDER,
         LocationManager.NETWORK_PROVIDER,
-        "fused"
+        PLATFORM_FUSED_PROVIDER
     )
     private val activeProviders = mutableSetOf<String>()
 
     override fun onCreate() {
         super.onCreate()
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         workerThread = HandlerThread("mock-location-worker", Process.THREAD_PRIORITY_BACKGROUND).apply { start() }
         workerHandler = Handler(workerThread!!.looper)
         createNotificationChannel()
@@ -150,7 +163,6 @@ class MockLocationService : Service() {
                     trajectoryInterpolator = TrajectoryInterpolator(route, currentPace, currentIsLoop)
                     terminalStateBroadcast = false
                     startForeground(NOTIFICATION_ID, buildNotification())
-                    setupMockProviders()
                     startLoop()
                 } else {
                     broadcastTerminalState()
@@ -184,7 +196,7 @@ class MockLocationService : Service() {
 
     private fun setupMockProviders() {
         activeProviders.clear()
-        providers.forEach { provider ->
+        platformProviders.forEach { provider ->
             try {
                 try { locationManager.removeTestProvider(provider) } catch (e: Exception) {}
                 locationManager.addTestProvider(
@@ -193,7 +205,6 @@ class MockLocationService : Service() {
                     ProviderProperties.ACCURACY_FINE
                 )
                 locationManager.setTestProviderEnabled(provider, true)
-                locationManager.setTestProviderStatus(provider, 2, null, System.currentTimeMillis())
                 activeProviders.add(provider)
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to setup provider $provider", e)
@@ -201,9 +212,50 @@ class MockLocationService : Service() {
         }
     }
 
+    /**
+     * FusedLocationProviderClient 不读取 LocationManager 中手工添加的同名 provider。
+     * 必须显式进入 FLP mock 模式，才能覆盖跑步软件在开始记录后发起的高精度融合定位请求。
+     */
+    @SuppressLint("MissingPermission")
+    private suspend fun enableFusedMockMode() {
+        fusedMockModeRequested = true
+        fusedMockModeEnabled = false
+        fusedDeliveryFailureCount = 0
+        try {
+            fusedLocationClient.setMockMode(true).await()
+            fusedMockModeEnabled = true
+            Log.i(TAG, "Google Play FLP mock mode enabled")
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to enable Google Play FLP mock mode; platform providers remain active", e)
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun disableFusedMockMode() {
+        if (!fusedMockModeRequested && !fusedMockModeEnabled) return
+
+        fusedMockModeRequested = false
+        fusedMockModeEnabled = false
+        fusedLocationClient.setMockMode(false)
+            .addOnSuccessListener { Log.i(TAG, "Google Play FLP mock mode disabled") }
+            .addOnFailureListener { error -> Log.e(TAG, "Failed to disable Google Play FLP mock mode", error) }
+    }
+
     private fun startLoop() {
         updateJob?.cancel()
         updateJob = serviceScope.launch {
+            setupMockProviders()
+            enableFusedMockMode()
+
+            if (activeProviders.isEmpty() && !fusedMockModeEnabled) {
+                Log.e(TAG, "No mock-location delivery channel could be enabled")
+                broadcastTerminalState()
+                stopSelf()
+                return@launch
+            }
+
             while (isActive) {
                 val result = trajectoryInterpolator?.calculateNextPosition()
                 if (result != null) {
@@ -226,6 +278,7 @@ class MockLocationService : Service() {
         updateJob = null
         workerHandler?.removeCallbacksAndMessages(null)
         removeMockProviders()
+        disableFusedMockMode()
         trajectoryInterpolator = null
         lastResult = null
         broadcastTerminalState()
@@ -233,47 +286,80 @@ class MockLocationService : Service() {
         stopSelf()
     }
 
-    private fun pushLocation(result: com.virtualrun.app.algorithm.PositionResult) {
-        if (activeProviders.isEmpty()) return
+    @SuppressLint("MissingPermission")
+    private suspend fun pushLocation(result: com.virtualrun.app.algorithm.PositionResult) {
+        if (activeProviders.isEmpty() && !fusedMockModeEnabled) return
 
         val now = System.currentTimeMillis()
         val elapsedNanos = SystemClock.elapsedRealtimeNanos()
         val worker = workerHandler ?: return
         val metadata = evolveSensorMetadata()
 
-        activeProviders.forEach { provider ->
+        activeProviders.toList().forEach { provider ->
             val providerAccuracy = when (provider) {
                 LocationManager.NETWORK_PROVIDER -> (metadata.horizontalAccuracyMeters + 2.2f).coerceAtMost(8.0f)
-                "fused" -> (metadata.horizontalAccuracyMeters + 0.35f).coerceAtMost(6.0f)
+                PLATFORM_FUSED_PROVIDER -> (metadata.horizontalAccuracyMeters + 0.35f).coerceAtMost(6.0f)
                 else -> metadata.horizontalAccuracyMeters
             }
             worker.post {
                 try {
-                    val loc = Location(provider).apply {
-                        latitude = result.latitude
-                        longitude = result.longitude
-                        altitude = metadata.altitudeMeters
-                        speed = result.speed
-                        bearing = result.bearing
-                        accuracy = providerAccuracy
-                        time = now
-                        elapsedRealtimeNanos = elapsedNanos
-
-                        val extras = Bundle()
-                        extras.putInt("satellites", metadata.satellites)
-                        this.extras = extras
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            verticalAccuracyMeters = metadata.verticalAccuracyMeters
-                            bearingAccuracyDegrees = metadata.bearingAccuracyDegrees
-                            speedAccuracyMetersPerSecond = metadata.speedAccuracyMetersPerSecond
-                        }
-                    }
+                    val loc = buildMockLocation(provider, result, metadata, providerAccuracy, now, elapsedNanos)
                     locationManager.setTestProviderLocation(provider, loc)
                 } catch (e: Exception) {
                     Log.e(TAG, "Error pushing location to $provider", e)
                 }
             }
+        }
+
+        if (fusedMockModeEnabled) {
+            val fusedAccuracy = (metadata.horizontalAccuracyMeters + 0.35f).coerceAtMost(6.0f)
+            val fusedLocation = buildMockLocation(
+                PLATFORM_FUSED_PROVIDER,
+                result,
+                metadata,
+                fusedAccuracy,
+                now,
+                elapsedNanos
+            )
+            try {
+                fusedLocationClient.setMockLocation(fusedLocation).await()
+                fusedDeliveryFailureCount = 0
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                fusedDeliveryFailureCount++
+                if (fusedDeliveryFailureCount <= 3 || fusedDeliveryFailureCount % 30 == 0) {
+                    Log.e(TAG, "Error pushing location to Google Play FLP", e)
+                }
+            }
+        }
+    }
+
+    private fun buildMockLocation(
+        provider: String,
+        result: com.virtualrun.app.algorithm.PositionResult,
+        metadata: SensorMetadata,
+        providerAccuracy: Float,
+        wallClockMillis: Long,
+        elapsedRealtimeNanosValue: Long
+    ): Location = Location(provider).apply {
+        latitude = result.latitude
+        longitude = result.longitude
+        altitude = metadata.altitudeMeters
+        speed = result.speed
+        bearing = result.bearing
+        accuracy = providerAccuracy
+        time = wallClockMillis
+        elapsedRealtimeNanos = elapsedRealtimeNanosValue
+
+        extras = Bundle().apply {
+            putInt("satellites", metadata.satellites)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            verticalAccuracyMeters = metadata.verticalAccuracyMeters
+            bearingAccuracyDegrees = metadata.bearingAccuracyDegrees
+            speedAccuracyMetersPerSecond = metadata.speedAccuracyMetersPerSecond
         }
     }
 
@@ -377,6 +463,7 @@ class MockLocationService : Service() {
         Log.d(TAG, "Service Destroyed")
         if (!terminalStateBroadcast) broadcastTerminalState()
         removeMockProviders()
+        disableFusedMockMode()
         releaseWakeLock()
         workerHandler?.removeCallbacksAndMessages(null)
         workerThread?.quitSafely()

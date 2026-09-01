@@ -21,6 +21,7 @@
 - **异常配速保护**：低速和停止状态不再显示数百分钟每公里的失真配速
 - **轨迹平滑**：闭环和开放路线均采用定长圆角与等距离重采样，路线连续自然
 - **后台保活**：前台服务 + 唤醒锁，APP 后台或锁屏时虚拟定位持续生效
+- **跑步软件兼容**：同时覆盖 Android 系统定位和 Google Play 融合定位，跑步软件切换到高精度记录后仍可持续收到移动轨迹
 - **实时进度**：显示路线距离、预计用时、跑步进度和当前配速
 
 ## 截图
@@ -115,7 +116,8 @@ app/src/main/java/com/virtualrun/app/
 
 ### Mock Location Service
 - 前台服务保活，确保 APP 后台时定位持续生效
-- 同时模拟 `GPS_PROVIDER`、`NETWORK_PROVIDER` 和 `fused` 三个定位源
+- 同时模拟 `GPS_PROVIDER`、`NETWORK_PROVIDER` 和系统 `fused` 三个定位源
+- 显式启用 Google Play `FusedLocationProviderClient` mock 模式，兼容跑步软件开始记录后的高精度融合定位请求
 - 补全海拔、精度、方位角、卫星数量等字段，提高模拟真实性
 - 以 1Hz 频率发送虚拟位置数据
 
@@ -154,6 +156,10 @@ app/src/main/java/com/virtualrun/app/
 欢迎提交 Issue 和 Pull Request！
 
 ## 更新日志
+
+### 开发版 (2026-09-01)
+- 修复跑步软件点击开始后切换到 Google Play 融合定位、轨迹停在现实原地的问题
+- 停止跑步时同步退出融合定位 mock 模式，恢复手机正常定位
 
 ### v1.0.1 (2026-08-28)
 - 地图显示缩放提升到 `z22`，修复高倍缩放空白问题

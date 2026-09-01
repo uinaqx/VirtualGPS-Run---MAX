@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Location permissions -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <!-- 由开发者选项中的“模拟位置信息应用”授权；用于 Google Play 融合定位 mock 模式。 -->
+    <uses-permission
+        android:name="android.permission.ACCESS_MOCK_LOCATION"
+        tools:ignore="MockLocation,ProtectedPermissions" />
 
     <!-- Foreground service permission -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
