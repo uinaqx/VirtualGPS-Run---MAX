@@ -2,7 +2,7 @@
 
 一款免 Root 的 Android 虚拟跑步定位 App，支持在地图上规划路线并生成更接近真人跑步的连续轨迹。无需任何 API Key，国内网络直连即可使用。
 
-当前版本：**v1.0.1** · 最低支持 Android 8.0（API 26）
+当前版本：**v1.0.2** · 最低支持 Android 8.0（API 26）
 
 ## 功能特性
 
@@ -31,12 +31,12 @@
 
 ## 下载安装
 
-**[>>> 点击下载 VirtualRun v1.0.1 APK <<<](https://github.com/uinaqx/VirtualGPS-Run---MAX/releases/download/v1.0.1/VirtualRun-v1.0.1.apk)**
+**[>>> 点击下载 VirtualRun v1.0.2 APK <<<](https://github.com/uinaqx/VirtualGPS-Run---MAX/releases/download/v1.0.2/VirtualRun-v1.0.2.apk)**
 
 也可以前往 [GitHub Releases](https://github.com/uinaqx/VirtualGPS-Run---MAX/releases/latest) 查看最新版本和更新说明。
 
-- APK 版本：`1.0.1`（versionCode 2）
-- SHA-256：`B9932951F1FEB4A4BF3BCE89D0E484F5936921130F9A7D36EAE5EB1FF5D4DB81`
+- APK 版本：`1.0.2`（versionCode 3）
+- SHA-256：`54CFA2294B71C9ED21AC53633B00B45C819F09C9303B494D6CDD759391409F68`
 
 > 当前 APK 使用 Android Debug 签名，可直接安装测试；项目尚未配置用于应用商店发布的正式签名密钥。
 
@@ -157,7 +157,7 @@ app/src/main/java/com/virtualrun/app/
 
 ## 更新日志
 
-### 开发版 (2026-09-01)
+### v1.0.2 (2026-09-01)
 - 修复跑步软件点击开始后切换到 Google Play 融合定位、轨迹停在现实原地的问题
 - 停止跑步时同步退出融合定位 mock 模式，恢复手机正常定位
 
