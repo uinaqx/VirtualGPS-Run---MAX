@@ -1,0 +1,7 @@
+samples=9
+all_mock=true
+timestamps_strictly_increasing=true
+reported_speed_mps=2.740..2.756
+step_distance_m=2.676..3.182
+derived_speed_mps=2.604..3.068
+total_movement_m=23.119

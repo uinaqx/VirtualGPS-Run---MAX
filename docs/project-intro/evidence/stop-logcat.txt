@@ -1,0 +1,995 @@
+--------- beginning of system
+09-01 02:38:58.033 W/ActivityTaskManager(  599): callingPackage for (uid=2000, pid=5569) has no WPC
+09-01 02:38:58.034 W/OptProp (  599): Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_USER_ASPECT_RATIO_OVERRIDE
+09-01 02:38:58.034 W/OptProp (  599): Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_USER_ASPECT_RATIO_FULLSCREEN_OVERRIDE
+09-01 02:38:58.034 W/OptProp (  599): Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_ORIENTATION_OVERRIDE
+--------- beginning of main
+09-01 02:38:58.035 V/GrammaticalInflectionUtils(  599): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@6bd52c3, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+09-01 02:38:58.035 W/OptProp (  599): Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_RESIZEABLE_ACTIVITY_OVERRIDES
+09-01 02:38:58.036 W/OptProp (  599): Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_MIN_ASPECT_RATIO_OVERRIDE
+09-01 02:38:58.042 W/WindowManager(  599): TaskSnapshotSurface.create: no main window in ActivityRecord{828ed88 u0 com.virtualrun.app/.MainActivity t49}
+09-01 02:38:58.043 I/ActivityTaskManager(  599): START u0 {flg=0x10000000 cmp=com.virtualrun.app/.MainActivity} with LAUNCH_MULTIPLE from uid 2000 (BAL_ALLOW_PERMISSION) result code=0
+09-01 02:38:58.046 I/TopTaskTracker( 1120): onTaskMovedToFront: (moved taskInfo to front) taskId=49, baseIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.virtualrun.app/.MainActivity }
+09-01 02:38:58.049 V/WindowManagerShell(  837): Transition requested (#11): android.os.BinderProxy@931a1ae TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=49 displayId=0 isRunning=true baseIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.virtualrun.app/.MainActivity } baseActivity=ComponentInfo{com.virtualrun.app/com.virtualrun.app.MainActivity} topActivity=ComponentInfo{com.virtualrun.app/com.virtualrun.app.MainActivity} origActivity=null realActivity=ComponentInfo{com.virtualrun.app/com.virtualrun.app.MainActivity} numActivities=2 lastActiveTime=355855 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@3f90b4f} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=ActivityInfo{9612dc com.virtualrun.app.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= falseisLetterboxEducationEnabled= true isLetterboxDoubleTapEnabled= false topActivityEligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=1080 topActivityLetterboxHeight=2220 isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false cameraCompatTaskInfo=CameraCompatTaskInfo { cameraCompatControlState=hidden freeformCameraCompatMode=inactive}}}, pipTask = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 11 }
+09-01 02:38:58.051 W/OptProp (  599): Cannot read opt property android.window.PROPERTY_COMPAT_ENABLE_FAKE_FOCUS
+09-01 02:38:58.058 D/OomAdjuster(  599): Not killing cached processes
+09-01 02:38:58.065 W/ProcessStats(  599): Tracking association SourceState{29e21ee com.google.android.as/10139 BFgs #2350} whose proc state 4 is better than process ProcessState{910986b com.google.android.as.oss/10130 pkg=com.google.android.as.oss} proc state 14 (10 skipped)
+09-01 02:38:58.071 I/BpBinder(  447): onLastStrongRef automatically unlinking death recipients: 
+09-01 02:38:58.089 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/YouTube/YouTube.apk' with 1 weak references
+09-01 02:38:58.091 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/overlay/DisplayCutoutEmulationCorner/DisplayCutoutEmulationCornerOverlay.apk' with 1 weak references
+09-01 02:38:58.092 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.extservices/priv-app/GoogleExtServices@350820300/GoogleExtServices.apk' with 1 weak references
+09-01 02:38:58.092 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/overlay/DisplayCutoutEmulationDouble/DisplayCutoutEmulationDoubleOverlay.apk' with 1 weak references
+09-01 02:38:58.092 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/TelephonyProvider/TelephonyProvider.apk' with 1 weak references
+09-01 02:38:58.092 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '/product/overlay/TelephonyProvider__sdk_gphone64_x86_64__auto_generated_rro_product.apk' with 1 weak references
+09-01 02:38:58.092 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/DynamicSystemInstallationService/DynamicSystemInstallationService.apk' with 1 weak references
+09-01 02:38:58.092 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/Velvet/Velvet.apk' with 1 weak references
+09-01 02:38:58.093 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/CalendarProvider/CalendarProvider.apk' with 1 weak references
+09-01 02:38:58.093 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/GoogleOneTimeInitializer/GoogleOneTimeInitializer.apk' with 1 weak references
+09-01 02:38:58.093 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/GoogleExtShared/GoogleExtShared.apk' with 1 weak references
+09-01 02:38:58.093 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/ExternalStorageProvider/ExternalStorageProvider.apk' with 1 weak references
+09-01 02:38:58.093 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/HTMLViewer/HTMLViewer.apk' with 1 weak references
+09-01 02:38:58.094 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/CompanionDeviceManager/CompanionDeviceManager.apk' with 1 weak references
+09-01 02:38:58.094 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/DownloadProvider/DownloadProvider.apk' with 1 weak references
+09-01 02:38:58.094 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/PrebuiltBugle/PrebuiltBugle.apk' with 1 weak references
+09-01 02:38:58.094 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/SoundPickerPrebuilt/SoundPickerPrebuilt.apk' with 1 weak references
+09-01 02:38:58.094 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.mediaprovider/priv-app/MediaProviderGoogle@350820300/MediaProviderGoogle.apk' with 1 weak references
+09-01 02:38:58.095 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/SafetyHubPrebuilt/SafetyHubPrebuilt.apk' with 1 weak references
+09-01 02:38:58.096 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/DownloadProviderUi/DownloadProviderUi.apk' with 1 weak references
+09-01 02:38:58.096 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.wifi/app/OsuLoginGoogle@350820300/OsuLoginGoogle.apk' with 1 weak references
+09-01 02:38:58.096 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/PacProcessor/PacProcessor.apk' with 1 weak references
+09-01 02:38:58.097 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/SimAppDialog/SimAppDialog.apk' with 1 weak references
+09-01 02:38:58.097 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '/product/overlay/SimAppDialog__sdk_gphone64_x86_64__auto_generated_rro_product.apk' with 1 weak references
+09-01 02:38:58.097 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.adservices/priv-app/AdServicesApkGoogle@350820260/AdServicesApkGoogle.apk' with 1 weak references
+09-01 02:38:58.098 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/overlay/DisplayCutoutEmulationHole/DisplayCutoutEmulationHoleOverlay.apk' with 1 weak references
+09-01 02:38:58.098 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/overlay/DisplayCutoutEmulationTall/DisplayCutoutEmulationTallOverlay.apk' with 1 weak references
+09-01 02:38:58.098 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/CertInstaller/CertInstaller.apk' with 1 weak references
+09-01 02:38:58.099 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/talkback/talkback.apk' with 1 weak references
+09-01 02:38:58.099 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '/vendor/overlay/EmulatorTalkBackOverlay/EmulatorTalkBackOverlay.apk' with 1 weak references
+09-01 02:38:58.099 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/overlay/NavigationBarMode3Button/NavigationBarMode3ButtonOverlay.apk' with 1 weak references
+09-01 02:38:58.099 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/Camera2/Camera2.apk' with 1 weak references
+09-01 02:38:58.099 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/EasterEgg/EasterEgg.apk' with 1 weak references
+09-01 02:38:58.099 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/MtpService/MtpService.apk' with 1 weak references
+09-01 02:38:58.100 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.nfcservices/priv-app/NfcNciApexGoogle@AE3A.240806.043/NfcNciApexGoogle.apk' with 1 weak references
+09-01 02:38:58.100 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/Stk/Stk.apk' with 1 weak references
+09-01 02:38:58.100 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/PrebuiltDeskClockGoogle/PrebuiltDeskClockGoogle.apk' with 1 weak references
+09-01 02:38:58.100 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/overlay/NavigationBarMode2Button/NavigationBarMode2ButtonOverlay.apk' with 1 weak references
+09-01 02:38:58.100 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/DevicePersonalizationPrebuiltPixel2021-aiai_20240329.00_RC16/DevicePersonalizationPrebuiltPixel2021-aiai_20240329.00_RC16.apk' with 1 weak references
+09-01 02:38:58.100 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/PrebuiltGmail/PrebuiltGmail.apk' with 1 weak references
+09-01 02:38:58.103 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.permission/priv-app/GooglePermissionController@350820360/GooglePermissionController.apk' with 1 weak references
+09-01 02:38:58.103 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '/product/overlay/GooglePermissionControllerOverlay.apk' with 1 weak references
+09-01 02:38:58.105 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.btservices/app/BluetoothGoogle@342010060/BluetoothGoogle.apk' with 1 weak references
+09-01 02:38:58.105 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/SettingsProvider/SettingsProvider.apk' with 1 weak references
+09-01 02:38:58.105 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '/product/overlay/LargeScreenSettingsProviderOverlay.apk' with 1 weak references
+09-01 02:38:58.105 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '/product/overlay/SettingsProvider__sdk_gphone64_x86_64__auto_generated_rro_product.apk' with 1 weak references
+09-01 02:38:58.105 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/PrintSpooler/PrintSpooler.apk' with 1 weak references
+09-01 02:38:58.105 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/BasicDreams/BasicDreams.apk' with 1 weak references
+09-01 02:38:58.105 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/DeviceIntelligenceNetworkPrebuilt-astrea_20240329.00_RC02/DeviceIntelligenceNetworkPrebuilt-astrea_20240329.00_RC02.apk' with 1 weak references
+09-01 02:38:58.106 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/InputDevices/InputDevices.apk' with 1 weak references
+09-01 02:38:58.106 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.devicelock/priv-app/DeviceLockControllerGoogle@AE3A.240806.043/DeviceLockControllerGoogle.apk' with 1 weak references
+09-01 02:38:58.106 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/GoogleDialer/GoogleDialer.apk' with 1 weak references
+09-01 02:38:58.106 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/BuiltInPrintService/BuiltInPrintService.apk' with 1 weak references
+09-01 02:38:58.106 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '/product/overlay/BuiltInPrintService__sdk_gphone64_x86_64__auto_generated_rro_product.apk' with 1 weak references
+09-01 02:38:58.107 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/CaptivePortalLoginGoogle/CaptivePortalLoginGoogle.apk' with 1 weak references
+09-01 02:38:58.107 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/MusicFX/MusicFX.apk' with 1 weak references
+09-01 02:38:58.107 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/Drive/Drive.apk' with 1 weak references
+09-01 02:38:58.107 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/Maps/Maps.apk' with 1 weak references
+09-01 02:38:58.107 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/ModuleMetadataGoogle/ModuleMetadataGoogle.apk' with 1 weak references
+09-01 02:38:58.108 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/overlay/DisplayCutoutEmulationEmu01/DisplayCutoutEmulationEmu01Overlay.apk' with 1 weak references
+09-01 02:38:58.108 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system_ext/priv-app/AvatarPickerGoogle/AvatarPickerGoogle.apk' with 1 weak references
+09-01 02:38:58.108 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~i51Ly4sFX1HMcIhcvIDs-Q==/com.virtualrun.app-w6a6KOl5X3sPY_-5rIrX3w==/base.apk' with 1 weak references
+09-01 02:38:58.109 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/MarkupGoogle_v2/MarkupGoogle_v2.apk' with 1 weak references
+09-01 02:38:58.109 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/NetworkStackGoogle/NetworkStackGoogle.apk' with 1 weak references
+09-01 02:38:58.109 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.rkpd/priv-app/rkpdapp.google@350820300/rkpdapp.google.apk' with 1 weak references
+09-01 02:38:58.109 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/GoogleContacts/GoogleContacts.apk' with 1 weak references
+09-01 02:38:58.109 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/Telecom/Telecom.apk' with 1 weak references
+09-01 02:38:58.109 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '/product/overlay/Telecom__sdk_gphone64_x86_64__auto_generated_rro_product.apk' with 1 weak references
+09-01 02:38:58.110 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/KeyChain/KeyChain.apk' with 1 weak references
+09-01 02:38:58.110 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~5qMycWFguVAcZHBbDYnE4g==/com.android.chrome-qHxAxu_00-QvwpCY690Y1Q==/Chrome.apk' with 1 weak references
+09-01 02:38:58.110 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~dwa5sfmHuL0S_1dcVkytQg==/com.google.android.trichromelibrary_636771938-NYoUsvf59XAEywJu6nEGrw==/TrichromeLibrary.apk' with 1 weak references
+09-01 02:38:58.110 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/GooglePackageInstaller/GooglePackageInstaller.apk' with 1 weak references
+09-01 02:38:58.110 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/PixelThemesStub/PixelThemesStub.apk' with 1 weak references
+09-01 02:38:58.110 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system_ext/priv-app/GoogleServicesFramework/GoogleServicesFramework.apk' with 1 weak references
+09-01 02:38:58.110 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/TagGoogle/TagGoogle.apk' with 1 weak references
+09-01 02:38:58.110 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/GoogleTTS/GoogleTTS.apk' with 1 weak references
+09-01 02:38:58.111 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/CallLogBackup/CallLogBackup.apk' with 1 weak references
+09-01 02:38:58.111 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/PartnerSetupPrebuilt/PartnerSetupPrebuilt.apk' with 1 weak references
+09-01 02:38:58.111 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/CameraExtensionsProxy/CameraExtensionsProxy.apk' with 1 weak references
+09-01 02:38:58.111 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/NexusWallpapersStubPrebuilt2018/NexusWallpapersStubPrebuilt2018.apk' with 1 weak references
+09-01 02:38:58.112 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system_ext/priv-app/NexusLauncherRelease/NexusLauncherRelease.apk' with 1 weak references
+09-01 02:38:58.113 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/CarrierDefaultApp/CarrierDefaultApp.apk' with 1 weak references
+09-01 02:38:58.116 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/CredentialManager/CredentialManager.apk' with 1 weak references
+09-01 02:38:58.116 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/overlay/FontNotoSerifSource/FontNotoSerifSourceOverlay.apk' with 1 weak references
+09-01 02:38:58.116 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/DeviceAsWebcam/DeviceAsWebcam.apk' with 1 weak references
+09-01 02:38:58.116 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/ProxyHandler/ProxyHandler.apk' with 1 weak references
+09-01 02:38:58.117 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.permission/priv-app/GoogleSafetyCenterResources@350820360/GoogleSafetyCenterResources.apk' with 1 weak references
+09-01 02:38:58.118 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/overlay/DisplayCutoutEmulationWaterfall/DisplayCutoutEmulationWaterfallOverlay.apk' with 1 weak references
+09-01 02:38:58.118 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/IntentResolver/IntentResolver.apk' with 1 weak references
+09-01 02:38:58.118 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/overlay/TransparentNavigationBar/TransparentNavigationBarOverlay.apk' with 1 weak references
+09-01 02:38:58.118 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/E2eeContactKeysProvider/E2eeContactKeysProvider.apk' with 1 weak references
+09-01 02:38:58.118 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.tethering/priv-app/ServiceConnectivityResourcesGoogle@350820300/ServiceConnectivityResourcesGoogle.apk' with 1 weak references
+09-01 02:38:58.118 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '/vendor/overlay/goldfish_overlay_connectivity_google.apk' with 1 weak references
+09-01 02:38:58.118 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:38:58.118 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system_ext/priv-app/GoogleFeedback/GoogleFeedback.apk' with 1 weak references
+09-01 02:38:58.118 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/GooglePrintRecommendationService/GooglePrintRecommendationService.apk' with 1 weak references
+09-01 02:38:58.118 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/Photos/Photos.apk' with 1 weak references
+09-01 02:38:58.119 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:38:58.119 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/CalendarGooglePrebuilt/CalendarGooglePrebuilt.apk' with 1 weak references
+09-01 02:38:58.119 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/ManagedProvisioning/ManagedProvisioning.apk' with 1 weak references
+09-01 02:38:58.119 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/SoundPicker/SoundPicker.apk' with 1 weak references
+09-01 02:38:58.120 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/DocumentsUIGoogle/DocumentsUIGoogle.apk' with 1 weak references
+09-01 02:38:58.120 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:38:58.120 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/PrebuiltGoogleTelemetryTvp/PrebuiltGoogleTelemetryTvp.apk' with 1 weak references
+09-01 02:38:58.120 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system_ext/priv-app/MultiDisplayProvider/MultiDisplayProvider.apk' with 1 weak references
+09-01 02:38:58.120 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/DeviceDiagnostics/DeviceDiagnostics.apk' with 1 weak references
+09-01 02:38:58.120 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '/product/overlay/DeviceDiagnostics__sdk_gphone64_x86_64__auto_generated_rro_product.apk' with 1 weak references
+09-01 02:38:58.120 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/overlay/NotesRoleEnabled/NotesRoleEnabledOverlay.apk' with 1 weak references
+09-01 02:38:58.120 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/LiveWallpapersPicker/LiveWallpapersPicker.apk' with 1 weak references
+09-01 02:38:58.121 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/PrebuiltGoogleAdservicesTvp/PrebuiltGoogleAdservicesTvp.apk' with 1 weak references
+09-01 02:38:58.121 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~iPwgZ2rd3KAxzwltX--kzA==/com.android.adbkeyboard-PGVsjeJA55dtd9U76HXd8A==/base.apk' with 1 weak references
+09-01 02:38:58.121 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.healthfitness/priv-app/HealthConnectControllerGoogle@350820300/HealthConnectControllerGoogle.apk' with 1 weak references
+09-01 02:38:58.121 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/KidsSupervisionStub/KidsSupervisionStub.apk' with 1 weak references
+09-01 02:38:58.122 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system_ext/priv-app/StorageManager/StorageManager.apk' with 1 weak references
+09-01 02:38:58.123 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '/product/overlay/StorageManager__sdk_gphone64_x86_64__auto_generated_rro_product.apk' with 1 weak references
+09-01 02:38:58.123 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/BookmarkProvider/BookmarkProvider.apk' with 1 weak references
+09-01 02:38:58.123 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system_ext/priv-app/SettingsGoogle/SettingsGoogle.apk' with 1 weak references
+09-01 02:38:58.123 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '/product/overlay/SettingsGoogle__sdk_gphone64_x86_64__auto_generated_rro_product.apk' with 1 weak references
+09-01 02:38:58.124 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/SettingsIntelligenceGooglePrebuilt/SettingsIntelligenceGooglePrebuilt.apk' with 1 weak references
+09-01 02:38:58.124 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.uwb/priv-app/ServiceUwbResourcesGoogle@350820300/ServiceUwbResourcesGoogle.apk' with 1 weak references
+09-01 02:38:58.125 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.wifi/priv-app/ServiceWifiResourcesGoogle@350820300/ServiceWifiResourcesGoogle.apk' with 1 weak references
+09-01 02:38:58.125 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system_ext/priv-app/ThemePicker/ThemePicker.apk' with 1 weak references
+09-01 02:38:58.126 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system_ext/priv-app/WallpaperPickerGoogleRelease/WallpaperPickerGoogleRelease.apk' with 1 weak references
+09-01 02:38:58.126 I/netd    (  396): tetherGetStats() -> {[]} <1.07ms>
+09-01 02:38:58.127 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/OdadPrebuilt/OdadPrebuilt.apk' with 1 weak references
+09-01 02:38:58.127 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/TeleService/TeleService.apk' with 1 weak references
+09-01 02:38:58.127 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '/vendor/overlay/TeleService__sdk_gphone64_x86_64__auto_generated_rro_vendor.apk' with 1 weak references
+09-01 02:38:58.128 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '/product/overlay/TeleService__sdk_gphone64_x86_64__auto_generated_rro_product.apk' with 1 weak references
+09-01 02:38:58.128 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/Shell/Shell.apk' with 1 weak references
+09-01 02:38:58.128 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/BlockedNumberProvider/BlockedNumberProvider.apk' with 1 weak references
+09-01 02:38:58.128 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/UserDictionaryProvider/UserDictionaryProvider.apk' with 1 weak references
+09-01 02:38:58.128 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system_ext/app/EmergencyInfoGoogleNoUi/EmergencyInfoGoogleNoUi.apk' with 1 weak references
+09-01 02:38:58.128 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/overlay/NavigationBarModeGestural/NavigationBarModeGesturalOverlay.apk' with 1 weak references
+09-01 02:38:58.128 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/FusedLocation/FusedLocation.apk' with 1 weak references
+09-01 02:38:58.129 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system_ext/priv-app/SystemUIGoogle/SystemUIGoogle.apk' with 1 weak references
+09-01 02:38:58.129 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '/vendor/overlay/SystemUIGoogle__sdk_gphone64_x86_64__auto_generated_rro_vendor.apk' with 1 weak references
+09-01 02:38:58.129 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '/product/overlay/SystemUIGoogle__sdk_gphone64_x86_64__auto_generated_rro_product.apk' with 1 weak references
+09-01 02:38:58.129 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/YouTubeMusicPrebuilt/YouTubeMusicPrebuilt.apk' with 1 weak references
+09-01 02:38:58.129 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/BluetoothMidiService/BluetoothMidiService.apk' with 1 weak references
+09-01 02:38:58.129 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/Traceur/Traceur.apk' with 1 weak references
+09-01 02:38:58.129 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.cellbroadcast/priv-app/GoogleCellBroadcastApp@350820300/GoogleCellBroadcastApp.apk' with 1 weak references
+09-01 02:38:58.130 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/ContactsProvider/ContactsProvider.apk' with 1 weak references
+09-01 02:38:58.130 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '/product/overlay/ContactsProvider__sdk_gphone64_x86_64__auto_generated_rro_product.apk' with 1 weak references
+09-01 02:38:58.130 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/LatinIMEGooglePrebuilt/LatinIMEGooglePrebuilt.apk' with 1 weak references
+09-01 02:38:58.130 W/.apps.wellbeing( 1263): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/GoogleRestorePrebuilt-v526684/GoogleRestorePrebuilt-v526684.apk' with 1 weak references
+09-01 02:38:58.136 D/AutofillManager( 3192): Fill dialog is enabled:false, hints=[password, passwordAuto, creditCardNumber, creditCardSecurityCode, creditCardExpirationDate]
+09-01 02:38:58.166 I/OsmDroid( 3192): Using tile source: Mapnik
+09-01 02:38:58.167 I/OsmDroid( 3192): Tile cache increased from 0 to 9
+09-01 02:38:58.179 D/CoreBackPreview(  599): Window{3875dd2 u0 com.virtualrun.app/com.virtualrun.app.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@a642acd, mPriority=0, mIsAnimationCallback=false}
+09-01 02:38:58.214 I/OsmDroid( 3192): Tile cache increased from 9 to 45
+09-01 02:38:58.259 V/WindowManagerShell(  837): onTransitionReady(transaction=2572685410856)
+09-01 02:38:58.260 W/ziparchive(  599): Unable to open '/data/app/~~i51Ly4sFX1HMcIhcvIDs-Q==/com.virtualrun.app-w6a6KOl5X3sPY_-5rIrX3w==/base.dm': No such file or directory
+09-01 02:38:58.262 I/ActivityTaskManager(  599): Displayed com.virtualrun.app/.MainActivity for user 0: +223ms
+09-01 02:38:58.268 V/WindowManagerShell(  837): onTransitionReady (#11) android.os.BinderProxy@931a1ae: {id=11 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@cdf80c8} m=TO_FRONT f=MOVE_TO_TOP leash=Surface(name=Task=49)/@0xbcd3fe5 sb=Rect(0, 0 - 1080, 2220) eb=Rect(0, 0 - 1080, 2220) d=0 taskParent=-1},{WCT{android.window.IWindowContainerToken$Stub$Proxy@716f561} m=TO_BACK f=NONE leash=Surface(name=Task=50)/@0xffa2aba sb=Rect(0, 0 - 1080, 2220) eb=Rect(0, 0 - 1080, 2220) d=0 taskParent=-1}]}
+09-01 02:38:58.269 V/WindowManagerShell(  837): Playing animation for (#11) android.os.BinderProxy@931a1ae@0
+09-01 02:38:58.271 V/WindowManagerShell(  837):  try handler com.android.wm.shell.transition.DefaultMixedHandler@833bd08
+09-01 02:38:58.272 V/WindowManagerShell(  837):  try handler com.android.wm.shell.keyguard.KeyguardTransitionHandler@dd01ca1
+09-01 02:38:58.272 V/WindowManagerShell(  837):  try handler com.android.wm.shell.pip.PipTransition@fdb6ec6
+09-01 02:38:58.272 V/WindowManagerShell(  837):  try handler com.android.wm.shell.activityembedding.ActivityEmbeddingController@f52ae87
+09-01 02:38:58.272 V/WindowManagerShell(  837):  try handler com.android.wm.shell.recents.RecentsTransitionHandler@acba1b4
+09-01 02:38:58.273 V/ShellRecents(  837): RecentsTransitionHandler.startAnimation: no controller found
+09-01 02:38:58.273 V/WindowManagerShell(  837):  try handler com.android.wm.shell.splitscreen.StageCoordinator@930e1dd
+09-01 02:38:58.273 V/WindowManagerShell(  837):  try handler com.android.wm.shell.transition.RemoteTransitionHandler@c8fb152
+09-01 02:38:58.273 V/WindowManagerShell(  837): Transition doesn't have explicit remote, search filters for match for {id=11 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@cdf80c8} m=TO_FRONT f=MOVE_TO_TOP leash=Surface(name=Task=49)/@0xbcd3fe5 sb=Rect(0, 0 - 1080, 2220) eb=Rect(0, 0 - 1080, 2220) d=0 taskParent=-1},{WCT{android.window.IWindowContainerToken$Stub$Proxy@716f561} m=TO_BACK f=NONE leash=Surface(name=Task=50)/@0xffa2aba sb=Rect(0, 0 - 1080, 2220) eb=Rect(0, 0 - 1080, 2220) d=0 taskParent=-1}]}
+09-01 02:38:58.273 V/WindowManagerShell(  837):  Checking filter Pair{{types=[] flags=0x0] notFlags=0x0 checks=[{atype=undefined independent=true modes=[OPEN,TO_FRONT] flags=IN_TASK_WITH_EMBEDDED_ACTIVITY mustBeTask=false order=ANY topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookie=null},{atype=undefined independent=true modes=[CLOSE,TO_BACK] flags=IN_TASK_WITH_EMBEDDED_ACTIVITY mustBeTask=false order=ANY topActivity=null launchCookie=null}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@d903886, appThread = android.app.IApplicationThread$Stub$Proxy@5451547, debugName = OverlaySwipeBack }}
+09-01 02:38:58.274 V/WindowManagerShell(  837):  Checking filter Pair{{types=[] flags=0x0] notFlags=0x0 checks=[{atype=dream independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null},{atype=home independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@6cfe174, appThread = android.app.IApplicationThread$Stub$Proxy@ec869d, debugName = LauncherToDream }}
+09-01 02:38:58.274 V/WindowManagerShell(  837):  Checking filter Pair{{types=[] flags=0x0] notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=TOP topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookie=null},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@275712, appThread = android.app.IApplicationThread$Stub$Proxy@733bee3, debugName = QuickstepLaunchHome }}
+09-01 02:38:58.275 V/WindowManagerShell(  837):  Delegate animation for (#11) to null
+09-01 02:38:58.275 V/WindowManagerShell(  837):  try handler com.android.wm.shell.transition.DefaultTransitionHandler@ff36f95
+09-01 02:38:58.277 V/WindowManagerShell(  837): start default transition animation, info = {id=11 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@cdf80c8} m=TO_FRONT f=MOVE_TO_TOP leash=Surface(name=Task=49)/@0xbcd3fe5 sb=Rect(0, 0 - 1080, 2220) eb=Rect(0, 0 - 1080, 2220) d=0 taskParent=-1},{WCT{android.window.IWindowContainerToken$Stub$Proxy@716f561} m=TO_BACK f=NONE leash=Surface(name=Task=50)/@0xffa2aba sb=Rect(0, 0 - 1080, 2220) eb=Rect(0, 0 - 1080, 2220) d=0 taskParent=-1}]}
+09-01 02:38:58.277 V/WindowManagerShell(  837): loadAnimation: anim=android.view.animation.AnimationSet@bc3a0e0 animAttr=0x9 type=OPEN isEntrance=false
+09-01 02:38:58.278 V/WindowManager(  599): Sent Transition (#11) createdAt=09-01 02:38:58.036 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=49 displayId=0 isRunning=true baseIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.virtualrun.app/.MainActivity } baseActivity=ComponentInfo{com.virtualrun.app/com.virtualrun.app.MainActivity} topActivity=ComponentInfo{com.virtualrun.app/com.virtualrun.app.MainActivity} origActivity=null realActivity=ComponentInfo{com.virtualrun.app/com.virtualrun.app.MainActivity} numActivities=2 lastActiveTime=355855 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{4c93b7f Task{5fe8d9a #49 type=standard A=10210:com.virtualrun.app}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=ActivityInfo{7f3affc com.virtualrun.app.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= falseisLetterboxEducationEnabled= true isLetterboxDoubleTapEnabled= false topActivityEligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=1080 topActivityLetterboxHeight=2220 isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false cameraCompatTaskInfo=CameraCompatTaskInfo { cameraCompatControlState=hidden freeformCameraCompatMode=inactive}}}, pipTask = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 11 }
+09-01 02:38:58.278 V/WindowManager(  599):     startWCT=WindowContainerTransaction { changes = {} hops = [] errorCallbackToken=null taskFragmentOrganizer=null }
+09-01 02:38:58.278 V/WindowManager(  599):     info={id=11 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+09-01 02:38:58.278 V/WindowManager(  599):         {WCT{RemoteToken{4c93b7f Task{5fe8d9a #49 type=standard A=10210:com.virtualrun.app}}} m=TO_FRONT f=MOVE_TO_TOP leash=Surface(name=Task=49)/@0xa40d5dd sb=Rect(0, 0 - 1080, 2220) eb=Rect(0, 0 - 1080, 2220) d=0 taskParent=-1},
+09-01 02:38:58.278 V/WindowManager(  599):         {WCT{RemoteToken{5c52c0f Task{2d95c01 #50 type=standard A=10212:qa.locationprobe}}} m=TO_BACK f=NONE leash=Surface(name=Task=50)/@0xa3de8b2 sb=Rect(0, 0 - 1080, 2220) eb=Rect(0, 0 - 1080, 2220) d=0 taskParent=-1}
+09-01 02:38:58.278 V/WindowManager(  599):     ]}
+09-01 02:38:58.281 W/UserManagerService(  599): Requested status bar icon for non-badged user 0
+09-01 02:38:58.290 I/FusedLocation( 1086): mock location {fused, 39.913327,116.402984±2.92m, alt=46.28±3.46m, spd=2.8±.28m/s, brg=120.05±2.98°, ert=09-01 02:38:58.281} injected by 10210/com.virtualrun.app [CONTEXT service_id=6 ]
+09-01 02:38:58.292 I/FusedLocation( 1086): location delivery to 10143/com.google.android.gms[earthquake_alerting]/d838f028 blocked - too fast [CONTEXT service_id=6 ]
+09-01 02:38:58.293 V/WindowManagerShell(  837): loadAnimation: anim=android.view.animation.AnimationSet@d66ec55 animAttr=0x8 type=OPEN isEntrance=true
+09-01 02:38:58.295 V/WindowManagerShell(  837):  animated by com.android.wm.shell.transition.DefaultTransitionHandler@ff36f95
+09-01 02:38:58.298 W/Looper  (  837): Slow dispatch took 30ms wmshell.main h=android.os.Handler c=com.android.wm.shell.transition.Transitions$TransitionPlayerImpl$$ExternalSyntheticLambda0@bd8abf8 m=0
+09-01 02:38:58.308 I/FusedLocation( 1086): location delivery to 10143/com.google.android.gms[.personalsafety]/4ae129f9 blocked - too fast [CONTEXT service_id=6 ]
+09-01 02:38:58.311 I/FLP_PROBE( 5476): seq=36 lat=39.9133272 lon=116.4029845 speed=2.803 mock=true elapsed=392639579700
+09-01 02:38:58.345 D/EGL_emulation( 5476): app_time_stats: avg=1155.59ms min=1155.59ms max=1155.59ms count=1
+09-01 02:38:58.414 I/ImeTracker(  599): com.virtualrun.app:231eea38: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+09-01 02:38:58.415 I/ImeTracker(  599): com.virtualrun.app:231eea38: onCancelled at PHASE_SERVER_SHOULD_HIDE
+09-01 02:38:58.425 I/GoogleInputMethodService( 1220): GoogleInputMethodService.onFinishInput():3157 
+09-01 02:38:58.432 I/GoogleInputMethodService( 1220): GoogleInputMethodService.updateDeviceLockedStatus():2248 repeatCheckTimes = 0, locked = false
+09-01 02:38:58.433 I/GoogleInputMethodService( 1220): GoogleInputMethodService.onStartInput():1986 onStartInput(EditorInfo{EditorInfo{packageName=com.virtualrun.app, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+09-01 02:38:58.436 I/GoogleInputMethodService( 1220): GoogleInputMethodService.updateDeviceLockedStatus():2248 repeatCheckTimes = 1, locked = false
+09-01 02:38:58.437 I/AndroidIME( 1220): InputBundleManager.loadActiveInputBundleId():450 loadActiveInputBundleId: und-Latn-x-password, password
+09-01 02:38:58.438 W/PackageConfigPersister(  599): App-specific configuration not found for packageName: com.virtualrun.app and userId: 0
+09-01 02:38:58.642 W/AiAiEcho( 1295): LyftNotificationParser Ridesharing ETA not enabled
+09-01 02:38:58.643 I/AiAiEcho( 1295): SmartspaceNotificationPredictor no parser can handle this notification or notification is invalid
+09-01 02:38:58.660 D/LocalImageResolver(  837): Couldn't use ImageDecoder for drawable, falling back to non-resized load.
+09-01 02:38:58.661 D/LocalImageResolver(  837): Couldn't use ImageDecoder for drawable, falling back to non-resized load.
+09-01 02:38:58.722 I/OsmDroid( 3192): Tile cache increased from 45 to 50
+09-01 02:38:58.819 V/WindowManagerShell(  837): Transition animation finished (aborted=false), notifying core (#11) android.os.BinderProxy@931a1ae@0
+09-01 02:38:58.820 V/WindowManager(  599): Finish Transition (#11): created at 09-01 02:38:58.036 collect-started=0.225ms request-sent=6.493ms started=19.568ms ready=19.541ms sent=219.696ms finished=783.803ms
+09-01 02:38:58.823 D/VRI[MainActivity]( 5476): visibilityChanged oldVisibility=true newVisibility=false
+09-01 02:38:58.824 V/WindowManagerShell(  837): Track 0 became idle
+09-01 02:38:58.825 V/WindowManagerShell(  837): All active transition animations finished
+09-01 02:38:58.825 W/UserManagerService(  599): Requested status bar icon for non-badged user 0
+09-01 02:38:58.826 W/UserManagerService(  599): Requested status bar icon for non-badged user 0
+09-01 02:38:58.906 I/.virtualrun.app( 3192): Background concurrent mark compact GC freed 3219KB AllocSpace bytes, 143(2752KB) LOS objects, 49% free, 6817KB/13MB, paused 2.677ms,35.120ms total 157.029ms
+09-01 02:38:58.967 D/EGL_emulation(  837): app_time_stats: avg=28955.09ms min=28955.09ms max=28955.09ms count=1
+09-01 02:38:59.122 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:38:59.123 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:38:59.125 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:38:59.167 I/.virtualrun.app( 3192): Background concurrent mark compact GC freed 3256KB AllocSpace bytes, 237(4504KB) LOS objects, 49% free, 7077KB/13MB, paused 1.406ms,5.754ms total 69.429ms
+09-01 02:38:59.301 D/EGL_emulation( 3192): app_time_stats: avg=29.28ms min=12.08ms max=82.44ms count=32
+09-01 02:38:59.445 I/FusedLocation( 1086): mock location {fused, 39.913310,116.403019±2.75m, alt=46.4±3.14m, spd=2.8±.3m/s, brg=120.45±3.29°, ert=09-01 02:38:59.423} injected by 10210/com.virtualrun.app [CONTEXT service_id=6 ]
+09-01 02:38:59.447 I/FusedLocation( 1086): location delivery to 10143/com.google.android.gms[earthquake_alerting]/d838f028 blocked - too fast [CONTEXT service_id=6 ]
+09-01 02:38:59.448 I/FusedLocation( 1086): location delivery to 10143/com.google.android.gms[.personalsafety]/4ae129f9 blocked - too fast [CONTEXT service_id=6 ]
+09-01 02:38:59.493 I/.virtualrun.app( 3192): Background concurrent mark compact GC freed 2896KB AllocSpace bytes, 277(5252KB) LOS objects, 49% free, 7489KB/14MB, paused 747us,5.774ms total 149.569ms
+09-01 02:38:59.672 W/AiAiEcho( 1295): LyftNotificationParser Ridesharing ETA not enabled
+09-01 02:38:59.672 I/AiAiEcho( 1295): SmartspaceNotificationPredictor no parser can handle this notification or notification is invalid
+09-01 02:38:59.688 D/LocalImageResolver(  837): Couldn't use ImageDecoder for drawable, falling back to non-resized load.
+09-01 02:38:59.690 D/LocalImageResolver(  837): Couldn't use ImageDecoder for drawable, falling back to non-resized load.
+09-01 02:38:59.837 I/.virtualrun.app( 3192): Background concurrent mark compact GC freed 3280KB AllocSpace bytes, 313(5908KB) LOS objects, 49% free, 7193KB/14MB, paused 857us,6.571ms total 109.354ms
+09-01 02:38:59.859 D/TrafficStats( 1086): tagSocket(131) with statsTag=0x407, statsUid=-1
+09-01 02:38:59.870 D/TrafficStats( 1086): tagSocket(132) with statsTag=0x407, statsUid=-1
+09-01 02:39:00.044 I/AiAiEcho( 1295): Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-01 02:39:00.044 I/AiAiEcho( 1295): EchoTargets: 
+09-01 02:39:00.044 I/AiAiEcho( 1295): Filtered by AiAi flag check: 
+09-01 02:39:00.044 I/AiAiEcho( 1295): [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:00.044 I/AiAiEcho( 1295): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:00.044 I/AiAiEcho( 1295): #remoteViewsTwiddler: feature disabled.
+09-01 02:39:00.044 I/AiAiEcho( 1295): Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-01 02:39:00.044 I/AiAiEcho( 1295): EchoTargets: 
+09-01 02:39:00.044 I/AiAiEcho( 1295): Filtered by AiAi flag check: 
+09-01 02:39:00.044 I/AiAiEcho( 1295): [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:00.045 I/AiAiEcho( 1295): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:00.045 I/AiAiEcho( 1295): #remoteViewsTwiddler: feature disabled.
+09-01 02:39:00.045 I/AiAiEcho( 1295): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+09-01 02:39:00.046 I/AiAiEcho( 1295): #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+09-01 02:39:00.048 W/PageIndicator(  837): Total number of pages invalid: 0. Assuming 1 page.
+09-01 02:39:00.053 D/EGL_emulation(  837): app_time_stats: avg=1085.64ms min=1085.64ms max=1085.64ms count=1
+09-01 02:39:00.120 I/.virtualrun.app( 3192): Background concurrent mark compact GC freed 2708KB AllocSpace bytes, 263(4976KB) LOS objects, 49% free, 7109KB/13MB, paused 3.358ms,5.171ms total 109.977ms
+09-01 02:39:00.136 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:00.137 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:00.140 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:00.288 W/.virtualrun.app( 3192): Suspending all threads took: 10.486ms
+09-01 02:39:00.316 D/EGL_emulation( 3192): app_time_stats: avg=21.95ms min=16.44ms max=27.33ms count=38
+09-01 02:39:00.345 I/.virtualrun.app( 3192): Background concurrent mark compact GC freed 2632KB AllocSpace bytes, 272(5136KB) LOS objects, 49% free, 7121KB/13MB, paused 11.964ms,9.789ms total 90.882ms
+09-01 02:39:00.466 I/FusedLocation( 1086): mock location {fused, 39.913299,116.403048±2.82m, alt=46.46±3.11m, spd=2.78±.28m/s, brg=120.08±3.1°, ert=09-01 02:39:00.464} injected by 10210/com.virtualrun.app [CONTEXT service_id=6 ]
+09-01 02:39:00.467 I/FusedLocation( 1086): location delivery to 10143/com.google.android.gms[earthquake_alerting]/d838f028 blocked - too fast [CONTEXT service_id=6 ]
+09-01 02:39:00.468 I/FusedLocation( 1086): location delivery to 10143/com.google.android.gms[.personalsafety]/4ae129f9 blocked - too fast [CONTEXT service_id=6 ]
+09-01 02:39:00.695 W/AiAiEcho( 1295): LyftNotificationParser Ridesharing ETA not enabled
+09-01 02:39:00.696 I/AiAiEcho( 1295): SmartspaceNotificationPredictor no parser can handle this notification or notification is invalid
+09-01 02:39:00.700 D/LocalImageResolver(  837): Couldn't use ImageDecoder for drawable, falling back to non-resized load.
+09-01 02:39:00.702 D/LocalImageResolver(  837): Couldn't use ImageDecoder for drawable, falling back to non-resized load.
+09-01 02:39:00.714 I/.virtualrun.app( 3192): Background concurrent mark compact GC freed 2796KB AllocSpace bytes, 252(4760KB) LOS objects, 49% free, 7117KB/13MB, paused 1.449ms,7.789ms total 68.824ms
+09-01 02:39:01.143 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:01.144 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:01.145 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:01.314 D/AndroidRuntime( 5630): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+09-01 02:39:01.320 I/AndroidRuntime( 5630): Using default boot image
+09-01 02:39:01.321 I/AndroidRuntime( 5630): Leaving lock profiling enabled
+09-01 02:39:01.323 I/app_process( 5630): Core platform API reporting enabled, enforcing=false
+09-01 02:39:01.324 I/app_process( 5630): Using CollectorTypeCMC GC.
+09-01 02:39:01.330 D/EGL_emulation( 3192): app_time_stats: avg=23.76ms min=16.49ms max=88.36ms count=36
+09-01 02:39:01.413 D/nativeloader( 5630): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+09-01 02:39:01.431 D/nativeloader( 5630): Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+09-01 02:39:01.432 D/app_process( 5630): u_setTimeZoneFilesDirectory("/apex/com.android.tzdata/etc/tz/versioned/8/icu") succeeded. 
+09-01 02:39:01.432 D/app_process( 5630): I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt75l.dat
+09-01 02:39:01.433 D/nativeloader( 5630): Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+09-01 02:39:01.436 D/nativeloader( 5630): Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+09-01 02:39:01.438 W/app_process( 5630): Unexpected CPU variant for x86: x86_64.
+09-01 02:39:01.438 W/app_process( 5630): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
+09-01 02:39:01.442 W/app_process( 5630): ClassLoaderContext shared library size mismatch. Expected=2, found=0 (PCL[]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]} | PCL[])
+09-01 02:39:01.443 W/app_process( 5630): ClassLoaderContext classpath size mismatch. expected=0, found=1 (PCL[]{PCL[/system/framework/android.test.runner.jar*2496447986]#PCL[/system/framework/android.test.base.jar*724373495]} | PCL[/system/framework/android.test.runner.jar*2496447986])
+09-01 02:39:01.463 D/nativeloader( 5630): Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+09-01 02:39:01.464 D/AndroidRuntime( 5630): Calling main entry com.android.commands.uiautomator.Launcher
+09-01 02:39:01.474 D/UiAutomationConnection( 5630): Created on user UserHandle{0}
+09-01 02:39:01.474 I/UiAutomation( 5630): Initialized for user 0 on display 0
+09-01 02:39:01.475 W/UiAutomation( 5630): Created with deprecatead constructor, assumes DEFAULT_DISPLAY
+09-01 02:39:01.477 D/AccessibilityManagerService(  599): changeCurrentUserForTestAutomationIfNeededLocked(0): ignoring because device doesn't support visible background users
+09-01 02:39:01.477 I/UiAutomationManager(  599): Registering UiTestAutomationService (id=com.android.server.accessibility/UiAutomation, flags=0x0) when called by user 0
+09-01 02:39:01.479 I/FusedLocation( 1086): mock location {fused, 39.913289,116.403075±2.64m, alt=46.78±3.43m, spd=2.77±.24m/s, brg=119.85±3.48°, ert=09-01 02:39:01.476} injected by 10210/com.virtualrun.app [CONTEXT service_id=6 ]
+09-01 02:39:01.480 I/FusedLocation( 1086): location delivery to 10143/com.google.android.gms[earthquake_alerting]/d838f028 blocked - too fast [CONTEXT service_id=6 ]
+09-01 02:39:01.481 I/FusedLocation( 1086): location delivery to 10143/com.google.android.gms[.personalsafety]/4ae129f9 blocked - too fast [CONTEXT service_id=6 ]
+09-01 02:39:01.485 W/MagnificationConnectionManager(  599): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+09-01 02:39:01.486 I/AiAiEcho( 1295): Settings changed for uri: content://settings/secure/accessibility_enabled
+09-01 02:39:01.487 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.487 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.487 I/AiAiEcho( 1295): Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-01 02:39:01.487 I/AiAiEcho( 1295): EchoTargets: 
+09-01 02:39:01.487 I/AiAiEcho( 1295): Filtered by AiAi flag check: 
+09-01 02:39:01.487 I/AiAiEcho( 1295): [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:01.488 I/AiAiEcho( 1295): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:01.488 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.488 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.488 I/AiAiEcho( 1295): #remoteViewsTwiddler: feature disabled.
+09-01 02:39:01.488 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.489 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.489 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.489 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.489 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.490 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.490 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.490 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.490 I/AiAiEcho( 1295): Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-01 02:39:01.490 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.490 I/AiAiEcho( 1295): EchoTargets: 
+09-01 02:39:01.490 I/AiAiEcho( 1295): Filtered by AiAi flag check: 
+09-01 02:39:01.490 I/AiAiEcho( 1295): [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:01.491 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.491 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.491 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.491 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.491 I/AiAiEcho( 1295): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:01.497 I/AiAiEcho( 1295): #remoteViewsTwiddler: feature disabled.
+09-01 02:39:01.498 I/AiAiEcho( 1295): Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-01 02:39:01.498 I/AiAiEcho( 1295): EchoTargets: 
+09-01 02:39:01.498 I/AiAiEcho( 1295): Filtered by AiAi flag check: 
+09-01 02:39:01.498 I/AiAiEcho( 1295): [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:01.499 I/AiAiEcho( 1295): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:01.500 I/AiAiEcho( 1295): #remoteViewsTwiddler: feature disabled.
+09-01 02:39:01.501 I/AiAiEcho( 1295): #postPredictionTargets: Sending updates to UISurface media_data_manager with targets# 0 (types=[])
+09-01 02:39:01.503 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.503 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.503 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.503 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.503 V/UiAutomation( 5630): Init UiAutomation@ab731dc[id=4, displayId=0, flags=0]
+09-01 02:39:01.504 D/BatterySaverPolicy(  599): accessibility changed to true, updating policy.
+09-01 02:39:01.510 I/AiAiEcho( 1295): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+09-01 02:39:01.511 I/AiAiEcho( 1295): #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+09-01 02:39:01.513 W/MagnificationConnectionManager(  599): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+09-01 02:39:01.518 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.518 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.518 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.519 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.520 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.520 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.520 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.520 D/SsMediaDataProvider(  837): Forwarding Smartspace updates []
+09-01 02:39:01.520 W/PageIndicator(  837): Total number of pages invalid: 0. Assuming 1 page.
+09-01 02:39:01.521 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.521 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.522 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.522 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.522 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.522 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.530 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:01.532 I/AiAiEcho( 1295): Settings changed for uri: content://settings/secure/accessibility_enabled
+09-01 02:39:01.532 I/AiAiEcho( 1295): Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-01 02:39:01.532 I/AiAiEcho( 1295): EchoTargets: 
+09-01 02:39:01.532 I/AiAiEcho( 1295): Filtered by AiAi flag check: 
+09-01 02:39:01.532 I/AiAiEcho( 1295): [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:01.533 I/AiAiEcho( 1295): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:01.533 I/AiAiEcho( 1295): #remoteViewsTwiddler: feature disabled.
+09-01 02:39:01.534 I/AiAiEcho( 1295): Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-01 02:39:01.534 I/AiAiEcho( 1295): EchoTargets: 
+09-01 02:39:01.534 I/AiAiEcho( 1295): Filtered by AiAi flag check: 
+09-01 02:39:01.534 I/AiAiEcho( 1295): [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:01.534 I/AiAiEcho( 1295): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:01.534 I/AiAiEcho( 1295): #remoteViewsTwiddler: feature disabled.
+09-01 02:39:01.534 I/AiAiEcho( 1295): Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-01 02:39:01.534 I/AiAiEcho( 1295): EchoTargets: 
+09-01 02:39:01.534 I/AiAiEcho( 1295): Filtered by AiAi flag check: 
+09-01 02:39:01.534 I/AiAiEcho( 1295): [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:01.534 I/AiAiEcho( 1295): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:01.535 I/AiAiEcho( 1295): #remoteViewsTwiddler: feature disabled.
+09-01 02:39:01.535 I/AiAiEcho( 1295): #postPredictionTargets: Sending updates to UISurface media_data_manager with targets# 0 (types=[])
+09-01 02:39:01.536 I/AiAiEcho( 1295): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+09-01 02:39:01.536 D/SsMediaDataProvider(  837): Forwarding Smartspace updates []
+09-01 02:39:01.541 I/AiAiEcho( 1295): #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+09-01 02:39:01.545 W/PageIndicator(  837): Total number of pages invalid: 0. Assuming 1 page.
+09-01 02:39:01.617 E/TaskPersister(  599): File error accessing recents directory (directory doesn't exist?).
+09-01 02:39:01.645 I/.virtualrun.app( 3192): Background concurrent mark compact GC freed 2608KB AllocSpace bytes, 239(4516KB) LOS objects, 49% free, 9789KB/19MB, paused 1.872ms,5.427ms total 163.883ms
+09-01 02:39:01.720 W/AiAiEcho( 1295): LyftNotificationParser Ridesharing ETA not enabled
+09-01 02:39:01.720 I/AiAiEcho( 1295): SmartspaceNotificationPredictor no parser can handle this notification or notification is invalid
+09-01 02:39:01.736 D/LocalImageResolver(  837): Couldn't use ImageDecoder for drawable, falling back to non-resized load.
+09-01 02:39:01.737 D/LocalImageResolver(  837): Couldn't use ImageDecoder for drawable, falling back to non-resized load.
+09-01 02:39:01.872 I/GmscoreIpa( 1326): Starting mediastore instant index [CONTEXT service_id=255 ]
+09-01 02:39:02.025 I/.virtualrun.app( 3192): Background concurrent mark compact GC freed 4748KB AllocSpace bytes, 508(9600KB) LOS objects, 49% free, 7397KB/14MB, paused 910us,4.490ms total 124.056ms
+09-01 02:39:02.149 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:02.150 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:02.154 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:02.336 D/EGL_emulation( 3192): app_time_stats: avg=23.08ms min=17.06ms max=91.11ms count=36
+09-01 02:39:02.506 I/FusedLocation( 1086): mock location {fused, 39.913279,116.403101±2.51m, alt=46.69±3.32m, spd=2.76±.23m/s, brg=119.76±3.28°, ert=09-01 02:39:02.503} injected by 10210/com.virtualrun.app [CONTEXT service_id=6 ]
+09-01 02:39:02.506 I/FusedLocation( 1086): location delivery to 10143/com.google.android.gms[earthquake_alerting]/d838f028 blocked - too fast [CONTEXT service_id=6 ]
+09-01 02:39:02.508 I/FusedLocation( 1086): location delivery to 10143/com.google.android.gms[.personalsafety]/4ae129f9 blocked - too fast [CONTEXT service_id=6 ]
+09-01 02:39:02.573 W/MediaProvider( 1309): isAppCloneUserPair for user 0: false
+09-01 02:39:02.660 I/NetworkScheduler.Stats( 1086): Task com.google.android.gms/com.google.android.gms.ipa.base.IpaGcmTaskService started execution. cause:9 exec_start_elapsed_seconds: 396 [CONTEXT service_id=218 ]
+09-01 02:39:02.672 I/NetworkScheduler.Stats( 1086): Task com.google.android.gms/com.google.android.gms.ipa.base.IpaGcmTaskService finished executing. cause:9 result: 1 elapsed_millis: 40 uptime_millis: 40 exec_start_elapsed_seconds: 396 [CONTEXT service_id=218 ]
+09-01 02:39:02.793 D/LocalImageResolver(  837): Couldn't use ImageDecoder for drawable, falling back to non-resized load.
+09-01 02:39:02.794 D/LocalImageResolver(  837): Couldn't use ImageDecoder for drawable, falling back to non-resized load.
+09-01 02:39:02.802 I/NetworkScheduler.Stats( 1086): Task com.google.android.gms/com.google.android.gms.gcm.gmsproc.GcmInGmsTaskService started execution. cause:5 exec_start_elapsed_seconds: 397 [CONTEXT service_id=218 ]
+09-01 02:39:02.803 W/AiAiEcho( 1295): LyftNotificationParser Ridesharing ETA not enabled
+09-01 02:39:02.804 I/AiAiEcho( 1295): SmartspaceNotificationPredictor no parser can handle this notification or notification is invalid
+09-01 02:39:02.804 I/GCM-GMS ( 1326): Registering GMS for direct boot.
+09-01 02:39:02.881 I/resolv  (  396): GetAddrInfoHandler::run: {100 786532 100 983140 10143 0}
+09-01 02:39:02.882 I/resolv  (  396): res_nmkquery: (QUERY, IN, A)
+09-01 02:39:02.882 I/resolv  (  396): res_nmkquery: (QUERY, IN, AAAA)
+09-01 02:39:02.883 I/resolv  (  396): resolv_cache_lookup: FOUND IN CACHE entry=0x7f45f4a0e950
+09-01 02:39:02.883 I/resolv  (  396): doQuery: rcode=0, ancount=5, return value=177
+09-01 02:39:02.912 I/.gms.persistent( 1086): Background concurrent mark compact GC freed 19MB AllocSpace bytes, 4(152KB) LOS objects, 50% free, 18MB/36MB, paused 2.021ms,1.909ms total 179.079ms
+09-01 02:39:02.925 I/resolv  (  396): res_nsend: used send_dg 161 terrno: 0
+09-01 02:39:02.926 I/resolv  (  396): doQuery: rcode=0, ancount=7, return value=161
+09-01 02:39:02.942 D/TrafficStats( 1086): tagSocket(195) with statsTag=0x407, statsUid=-1
+09-01 02:39:02.973 I/.virtualrun.app( 3192): Background concurrent mark compact GC freed 3276KB AllocSpace bytes, 256(4836KB) LOS objects, 49% free, 7389KB/14MB, paused 1.705ms,13.012ms total 126.483ms
+09-01 02:39:03.161 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:03.163 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:03.174 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:03.243 I/.virtualrun.app( 3192): Background concurrent mark compact GC freed 2940KB AllocSpace bytes, 272(5136KB) LOS objects, 49% free, 8477KB/16MB, paused 2.420ms,8.487ms total 114.781ms
+09-01 02:39:03.256 D/TrafficStats( 1086): tagSocket(196) with statsTag=0x407, statsUid=-1
+09-01 02:39:03.337 D/EGL_emulation( 3192): app_time_stats: avg=26.67ms min=18.80ms max=90.20ms count=33
+09-01 02:39:03.509 W/AccessibilityNodeInfoDumper( 5630): Fetch time: 942ms
+09-01 02:39:03.511 W/MagnificationConnectionManager(  599): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+09-01 02:39:03.511 D/AccessibilityManagerService(  599): restoreCurrentUserForTestAutomationIfNeededLocked(): ignoring because device doesn't support visible background users
+09-01 02:39:03.512 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.512 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.512 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.513 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.513 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.513 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.513 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.514 D/AndroidRuntime( 5630): Shutting down VM
+09-01 02:39:03.519 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.519 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.520 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.521 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.522 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.522 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.522 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.525 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.526 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.526 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.527 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.528 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.528 I/AiAiEcho( 1295): Settings changed for uri: content://settings/secure/accessibility_enabled
+09-01 02:39:03.529 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.529 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:03.529 I/AiAiEcho( 1295): Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-01 02:39:03.529 I/AiAiEcho( 1295): EchoTargets: 
+09-01 02:39:03.529 I/AiAiEcho( 1295): Filtered by AiAi flag check: 
+09-01 02:39:03.529 I/AiAiEcho( 1295): [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:03.529 D/BatterySaverPolicy(  599): accessibility changed to false, updating policy.
+09-01 02:39:03.537 I/AiAiEcho( 1295): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:03.537 I/AiAiEcho( 1295): #remoteViewsTwiddler: feature disabled.
+09-01 02:39:03.538 I/AiAiEcho( 1295): Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-01 02:39:03.538 I/AiAiEcho( 1295): EchoTargets: 
+09-01 02:39:03.538 I/AiAiEcho( 1295): Filtered by AiAi flag check: 
+09-01 02:39:03.538 I/AiAiEcho( 1295): [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:03.538 I/AiAiEcho( 1295): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:03.539 I/AiAiEcho( 1295): #remoteViewsTwiddler: feature disabled.
+09-01 02:39:03.539 I/AiAiEcho( 1295): Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-01 02:39:03.539 I/AiAiEcho( 1295): EchoTargets: 
+09-01 02:39:03.539 I/AiAiEcho( 1295): Filtered by AiAi flag check: 
+09-01 02:39:03.539 I/AiAiEcho( 1295): [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:03.540 I/AiAiEcho( 1295): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:03.540 I/AiAiEcho( 1295): #remoteViewsTwiddler: feature disabled.
+09-01 02:39:03.541 I/AiAiEcho( 1295): #postPredictionTargets: Sending updates to UISurface media_data_manager with targets# 0 (types=[])
+09-01 02:39:03.541 I/FusedLocation( 1086): mock location {fused, 39.913268,116.403129±2.51m, alt=46.69±3.47m, spd=2.76±.24m/s, brg=119.93±3.22°, ert=09-01 02:39:03.535} injected by 10210/com.virtualrun.app [CONTEXT service_id=6 ]
+09-01 02:39:03.543 I/FusedLocation( 1086): location delivery to 10143/com.google.android.gms[earthquake_alerting]/d838f028 blocked - too fast [CONTEXT service_id=6 ]
+09-01 02:39:03.544 I/AiAiEcho( 1295): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+09-01 02:39:03.544 I/AiAiEcho( 1295): #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+09-01 02:39:03.544 D/SsMediaDataProvider(  837): Forwarding Smartspace updates []
+09-01 02:39:03.545 W/PageIndicator(  837): Total number of pages invalid: 0. Assuming 1 page.
+09-01 02:39:03.546 I/FusedLocation( 1086): location delivery to 10143/com.google.android.gms[.personalsafety]/4ae129f9 blocked - too fast [CONTEXT service_id=6 ]
+09-01 02:39:03.555 I/.virtualrun.app( 3192): Background concurrent mark compact GC freed 3852KB AllocSpace bytes, 348(6576KB) LOS objects, 49% free, 8017KB/15MB, paused 1.347ms,17.779ms total 85.642ms
+09-01 02:39:03.762 W/AiAiEcho( 1295): LyftNotificationParser Ridesharing ETA not enabled
+09-01 02:39:03.763 I/AiAiEcho( 1295): SmartspaceNotificationPredictor no parser can handle this notification or notification is invalid
+09-01 02:39:03.784 D/LocalImageResolver(  837): Couldn't use ImageDecoder for drawable, falling back to non-resized load.
+09-01 02:39:03.785 D/LocalImageResolver(  837): Couldn't use ImageDecoder for drawable, falling back to non-resized load.
+09-01 02:39:03.878 I/.virtualrun.app( 3192): Background concurrent mark compact GC freed 3476KB AllocSpace bytes, 325(6140KB) LOS objects, 49% free, 7669KB/14MB, paused 2.052ms,5.586ms total 107.165ms
+09-01 02:39:04.131 I/.virtualrun.app( 3192): Background concurrent mark compact GC freed 3028KB AllocSpace bytes, 298(5628KB) LOS objects, 49% free, 7069KB/13MB, paused 886us,7.411ms total 69.837ms
+09-01 02:39:04.176 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:04.178 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:04.179 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:04.375 D/EGL_emulation( 3192): app_time_stats: avg=24.25ms min=16.70ms max=92.28ms count=36
+09-01 02:39:04.406 I/.virtualrun.app( 3192): Background concurrent mark compact GC freed 2432KB AllocSpace bytes, 243(4592KB) LOS objects, 49% free, 6885KB/13MB, paused 4.569ms,9.383ms total 73.442ms
+09-01 02:39:04.531 D/OomAdjuster(  599): Not killing cached processes
+09-01 02:39:04.575 D/MockLocationService( 3192): Action: STOP_MOCK
+09-01 02:39:04.584 I/NearbyDiscovery( 1086): FastPairHandler: Received action android.location.PROVIDERS_CHANGED [CONTEXT service_id=265 ]
+09-01 02:39:04.589 I/NearbyDiscovery( 1086): OffloadFastPairScanner: eventType=LOCATION, isInternalReq=false, isOffloadScanning=false, isOffloadScanningAllowed=false [CONTEXT service_id=265 ]
+09-01 02:39:04.589 I/NearbyDiscovery( 1086): FastPairScanner: isScreenOn=true, isLocationEnabled=true, disableLocationRequirement=true, isDiscoveryScanningEnabled=true, during24GhzWifiWarmingUpPeriod=false [CONTEXT service_id=265 ]
+09-01 02:39:04.589 D/BluetoothAdapter( 1086): isLeEnabled(): ON
+09-01 02:39:04.590 I/NearbyDiscovery( 1086): FastPairScanner: eventType=LOCATION, intReq=false, scanning=true, scanAllowed=true, bleEnabled=true, lockScanRate=false, startScanningByLowPowerMode=false [CONTEXT service_id=265 ]
+09-01 02:39:04.590 I/NearbyDiscovery( 1086): FastPairScanner: nothing changed, eventType=LOCATION [CONTEXT service_id=265 ]
+09-01 02:39:04.590 I/NearbyDiscovery( 1086): FastPairScanner: isScreenOn=true, isLocationEnabled=true, disableLocationRequirement=true, isDiscoveryScanningEnabled=true, during24GhzWifiWarmingUpPeriod=false [CONTEXT service_id=265 ]
+09-01 02:39:04.590 I/NearbyDiscovery( 1086): OffloadFastPairScanner: isScanningAllowed, try startScanning. [CONTEXT service_id=265 ]
+09-01 02:39:04.590 D/BluetoothAdapter( 1086): isLeEnabled(): ON
+09-01 02:39:04.590 I/NearbyDiscovery( 1086): OffloadFastPairScanner: Ble is already enabled, start offload scanning. [CONTEXT service_id=265 ]
+09-01 02:39:04.591 I/NearbyDiscovery( 1086): OffloadFastPairScanner: Skipping start offload scanning, scanning not allowed now. [CONTEXT service_id=265 ]
+09-01 02:39:04.591 I/ServiceWatcher(  599): [network] chose new implementation 10143/com.google.android.gms/com.google.android.location.network.NetworkLocationService@2
+09-01 02:39:04.596 I/ServiceWatcher(  599): [fused] chose new implementation 10143/com.google.android.gms/com.google.android.location.fused.FusedLocationService@1
+09-01 02:39:04.604 I/NearbyDiscovery( 1086): FastPairHandler: Received action android.location.PROVIDERS_CHANGED [CONTEXT service_id=265 ]
+09-01 02:39:04.604 I/NearbyDiscovery( 1086): OffloadFastPairScanner: eventType=LOCATION, isInternalReq=false, isOffloadScanning=false, isOffloadScanningAllowed=false [CONTEXT service_id=265 ]
+09-01 02:39:04.604 I/NearbyDiscovery( 1086): FastPairScanner: isScreenOn=true, isLocationEnabled=true, disableLocationRequirement=true, isDiscoveryScanningEnabled=true, during24GhzWifiWarmingUpPeriod=false [CONTEXT service_id=265 ]
+09-01 02:39:04.605 D/BluetoothAdapter( 1086): isLeEnabled(): ON
+09-01 02:39:04.605 I/NearbyDiscovery( 1086): FastPairScanner: eventType=LOCATION, intReq=false, scanning=true, scanAllowed=true, bleEnabled=true, lockScanRate=false, startScanningByLowPowerMode=false [CONTEXT service_id=265 ]
+09-01 02:39:04.605 I/NearbyDiscovery( 1086): FastPairScanner: nothing changed, eventType=LOCATION [CONTEXT service_id=265 ]
+09-01 02:39:04.605 I/NearbyDiscovery( 1086): FastPairScanner: isScreenOn=true, isLocationEnabled=true, disableLocationRequirement=true, isDiscoveryScanningEnabled=true, during24GhzWifiWarmingUpPeriod=false [CONTEXT service_id=265 ]
+09-01 02:39:04.605 I/NearbyDiscovery( 1086): OffloadFastPairScanner: isScanningAllowed, try startScanning. [CONTEXT service_id=265 ]
+09-01 02:39:04.605 D/BluetoothAdapter( 1086): isLeEnabled(): ON
+09-01 02:39:04.605 I/NearbyDiscovery( 1086): OffloadFastPairScanner: Ble is already enabled, start offload scanning. [CONTEXT service_id=265 ]
+09-01 02:39:04.605 I/NearbyDiscovery( 1086): OffloadFastPairScanner: Skipping start offload scanning, scanning not allowed now. [CONTEXT service_id=265 ]
+09-01 02:39:04.610 I/ServiceWatcher(  599): [network] connected to {com.google.android.gms/com.google.android.location.network.NetworkLocationService}
+09-01 02:39:04.611 I/LocationManagerService(  599): network provider loaded extra attribution tags: [activity_recognition_provider, awareness_provider, current_semantic_location, fused_location_provider, geofencer_provider, gnss_location_provider, network_location_calibration, network_location_provider, wearable_flp_shim]
+09-01 02:39:04.613 I/NearbyDiscovery( 1086): FastPairHandler: Received action android.location.PROVIDERS_CHANGED [CONTEXT service_id=265 ]
+09-01 02:39:04.629 I/NearbyDiscovery( 1086): OffloadFastPairScanner: eventType=LOCATION, isInternalReq=false, isOffloadScanning=false, isOffloadScanningAllowed=false [CONTEXT service_id=265 ]
+09-01 02:39:04.629 I/NearbyDiscovery( 1086): FastPairScanner: isScreenOn=true, isLocationEnabled=true, disableLocationRequirement=true, isDiscoveryScanningEnabled=true, during24GhzWifiWarmingUpPeriod=false [CONTEXT service_id=265 ]
+09-01 02:39:04.629 D/BluetoothAdapter( 1086): isLeEnabled(): ON
+09-01 02:39:04.630 I/NearbyDiscovery( 1086): FastPairScanner: eventType=LOCATION, intReq=false, scanning=true, scanAllowed=true, bleEnabled=true, lockScanRate=false, startScanningByLowPowerMode=false [CONTEXT service_id=265 ]
+09-01 02:39:04.630 I/NearbyDiscovery( 1086): FastPairScanner: nothing changed, eventType=LOCATION [CONTEXT service_id=265 ]
+09-01 02:39:04.631 I/NearbyDiscovery( 1086): FastPairScanner: isScreenOn=true, isLocationEnabled=true, disableLocationRequirement=true, isDiscoveryScanningEnabled=true, during24GhzWifiWarmingUpPeriod=false [CONTEXT service_id=265 ]
+09-01 02:39:04.631 I/NearbyDiscovery( 1086): OffloadFastPairScanner: isScanningAllowed, try startScanning. [CONTEXT service_id=265 ]
+09-01 02:39:04.631 D/BluetoothAdapter( 1086): isLeEnabled(): ON
+09-01 02:39:04.631 I/NearbyDiscovery( 1086): OffloadFastPairScanner: Ble is already enabled, start offload scanning. [CONTEXT service_id=265 ]
+09-01 02:39:04.631 I/NearbyDiscovery( 1086): OffloadFastPairScanner: Skipping start offload scanning, scanning not allowed now. [CONTEXT service_id=265 ]
+09-01 02:39:04.635 W/ForegroundServiceTypeLoggerModule(  599): Logger should be tracking FGS types correctly for UID 10210 in package com.virtualrun.app
+09-01 02:39:04.654 I/ServiceWatcher(  599): [fused] connected to {com.google.android.gms/com.google.android.location.fused.FusedLocationService}
+09-01 02:39:04.654 I/LocationManagerService(  599): fused provider loaded extra attribution tags: [activity_recognition_provider, awareness_provider, current_semantic_location, fused_location_provider, geofencer_provider, gnss_location_provider, network_location_calibration, network_location_provider, wearable_flp_shim]
+09-01 02:39:04.657 I/FusedLocation( 1086): mock mode set to false by 10210/com.virtualrun.app [CONTEXT service_id=6 ]
+09-01 02:39:04.686 I/LocationHistory( 1326): [IntentOperation] Handling action android.location.PROVIDERS_CHANGED [CONTEXT service_id=314 ]
+09-01 02:39:04.686 I/LocationHistory( 1326): [IntentOperation] Device settings changed to ENABLED. Scheduling periodic tasks. [CONTEXT service_id=314 ]
+09-01 02:39:04.686 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.storevisits.StoreVisitsProcessingService.StoreVisitsProcessing is scheduled to run EVERY_6_HOURS [CONTEXT service_id=173 ]
+09-01 02:39:04.686 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.wifi.WifiPlaceVisitProcessingService.WifiPlaceVisit is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.687 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.uploads.BatchDeidentifiedDataUploadService.BatchDeidentifiedDataUpload is scheduled to run EVERY_6_HOURS [CONTEXT service_id=173 ]
+09-01 02:39:04.687 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.historicalbusyness.HistoricalBusynessProcessingService.HistoricalBusyness is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.687 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.pulp.PulpInferenceService.PulpInference is scheduled to run EVERY_7_DAYS [CONTEXT service_id=173 ]
+09-01 02:39:04.687 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.pulp.PulpMddDownloadScheduleService.PulpMddRefreshDownloadTask is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.689 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.pulp.PulpMddMaintenanceService.PulpMddMaintenanceTask is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.690 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.pulptraining.PulpTrainingService.PulpTraining is scheduled to run EVERY_7_DAYS [CONTEXT service_id=173 ]
+09-01 02:39:04.690 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.topplace.TopPlaceProcessingService.TopPlaceProcessing is scheduled to run EVERY_3_DAYS [CONTEXT service_id=173 ]
+09-01 02:39:04.690 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.FederatedScheduleService.FederatedLocation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.690 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.FederatedTaskIdentityDataService.FederatedTaskIdentityDataService is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.698 D/MockLocationService( 3192): Service Destroyed
+09-01 02:39:04.705 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.FederatedJobHistoryService.FederatedJobHistoryService is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.707 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFirstPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.709 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceSecondPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.713 I/MockLocationService( 3192): Google Play FLP mock mode disabled
+09-01 02:39:04.722 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceThirdPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.723 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFourthPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.723 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFifthPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.723 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.regionfetcher.RegionMddMaintenanceService.RegionMddMaintenanceTask is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.726 I/NearbyDiscovery( 1086): FastPairHandler: Received action android.location.PROVIDERS_CHANGED [CONTEXT service_id=265 ]
+09-01 02:39:04.726 I/NearbyDiscovery( 1086): OffloadFastPairScanner: eventType=LOCATION, isInternalReq=false, isOffloadScanning=false, isOffloadScanningAllowed=false [CONTEXT service_id=265 ]
+09-01 02:39:04.726 I/NearbyDiscovery( 1086): FastPairScanner: isScreenOn=true, isLocationEnabled=true, disableLocationRequirement=true, isDiscoveryScanningEnabled=true, during24GhzWifiWarmingUpPeriod=false [CONTEXT service_id=265 ]
+09-01 02:39:04.727 D/BluetoothAdapter( 1086): isLeEnabled(): ON
+09-01 02:39:04.727 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.regionfetcher.RegionMddDownloadScheduleService.RegionMddRefreshDownloadTask is scheduled to run EVERY_6_HOURS [CONTEXT service_id=173 ]
+09-01 02:39:04.730 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.db.backup.OdlhBackupService.OdlhBackup is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.730 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.edit.EditUploadJob.EditUploadJob is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.741 I/LocationHistory( 1326): [IntentOperation] Handling action android.location.PROVIDERS_CHANGED [CONTEXT service_id=314 ]
+09-01 02:39:04.741 I/LocationHistory( 1326): [IntentOperation] Device settings changed to ENABLED. Scheduling periodic tasks. [CONTEXT service_id=314 ]
+09-01 02:39:04.742 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.storevisits.StoreVisitsProcessingService.StoreVisitsProcessing is scheduled to run EVERY_6_HOURS [CONTEXT service_id=173 ]
+09-01 02:39:04.742 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.wifi.WifiPlaceVisitProcessingService.WifiPlaceVisit is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.742 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.uploads.BatchDeidentifiedDataUploadService.BatchDeidentifiedDataUpload is scheduled to run EVERY_6_HOURS [CONTEXT service_id=173 ]
+09-01 02:39:04.743 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.historicalbusyness.HistoricalBusynessProcessingService.HistoricalBusyness is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.744 D/EGL_emulation(  837): app_time_stats: avg=4690.49ms min=4690.49ms max=4690.49ms count=1
+09-01 02:39:04.746 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.pulp.PulpInferenceService.PulpInference is scheduled to run EVERY_7_DAYS [CONTEXT service_id=173 ]
+09-01 02:39:04.746 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.pulp.PulpMddDownloadScheduleService.PulpMddRefreshDownloadTask is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.746 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.pulp.PulpMddMaintenanceService.PulpMddMaintenanceTask is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.746 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.pulptraining.PulpTrainingService.PulpTraining is scheduled to run EVERY_7_DAYS [CONTEXT service_id=173 ]
+09-01 02:39:04.746 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.topplace.TopPlaceProcessingService.TopPlaceProcessing is scheduled to run EVERY_3_DAYS [CONTEXT service_id=173 ]
+09-01 02:39:04.746 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.FederatedScheduleService.FederatedLocation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.746 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.FederatedTaskIdentityDataService.FederatedTaskIdentityDataService is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.747 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.FederatedJobHistoryService.FederatedJobHistoryService is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.748 I/NearbyDiscovery( 1086): FastPairScanner: eventType=LOCATION, intReq=false, scanning=true, scanAllowed=true, bleEnabled=true, lockScanRate=false, startScanningByLowPowerMode=false [CONTEXT service_id=265 ]
+09-01 02:39:04.748 I/NearbyDiscovery( 1086): FastPairScanner: nothing changed, eventType=LOCATION [CONTEXT service_id=265 ]
+09-01 02:39:04.748 I/NearbyDiscovery( 1086): FastPairScanner: isScreenOn=true, isLocationEnabled=true, disableLocationRequirement=true, isDiscoveryScanningEnabled=true, during24GhzWifiWarmingUpPeriod=false [CONTEXT service_id=265 ]
+09-01 02:39:04.749 I/NearbyDiscovery( 1086): OffloadFastPairScanner: isScanningAllowed, try startScanning. [CONTEXT service_id=265 ]
+09-01 02:39:04.750 I/ActivityScheduler( 1086): nextTriggerTime: 602816, in 203708ms, detectorType: 39, FULL_TYPE alarmWindowMillis: 80000
+09-01 02:39:04.751 D/BluetoothAdapter( 1086): isLeEnabled(): ON
+09-01 02:39:04.751 I/NearbyDiscovery( 1086): OffloadFastPairScanner: Ble is already enabled, start offload scanning. [CONTEXT service_id=265 ]
+09-01 02:39:04.753 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFirstPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.753 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceSecondPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.755 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceThirdPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.755 I/Nearby  ( 1086): is blocked device type false, isAuto=false, isIot=false, isLatchsky=false, isChinaWearable=false, isTv=false, isWearable=false (supportWearOs=false), isChromeOsDevice=false (supportChromeOs=false) [CONTEXT service_id=49 ]
+09-01 02:39:04.764 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFourthPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.765 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFifthPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.765 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.regionfetcher.RegionMddMaintenanceService.RegionMddMaintenanceTask is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.765 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.regionfetcher.RegionMddDownloadScheduleService.RegionMddRefreshDownloadTask is scheduled to run EVERY_6_HOURS [CONTEXT service_id=173 ]
+09-01 02:39:04.766 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.db.backup.OdlhBackupService.OdlhBackup is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.766 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.edit.EditUploadJob.EditUploadJob is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.770 I/NearbyDiscovery( 1086): OffloadFastPairScanner: Skipping start offload scanning, scanning not allowed now. [CONTEXT service_id=265 ]
+09-01 02:39:04.785 I/NearbyDiscovery( 1086): FastPairHandler: Received action android.location.PROVIDERS_CHANGED [CONTEXT service_id=265 ]
+09-01 02:39:04.786 I/NearbyDiscovery( 1086): OffloadFastPairScanner: eventType=LOCATION, isInternalReq=false, isOffloadScanning=false, isOffloadScanningAllowed=false [CONTEXT service_id=265 ]
+09-01 02:39:04.786 I/NearbyDiscovery( 1086): FastPairScanner: isScreenOn=true, isLocationEnabled=true, disableLocationRequirement=true, isDiscoveryScanningEnabled=true, during24GhzWifiWarmingUpPeriod=false [CONTEXT service_id=265 ]
+09-01 02:39:04.786 D/BluetoothAdapter( 1086): isLeEnabled(): ON
+09-01 02:39:04.786 I/NearbyDiscovery( 1086): FastPairScanner: eventType=LOCATION, intReq=false, scanning=true, scanAllowed=true, bleEnabled=true, lockScanRate=false, startScanningByLowPowerMode=false [CONTEXT service_id=265 ]
+09-01 02:39:04.786 I/NearbyDiscovery( 1086): FastPairScanner: nothing changed, eventType=LOCATION [CONTEXT service_id=265 ]
+09-01 02:39:04.786 I/NearbyDiscovery( 1086): FastPairScanner: isScreenOn=true, isLocationEnabled=true, disableLocationRequirement=true, isDiscoveryScanningEnabled=true, during24GhzWifiWarmingUpPeriod=false [CONTEXT service_id=265 ]
+09-01 02:39:04.786 I/NearbyDiscovery( 1086): OffloadFastPairScanner: isScanningAllowed, try startScanning. [CONTEXT service_id=265 ]
+09-01 02:39:04.787 D/BluetoothAdapter( 1086): isLeEnabled(): ON
+09-01 02:39:04.787 I/NearbyDiscovery( 1086): OffloadFastPairScanner: Ble is already enabled, start offload scanning. [CONTEXT service_id=265 ]
+09-01 02:39:04.787 I/NearbyDiscovery( 1086): OffloadFastPairScanner: Skipping start offload scanning, scanning not allowed now. [CONTEXT service_id=265 ]
+09-01 02:39:04.787 I/NearbyDiscovery( 1086): FastPairHandler: Received action android.location.PROVIDERS_CHANGED [CONTEXT service_id=265 ]
+09-01 02:39:04.787 I/NearbyDiscovery( 1086): OffloadFastPairScanner: eventType=LOCATION, isInternalReq=false, isOffloadScanning=false, isOffloadScanningAllowed=false [CONTEXT service_id=265 ]
+09-01 02:39:04.788 I/NearbyDiscovery( 1086): FastPairScanner: isScreenOn=true, isLocationEnabled=true, disableLocationRequirement=true, isDiscoveryScanningEnabled=true, during24GhzWifiWarmingUpPeriod=false [CONTEXT service_id=265 ]
+09-01 02:39:04.788 D/BluetoothAdapter( 1086): isLeEnabled(): ON
+09-01 02:39:04.788 I/NearbyDiscovery( 1086): FastPairScanner: eventType=LOCATION, intReq=false, scanning=true, scanAllowed=true, bleEnabled=true, lockScanRate=false, startScanningByLowPowerMode=false [CONTEXT service_id=265 ]
+09-01 02:39:04.788 I/NearbyDiscovery( 1086): FastPairScanner: nothing changed, eventType=LOCATION [CONTEXT service_id=265 ]
+09-01 02:39:04.814 I/Nearby  ( 1086): is blocked device type false, isAuto=false, isIot=false, isLatchsky=false, isChinaWearable=false, isTv=false, isWearable=false (supportWearOs=false), isChromeOsDevice=false (supportChromeOs=false) [CONTEXT service_id=49 ]
+09-01 02:39:04.815 I/NearbyDiscovery( 1086): FastPairScanner: isScreenOn=true, isLocationEnabled=true, disableLocationRequirement=true, isDiscoveryScanningEnabled=true, during24GhzWifiWarmingUpPeriod=false [CONTEXT service_id=265 ]
+09-01 02:39:04.816 I/NearbyDiscovery( 1086): OffloadFastPairScanner: isScanningAllowed, try startScanning. [CONTEXT service_id=265 ]
+09-01 02:39:04.816 D/BluetoothAdapter( 1086): isLeEnabled(): ON
+09-01 02:39:04.816 I/NearbyDiscovery( 1086): OffloadFastPairScanner: Ble is already enabled, start offload scanning. [CONTEXT service_id=265 ]
+09-01 02:39:04.816 I/NearbyDiscovery( 1086): OffloadFastPairScanner: Skipping start offload scanning, scanning not allowed now. [CONTEXT service_id=265 ]
+09-01 02:39:04.874 I/NearbyDiscovery( 1086): DiscoveryService onStartCommand action: com.google.android.gms.nearby.discovery:ACTION_PERMISSION_CHANGE [CONTEXT service_id=265 ]
+09-01 02:39:04.875 I/LocationHistory( 1326): [IntentOperation] Handling action android.location.PROVIDERS_CHANGED [CONTEXT service_id=314 ]
+09-01 02:39:04.875 I/LocationHistory( 1326): [IntentOperation] Device settings changed to ENABLED. Scheduling periodic tasks. [CONTEXT service_id=314 ]
+09-01 02:39:04.876 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.storevisits.StoreVisitsProcessingService.StoreVisitsProcessing is scheduled to run EVERY_6_HOURS [CONTEXT service_id=173 ]
+09-01 02:39:04.876 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.wifi.WifiPlaceVisitProcessingService.WifiPlaceVisit is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.877 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.uploads.BatchDeidentifiedDataUploadService.BatchDeidentifiedDataUpload is scheduled to run EVERY_6_HOURS [CONTEXT service_id=173 ]
+09-01 02:39:04.877 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.historicalbusyness.HistoricalBusynessProcessingService.HistoricalBusyness is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.897 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.pulp.PulpInferenceService.PulpInference is scheduled to run EVERY_7_DAYS [CONTEXT service_id=173 ]
+09-01 02:39:04.898 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.pulp.PulpMddDownloadScheduleService.PulpMddRefreshDownloadTask is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.899 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.pulp.PulpMddMaintenanceService.PulpMddMaintenanceTask is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.899 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.pulptraining.PulpTrainingService.PulpTraining is scheduled to run EVERY_7_DAYS [CONTEXT service_id=173 ]
+09-01 02:39:04.899 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.topplace.TopPlaceProcessingService.TopPlaceProcessing is scheduled to run EVERY_3_DAYS [CONTEXT service_id=173 ]
+09-01 02:39:04.899 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.FederatedScheduleService.FederatedLocation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.900 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.FederatedTaskIdentityDataService.FederatedTaskIdentityDataService is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.900 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.FederatedJobHistoryService.FederatedJobHistoryService is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.900 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFirstPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.900 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceSecondPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.901 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceThirdPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.901 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFourthPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.902 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFifthPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.902 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.regionfetcher.RegionMddMaintenanceService.RegionMddMaintenanceTask is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.903 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.regionfetcher.RegionMddDownloadScheduleService.RegionMddRefreshDownloadTask is scheduled to run EVERY_6_HOURS [CONTEXT service_id=173 ]
+09-01 02:39:04.903 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.db.backup.OdlhBackupService.OdlhBackup is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.903 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.edit.EditUploadJob.EditUploadJob is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:04.904 I/Nearby  ( 1086): is blocked device type false, isAuto=false, isIot=false, isLatchsky=false, isChinaWearable=false, isTv=false, isWearable=false (supportWearOs=false), isChromeOsDevice=false (supportChromeOs=false) [CONTEXT service_id=49 ]
+09-01 02:39:04.924 I/Nearby  ( 1086): is blocked device type false, isAuto=false, isIot=false, isLatchsky=false, isChinaWearable=false, isTv=false, isWearable=false (supportWearOs=false), isChromeOsDevice=false (supportChromeOs=false) [CONTEXT service_id=49 ]
+09-01 02:39:04.925 I/NearbyDiscovery( 1086): DiscoveryController, showNotification, itemSize=0 [CONTEXT service_id=265 ]
+09-01 02:39:04.926 I/NearbyDiscovery( 1086): DiscoveryService onStartCommand action: com.google.android.gms.nearby.discovery:ACTION_PERMISSION_CHANGE [CONTEXT service_id=265 ]
+09-01 02:39:04.930 I/Nearby  ( 1086): is blocked device type false, isAuto=false, isIot=false, isLatchsky=false, isChinaWearable=false, isTv=false, isWearable=false (supportWearOs=false), isChromeOsDevice=false (supportChromeOs=false) [CONTEXT service_id=49 ]
+09-01 02:39:04.940 I/NearbyDiscovery( 1086): Show notifications: 0 total, no changes since last shown, no-op. [CONTEXT service_id=265 ]
+09-01 02:39:04.999 I/GCoreUlr( 1086): Unbound from all signal providers.
+09-01 02:39:05.003 I/LocationHistory( 1326): [IntentOperation] Handling action android.location.PROVIDERS_CHANGED [CONTEXT service_id=314 ]
+09-01 02:39:05.004 I/LocationHistory( 1326): [IntentOperation] Device settings changed to ENABLED. Scheduling periodic tasks. [CONTEXT service_id=314 ]
+09-01 02:39:05.007 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.storevisits.StoreVisitsProcessingService.StoreVisitsProcessing is scheduled to run EVERY_6_HOURS [CONTEXT service_id=173 ]
+09-01 02:39:05.009 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.wifi.WifiPlaceVisitProcessingService.WifiPlaceVisit is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.010 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.uploads.BatchDeidentifiedDataUploadService.BatchDeidentifiedDataUpload is scheduled to run EVERY_6_HOURS [CONTEXT service_id=173 ]
+09-01 02:39:05.011 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.historicalbusyness.HistoricalBusynessProcessingService.HistoricalBusyness is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.012 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.pulp.PulpInferenceService.PulpInference is scheduled to run EVERY_7_DAYS [CONTEXT service_id=173 ]
+09-01 02:39:05.013 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.pulp.PulpMddDownloadScheduleService.PulpMddRefreshDownloadTask is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.014 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.pulp.PulpMddMaintenanceService.PulpMddMaintenanceTask is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.014 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.pulptraining.PulpTrainingService.PulpTraining is scheduled to run EVERY_7_DAYS [CONTEXT service_id=173 ]
+09-01 02:39:05.015 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.topplace.TopPlaceProcessingService.TopPlaceProcessing is scheduled to run EVERY_3_DAYS [CONTEXT service_id=173 ]
+09-01 02:39:05.015 I/Nearby  ( 1086): is blocked device type false, isAuto=false, isIot=false, isLatchsky=false, isChinaWearable=false, isTv=false, isWearable=false (supportWearOs=false), isChromeOsDevice=false (supportChromeOs=false) [CONTEXT service_id=49 ]
+09-01 02:39:05.015 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.FederatedScheduleService.FederatedLocation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.020 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.FederatedTaskIdentityDataService.FederatedTaskIdentityDataService is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.020 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.FederatedJobHistoryService.FederatedJobHistoryService is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.026 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFirstPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.027 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceSecondPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.027 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceThirdPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.027 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFourthPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.027 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFifthPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.027 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.regionfetcher.RegionMddMaintenanceService.RegionMddMaintenanceTask is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.027 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.regionfetcher.RegionMddDownloadScheduleService.RegionMddRefreshDownloadTask is scheduled to run EVERY_6_HOURS [CONTEXT service_id=173 ]
+09-01 02:39:05.027 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.db.backup.OdlhBackupService.OdlhBackup is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.028 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.edit.EditUploadJob.EditUploadJob is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.032 I/NearbyDiscovery( 1086): DiscoveryService onStartCommand action: com.google.android.gms.nearby.discovery:ACTION_PERMISSION_CHANGE [CONTEXT service_id=265 ]
+09-01 02:39:05.034 I/Nearby  ( 1086): is blocked device type false, isAuto=false, isIot=false, isLatchsky=false, isChinaWearable=false, isTv=false, isWearable=false (supportWearOs=false), isChromeOsDevice=false (supportChromeOs=false) [CONTEXT service_id=49 ]
+09-01 02:39:05.056 I/Nearby  ( 1086): is blocked device type false, isAuto=false, isIot=false, isLatchsky=false, isChinaWearable=false, isTv=false, isWearable=false (supportWearOs=false), isChromeOsDevice=false (supportChromeOs=false) [CONTEXT service_id=49 ]
+09-01 02:39:05.060 I/LocationHistory( 1326): [IntentOperation] Handling action android.location.PROVIDERS_CHANGED [CONTEXT service_id=314 ]
+09-01 02:39:05.060 I/LocationHistory( 1326): [IntentOperation] Device settings changed to ENABLED. Scheduling periodic tasks. [CONTEXT service_id=314 ]
+09-01 02:39:05.061 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.storevisits.StoreVisitsProcessingService.StoreVisitsProcessing is scheduled to run EVERY_6_HOURS [CONTEXT service_id=173 ]
+09-01 02:39:05.061 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.wifi.WifiPlaceVisitProcessingService.WifiPlaceVisit is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.061 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.uploads.BatchDeidentifiedDataUploadService.BatchDeidentifiedDataUpload is scheduled to run EVERY_6_HOURS [CONTEXT service_id=173 ]
+09-01 02:39:05.061 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.historicalbusyness.HistoricalBusynessProcessingService.HistoricalBusyness is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.061 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.pulp.PulpInferenceService.PulpInference is scheduled to run EVERY_7_DAYS [CONTEXT service_id=173 ]
+09-01 02:39:05.061 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.pulp.PulpMddDownloadScheduleService.PulpMddRefreshDownloadTask is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.065 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.pulp.PulpMddMaintenanceService.PulpMddMaintenanceTask is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.068 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.pulptraining.PulpTrainingService.PulpTraining is scheduled to run EVERY_7_DAYS [CONTEXT service_id=173 ]
+09-01 02:39:05.068 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.topplace.TopPlaceProcessingService.TopPlaceProcessing is scheduled to run EVERY_3_DAYS [CONTEXT service_id=173 ]
+09-01 02:39:05.069 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.FederatedScheduleService.FederatedLocation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.069 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.FederatedTaskIdentityDataService.FederatedTaskIdentityDataService is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.069 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.FederatedJobHistoryService.FederatedJobHistoryService is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.069 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFirstPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.080 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceSecondPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.082 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceThirdPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.083 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFourthPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.083 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFifthPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.083 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.regionfetcher.RegionMddMaintenanceService.RegionMddMaintenanceTask is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.084 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.regionfetcher.RegionMddDownloadScheduleService.RegionMddRefreshDownloadTask is scheduled to run EVERY_6_HOURS [CONTEXT service_id=173 ]
+09-01 02:39:05.084 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.db.backup.OdlhBackupService.OdlhBackup is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.084 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.edit.EditUploadJob.EditUploadJob is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.086 W/PersonalSafety( 1086): Ble scanner not running, ignore location update [CONTEXT service_id=310 ]
+09-01 02:39:05.088 I/GCoreUlr( 1086): Unbound from all signal providers.
+09-01 02:39:05.089 I/ActivityScheduler( 1086): nextTriggerTime: 602816, in 203369ms, detectorType: 39, FULL_TYPE alarmWindowMillis: 80000
+09-01 02:39:05.096 W/SystemServiceRegistry( 1086): No service published for: wifirtt
+09-01 02:39:05.120 I/Nearby  ( 1086): is blocked device type false, isAuto=false, isIot=false, isLatchsky=false, isChinaWearable=false, isTv=false, isWearable=false (supportWearOs=false), isChromeOsDevice=false (supportChromeOs=false) [CONTEXT service_id=49 ]
+09-01 02:39:05.123 D/ActivityManager(  599): sync unfroze 2811 com.google.android.gms.ui for 10
+09-01 02:39:05.135 I/LocationHistory( 1326): [IntentOperation] Handling action android.location.PROVIDERS_CHANGED [CONTEXT service_id=314 ]
+09-01 02:39:05.135 I/LocationHistory( 1326): [IntentOperation] Device settings changed to ENABLED. Scheduling periodic tasks. [CONTEXT service_id=314 ]
+09-01 02:39:05.136 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.storevisits.StoreVisitsProcessingService.StoreVisitsProcessing is scheduled to run EVERY_6_HOURS [CONTEXT service_id=173 ]
+09-01 02:39:05.136 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.wifi.WifiPlaceVisitProcessingService.WifiPlaceVisit is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.137 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.uploads.BatchDeidentifiedDataUploadService.BatchDeidentifiedDataUpload is scheduled to run EVERY_6_HOURS [CONTEXT service_id=173 ]
+09-01 02:39:05.138 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.historicalbusyness.HistoricalBusynessProcessingService.HistoricalBusyness is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.139 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.pulp.PulpInferenceService.PulpInference is scheduled to run EVERY_7_DAYS [CONTEXT service_id=173 ]
+09-01 02:39:05.142 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.pulp.PulpMddDownloadScheduleService.PulpMddRefreshDownloadTask is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.142 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.pulp.PulpMddMaintenanceService.PulpMddMaintenanceTask is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.142 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.deidentifieddata.pulptraining.PulpTrainingService.PulpTraining is scheduled to run EVERY_7_DAYS [CONTEXT service_id=173 ]
+09-01 02:39:05.142 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.topplace.TopPlaceProcessingService.TopPlaceProcessing is scheduled to run EVERY_3_DAYS [CONTEXT service_id=173 ]
+09-01 02:39:05.142 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.FederatedScheduleService.FederatedLocation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.143 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.FederatedTaskIdentityDataService.FederatedTaskIdentityDataService is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.143 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.FederatedJobHistoryService.FederatedJobHistoryService is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.151 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFirstPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.151 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceSecondPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.151 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceThirdPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.152 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFourthPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.152 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFifthPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.153 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.regionfetcher.RegionMddMaintenanceService.RegionMddMaintenanceTask is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.153 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.regionfetcher.RegionMddDownloadScheduleService.RegionMddRefreshDownloadTask is scheduled to run EVERY_6_HOURS [CONTEXT service_id=173 ]
+09-01 02:39:05.153 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.db.backup.OdlhBackupService.OdlhBackup is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.154 I/SemanticLocation( 1326): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.edit.EditUploadJob.EditUploadJob is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+09-01 02:39:05.158 I/NearbyDiscovery( 1086): DiscoveryService onStartCommand action: com.google.android.gms.nearby.discovery:ACTION_PERMISSION_CHANGE [CONTEXT service_id=265 ]
+09-01 02:39:05.161 I/Nearby  ( 1086): is blocked device type false, isAuto=false, isIot=false, isLatchsky=false, isChinaWearable=false, isTv=false, isWearable=false (supportWearOs=false), isChromeOsDevice=false (supportChromeOs=false) [CONTEXT service_id=49 ]
+09-01 02:39:05.198 I/GCoreUlr( 1086): Unbound from all signal providers.
+09-01 02:39:05.199 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:05.200 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:05.207 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:05.246 I/GCoreUlr( 1086): Unbound from all signal providers.
+09-01 02:39:05.294 I/NearbyDiscovery( 1086): DiscoveryService onStartCommand action: com.google.android.gms.nearby.discovery:ACTION_PERMISSION_CHANGE [CONTEXT service_id=265 ]
+09-01 02:39:05.302 I/Nearby  ( 1086): is blocked device type false, isAuto=false, isIot=false, isLatchsky=false, isChinaWearable=false, isTv=false, isWearable=false (supportWearOs=false), isChromeOsDevice=false (supportChromeOs=false) [CONTEXT service_id=49 ]
+09-01 02:39:05.306 I/Nearby  ( 1086): is blocked device type false, isAuto=false, isIot=false, isLatchsky=false, isChinaWearable=false, isTv=false, isWearable=false (supportWearOs=false), isChromeOsDevice=false (supportChromeOs=false) [CONTEXT service_id=49 ]
+09-01 02:39:05.310 I/NearbyDiscovery( 1086): DiscoveryService onStartCommand action: com.google.android.gms.nearby.discovery:ACTION_PERMISSION_CHANGE [CONTEXT service_id=265 ]
+09-01 02:39:05.313 I/Nearby  ( 1086): is blocked device type false, isAuto=false, isIot=false, isLatchsky=false, isChinaWearable=false, isTv=false, isWearable=false (supportWearOs=false), isChromeOsDevice=false (supportChromeOs=false) [CONTEXT service_id=49 ]
+09-01 02:39:05.335 I/GCoreUlr( 1086): DispatchingService ignoring Intent { act=android.net.wifi.WIFI_STATE_CHANGED flg=0x4000010 (has extras) } because ULR inactive
+09-01 02:39:05.378 I/GCoreUlr( 1086): Unbound from all signal providers.
+09-01 02:39:05.385 D/EGL_emulation( 3192): app_time_stats: avg=26.59ms min=18.35ms max=78.27ms count=33
+09-01 02:39:05.407 I/GCoreUlr( 1086): Unbound from all signal providers.
+09-01 02:39:05.436 I/GCoreUlr( 1086): Unbound from all signal providers.
+09-01 02:39:05.436 I/GCoreUlr( 1086): Stopping handler for UlrDispSvcFast
+09-01 02:39:06.063 D/WifiNl80211Manager(  599): Scan result ready event
+09-01 02:39:06.063 D/WifiNative(  599): Scan result ready event
+09-01 02:39:06.068 I/HalDevMgr(  599): bestIfaceCreationProposal is null, requestIface=STA, existingIface=[name=wlan0 type=STA]
+09-01 02:39:06.075 W/GLSUser ( 1086): [DeviceKeyStore] Cannot load key: Device key file not found.
+09-01 02:39:06.080 W/DG      ( 1979): [flow devicekey] DroidGuardRunner.newVmProcessForFastSignalCollection(): Fast program not found [CONTEXT service_id=25 ]
+09-01 02:39:06.085 I/resolv  (  396): GetAddrInfoHandler::run: {100 786532 100 983140 10143 0}
+09-01 02:39:06.086 I/resolv  (  396): res_nmkquery: (QUERY, IN, A)
+09-01 02:39:06.086 I/resolv  (  396): res_nmkquery: (QUERY, IN, AAAA)
+09-01 02:39:06.086 I/resolv  (  396): resolv_cache_lookup: FOUND IN CACHE entry=0x7f4764a15d10
+09-01 02:39:06.086 I/resolv  (  396): doQuery: rcode=0, ancount=8, return value=260
+09-01 02:39:06.088 W/id.gms.unstable( 1979): Missing inline cache for int fkid.a(java.lang.Object)
+09-01 02:39:06.113 I/resolv  (  396): res_nsend: used send_dg 164 terrno: 0
+09-01 02:39:06.114 I/resolv  (  396): doQuery: rcode=0, ancount=8, return value=164
+09-01 02:39:06.116 D/TrafficStats( 1979): tagSocket(96) with statsTag=0x1803, statsUid=10143
+09-01 02:39:06.220 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:06.220 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:06.222 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:06.421 D/TrafficStats( 1979): tagSocket(122) with statsTag=0x1803, statsUid=10143
+09-01 02:39:06.437 I/Nearby  ( 1086): is blocked device type false, isAuto=false, isIot=false, isLatchsky=false, isChinaWearable=false, isTv=false, isWearable=false (supportWearOs=false), isChromeOsDevice=false (supportChromeOs=false) [CONTEXT service_id=49 ]
+09-01 02:39:06.437 I/NearbyDiscovery( 1086): DiscoveryController, showNotification, itemSize=0 [CONTEXT service_id=265 ]
+09-01 02:39:06.437 I/NearbyDiscovery( 1086): Show notifications: 0 total, no changes since last shown, no-op. [CONTEXT service_id=265 ]
+09-01 02:39:06.732 D/TrafficStats( 1979): tagSocket(123) with statsTag=0x1803, statsUid=10143
+09-01 02:39:07.229 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:07.230 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:07.232 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:08.075 D/ActivityManager(  599): freezing 1263 com.google.android.apps.wellbeing
+09-01 02:39:08.078 D/InetDiagMessage(  599): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+09-01 02:39:08.078 D/InetDiagMessage(  599): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+09-01 02:39:08.079 D/InetDiagMessage(  599): Destroyed live tcp sockets for uids={10142} in 1ms
+09-01 02:39:08.248 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:08.249 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:08.250 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:08.655 D/AndroidRuntime( 5719): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+09-01 02:39:08.659 I/AndroidRuntime( 5719): Using default boot image
+09-01 02:39:08.659 I/AndroidRuntime( 5719): Leaving lock profiling enabled
+09-01 02:39:08.662 I/app_process( 5719): Core platform API reporting enabled, enforcing=false
+09-01 02:39:08.662 I/app_process( 5719): Using CollectorTypeCMC GC.
+09-01 02:39:08.720 D/nativeloader( 5719): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+09-01 02:39:08.730 D/nativeloader( 5719): Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+09-01 02:39:08.731 D/app_process( 5719): u_setTimeZoneFilesDirectory("/apex/com.android.tzdata/etc/tz/versioned/8/icu") succeeded. 
+09-01 02:39:08.731 D/app_process( 5719): I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt75l.dat
+09-01 02:39:08.732 D/nativeloader( 5719): Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+09-01 02:39:08.733 D/nativeloader( 5719): Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+09-01 02:39:08.735 W/app_process( 5719): Unexpected CPU variant for x86: x86_64.
+09-01 02:39:08.735 W/app_process( 5719): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
+09-01 02:39:08.736 W/app_process( 5719): ClassLoaderContext shared library size mismatch. Expected=2, found=0 (PCL[]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]} | PCL[])
+09-01 02:39:08.737 W/app_process( 5719): ClassLoaderContext classpath size mismatch. expected=0, found=1 (PCL[]{PCL[/system/framework/android.test.runner.jar*2496447986]#PCL[/system/framework/android.test.base.jar*724373495]} | PCL[/system/framework/android.test.runner.jar*2496447986])
+09-01 02:39:08.759 D/nativeloader( 5719): Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+09-01 02:39:08.759 D/AndroidRuntime( 5719): Calling main entry com.android.commands.uiautomator.Launcher
+09-01 02:39:08.764 D/UiAutomationConnection( 5719): Created on user UserHandle{0}
+09-01 02:39:08.764 I/UiAutomation( 5719): Initialized for user 0 on display 0
+09-01 02:39:08.764 W/UiAutomation( 5719): Created with deprecatead constructor, assumes DEFAULT_DISPLAY
+09-01 02:39:08.766 D/AccessibilityManagerService(  599): changeCurrentUserForTestAutomationIfNeededLocked(0): ignoring because device doesn't support visible background users
+09-01 02:39:08.766 I/UiAutomationManager(  599): Registering UiTestAutomationService (id=com.android.server.accessibility/UiAutomation, flags=0x0) when called by user 0
+09-01 02:39:08.767 W/MagnificationConnectionManager(  599): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+09-01 02:39:08.768 I/AiAiEcho( 1295): Settings changed for uri: content://settings/secure/accessibility_enabled
+09-01 02:39:08.769 I/AiAiEcho( 1295): Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-01 02:39:08.769 I/AiAiEcho( 1295): EchoTargets: 
+09-01 02:39:08.769 I/AiAiEcho( 1295): Filtered by AiAi flag check: 
+09-01 02:39:08.769 I/AiAiEcho( 1295): [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:08.770 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.770 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.770 I/AiAiEcho( 1295): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:08.770 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.770 I/AiAiEcho( 1295): #remoteViewsTwiddler: feature disabled.
+09-01 02:39:08.770 V/UiAutomation( 5719): Init UiAutomation@8cd931b[id=5, displayId=0, flags=0]
+09-01 02:39:08.771 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.771 I/AiAiEcho( 1295): Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-01 02:39:08.771 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.771 I/AiAiEcho( 1295): EchoTargets: 
+09-01 02:39:08.771 I/AiAiEcho( 1295): Filtered by AiAi flag check: 
+09-01 02:39:08.771 I/AiAiEcho( 1295): [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:08.771 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.772 I/AiAiEcho( 1295): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:08.772 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.772 I/AiAiEcho( 1295): #remoteViewsTwiddler: feature disabled.
+09-01 02:39:08.773 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.773 I/AiAiEcho( 1295): Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-01 02:39:08.773 I/AiAiEcho( 1295): EchoTargets: 
+09-01 02:39:08.773 I/AiAiEcho( 1295): Filtered by AiAi flag check: 
+09-01 02:39:08.773 I/AiAiEcho( 1295): [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:08.773 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.773 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.773 I/AiAiEcho( 1295): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:08.773 I/AiAiEcho( 1295): #remoteViewsTwiddler: feature disabled.
+09-01 02:39:08.773 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.774 I/AiAiEcho( 1295): #postPredictionTargets: Sending updates to UISurface media_data_manager with targets# 0 (types=[])
+09-01 02:39:08.774 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.774 W/MagnificationConnectionManager(  599): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+09-01 02:39:08.774 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.774 I/AiAiEcho( 1295): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+09-01 02:39:08.775 I/AiAiEcho( 1295): #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+09-01 02:39:08.777 I/AiAiEcho( 1295): Settings changed for uri: content://settings/secure/accessibility_enabled
+09-01 02:39:08.777 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.777 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.777 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.777 I/AiAiEcho( 1295): Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-01 02:39:08.778 I/AiAiEcho( 1295): EchoTargets: 
+09-01 02:39:08.778 I/AiAiEcho( 1295): Filtered by AiAi flag check: 
+09-01 02:39:08.778 I/AiAiEcho( 1295): [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:08.778 I/AiAiEcho( 1295): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:08.778 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.778 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.779 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.779 I/AiAiEcho( 1295): #remoteViewsTwiddler: feature disabled.
+09-01 02:39:08.779 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.779 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.779 I/AiAiEcho( 1295): Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-01 02:39:08.779 I/AiAiEcho( 1295): EchoTargets: 
+09-01 02:39:08.779 I/AiAiEcho( 1295): Filtered by AiAi flag check: 
+09-01 02:39:08.779 I/AiAiEcho( 1295): [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:08.779 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.779 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.779 I/AiAiEcho( 1295): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:08.780 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.780 I/AiAiEcho( 1295): #remoteViewsTwiddler: feature disabled.
+09-01 02:39:08.780 I/AiAiEcho( 1295): Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-01 02:39:08.780 I/AiAiEcho( 1295): EchoTargets: 
+09-01 02:39:08.780 I/AiAiEcho( 1295): Filtered by AiAi flag check: 
+09-01 02:39:08.780 I/AiAiEcho( 1295): [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:08.780 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.780 I/AiAiEcho( 1295): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:08.780 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.780 I/AiAiEcho( 1295): #remoteViewsTwiddler: feature disabled.
+09-01 02:39:08.780 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.780 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.781 I/AiAiEcho( 1295): #postPredictionTargets: Sending updates to UISurface media_data_manager with targets# 0 (types=[])
+09-01 02:39:08.781 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.781 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.781 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.781 I/AiAiEcho( 1295): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+09-01 02:39:08.781 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.781 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.781 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.781 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.781 I/AiAiEcho( 1295): #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+09-01 02:39:08.782 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.785 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.786 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.786 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.786 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:08.786 D/BatterySaverPolicy(  599): accessibility changed to true, updating policy.
+09-01 02:39:08.789 W/PageIndicator(  837): Total number of pages invalid: 0. Assuming 1 page.
+09-01 02:39:08.789 D/SsMediaDataProvider(  837): Forwarding Smartspace updates []
+09-01 02:39:08.790 D/SsMediaDataProvider(  837): Forwarding Smartspace updates []
+09-01 02:39:08.790 W/PageIndicator(  837): Total number of pages invalid: 0. Assuming 1 page.
+09-01 02:39:09.256 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:09.257 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:09.258 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:09.811 W/MediaProvider( 1309): isAppCloneUserPair for user 0: false
+09-01 02:39:09.846 W/AccessibilityNodeInfoDumper( 5719): Fetch time: 37ms
+09-01 02:39:09.849 W/MagnificationConnectionManager(  599): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+09-01 02:39:09.849 D/AccessibilityManagerService(  599): restoreCurrentUserForTestAutomationIfNeededLocked(): ignoring because device doesn't support visible background users
+09-01 02:39:09.850 I/AiAiEcho( 1295): Settings changed for uri: content://settings/secure/accessibility_enabled
+09-01 02:39:09.850 I/AiAiEcho( 1295): Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-01 02:39:09.850 I/AiAiEcho( 1295): EchoTargets: 
+09-01 02:39:09.850 I/AiAiEcho( 1295): Filtered by AiAi flag check: 
+09-01 02:39:09.850 I/AiAiEcho( 1295): [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:09.850 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.850 I/AiAiEcho( 1295): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:09.850 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.851 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.851 I/AiAiEcho( 1295): #remoteViewsTwiddler: feature disabled.
+09-01 02:39:09.851 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.851 I/AiAiEcho( 1295): Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-01 02:39:09.851 I/AiAiEcho( 1295): EchoTargets: 
+09-01 02:39:09.851 I/AiAiEcho( 1295): Filtered by AiAi flag check: 
+09-01 02:39:09.851 I/AiAiEcho( 1295): [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:09.851 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.851 I/AiAiEcho( 1295): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:09.851 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.851 I/AiAiEcho( 1295): #remoteViewsTwiddler: feature disabled.
+09-01 02:39:09.851 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.852 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.852 I/AiAiEcho( 1295): Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-01 02:39:09.852 I/AiAiEcho( 1295): EchoTargets: 
+09-01 02:39:09.852 I/AiAiEcho( 1295): Filtered by AiAi flag check: 
+09-01 02:39:09.852 I/AiAiEcho( 1295): [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:09.852 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.852 I/AiAiEcho( 1295): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+09-01 02:39:09.852 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.852 I/AiAiEcho( 1295): #remoteViewsTwiddler: feature disabled.
+09-01 02:39:09.852 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.852 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.852 I/AiAiEcho( 1295): #postPredictionTargets: Sending updates to UISurface media_data_manager with targets# 0 (types=[])
+09-01 02:39:09.853 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.853 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.853 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.853 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.855 I/AiAiEcho( 1295): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+09-01 02:39:09.855 D/AndroidRuntime( 5719): Shutting down VM
+09-01 02:39:09.858 I/AiAiEcho( 1295): #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+09-01 02:39:09.862 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.862 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.862 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.862 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.863 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.863 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.863 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.863 W/IPCThreadState(  599): Sending oneway calls to frozen process.
+09-01 02:39:09.864 D/BatterySaverPolicy(  599): accessibility changed to false, updating policy.
+09-01 02:39:09.866 D/SsMediaDataProvider(  837): Forwarding Smartspace updates []
+09-01 02:39:09.866 W/PageIndicator(  837): Total number of pages invalid: 0. Assuming 1 page.
+09-01 02:39:10.035 W/AlarmManager( 1086): alarm window unlikely to be respected [CONTEXT service_id=231 ]
+09-01 02:39:10.035 W/AlarmManager( 1086): java.lang.IllegalArgumentException: alarm "NetworkLocationLocator" has short window length
+09-01 02:39:10.035 W/AlarmManager( 1086): 	at boaw.b(:com.google.android.gms@242335041@24.23.35 (190800-646585959):52)
+09-01 02:39:10.035 W/AlarmManager( 1086): 	at ehbk.f(:com.google.android.gms@242335041@24.23.35 (190800-646585959):119)
+09-01 02:39:10.035 W/AlarmManager( 1086): 	at egxu.q(:com.google.android.gms@242335041@24.23.35 (190800-646585959):107)
+09-01 02:39:10.035 W/AlarmManager( 1086): 	at egxu.j(:com.google.android.gms@242335041@24.23.35 (190800-646585959):1231)
+09-01 02:39:10.035 W/AlarmManager( 1086): 	at ehje.b(:com.google.android.gms@242335041@24.23.35 (190800-646585959):116)
+09-01 02:39:10.035 W/AlarmManager( 1086): 	at ehit.b(:com.google.android.gms@242335041@24.23.35 (190800-646585959):22)
+09-01 02:39:10.035 W/AlarmManager( 1086): 	at ehal.b(:com.google.android.gms@242335041@24.23.35 (190800-646585959):26)
+09-01 02:39:10.035 W/AlarmManager( 1086): 	at ehbh.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):9)
+09-01 02:39:10.035 W/AlarmManager( 1086): 	at ehah.handleMessage(:com.google.android.gms@242335041@24.23.35 (190800-646585959):740)
+09-01 02:39:10.035 W/AlarmManager( 1086): 	at android.os.Handler.dispatchMessage(Handler.java:107)
+09-01 02:39:10.035 W/AlarmManager( 1086): 	at bphk.nR(:com.google.android.gms@242335041@24.23.35 (190800-646585959):1)
+09-01 02:39:10.035 W/AlarmManager( 1086): 	at bphk.dispatchMessage(:com.google.android.gms@242335041@24.23.35 (190800-646585959):138)
+09-01 02:39:10.035 W/AlarmManager( 1086): 	at android.os.Looper.loopOnce(Looper.java:232)
+09-01 02:39:10.035 W/AlarmManager( 1086): 	at android.os.Looper.loop(Looper.java:317)
+09-01 02:39:10.035 W/AlarmManager( 1086): 	at android.os.HandlerThread.run(HandlerThread.java:85)
+09-01 02:39:10.039 I/ActivityScheduler( 1086): nextTriggerTime: 602816, in 198419ms, detectorType: 39, FULL_TYPE alarmWindowMillis: 80000
+09-01 02:39:10.262 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:10.263 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:10.263 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:10.834 W/BpBinder( 5734): Linking to death on android.gui.ISurfaceComposer but there are no threads (yet?) listening to incoming transactions. See ProcessState::startThreadPool and ProcessState::setThreadPoolMaxThreadCount. Generally you should setup the binder threadpool before other initialization steps.
+09-01 02:39:10.836 W/ProcessState( 5734): Extra binder thread started, but 0 threads requested. Do not use *startThreadPool when zero threads are requested.
+09-01 02:39:10.836 D/TrafficStats( 1326): tagSocket(108) with statsTag=0x20000408, statsUid=-1
+09-01 02:39:10.846 I/hwservicemanager(  177): getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+09-01 02:39:10.847 I/Gralloc4( 5734): mapper 4.x is not supported
+--------- beginning of kernel
+09-01 02:39:10.826 I/servicemanager(    0): Caller(pid=5734,uid=2000,sid=u:r:shell:s0) Could not find android.hardware.graphics.allocator.IAllocator/default in the VINTF manifest. No alternative instances declared in VINTF.
+09-01 02:39:10.863 W/MediaProvider( 1309): isAppCloneUserPair for user 0: false
+09-01 02:39:11.163 I/ActivityManager(  599): Broadcasting: Intent { act=android.intent.action.MEDIA_SCANNER_SCAN_FILE dat=file:///... flg=0x400000 }
+09-01 02:39:11.164 I/ActivityManager(  599): Enqueued broadcast Intent { act=android.intent.action.MEDIA_SCANNER_SCAN_FILE dat=file:///... flg=0x400000 }: 0
+09-01 02:39:11.165 D/OomAdjuster(  599): Not killing cached processes
+09-01 02:39:11.165 W/JobInfo (  599): Job 'com.google.android.providers.media.module/com.android.providers.media.MediaService#-300' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+09-01 02:39:11.170 I/ActivityManager(  599): Broadcast completed: result=0
+09-01 02:39:11.173 I/MediaProvider( 1309): Begin Intent { act=android.intent.action.MEDIA_SCANNER_SCAN_FILE dat=file:///... flg=0x1400010 cmp=com.google.android.providers.media.module/com.android.providers.media.MediaService }
+09-01 02:39:11.194 I/MediaProvider( 1309): End Intent { act=android.intent.action.MEDIA_SCANNER_SCAN_FILE dat=file:///... flg=0x1400010 cmp=com.google.android.providers.media.module/com.android.providers.media.MediaService }
+09-01 02:39:11.211 D/WM-SystemJobScheduler( 1309): Scheduling work ID 29257289-2d67-4b95-b0ae-440a9d6dbd48Job ID 44
+09-01 02:39:11.217 D/WM-GreedyScheduler( 1309): Ignoring {WorkSpec: d0b2bdca-a84d-42f0-8068-3828a01af564}. Requires device idle.
+09-01 02:39:11.218 D/WM-GreedyScheduler( 1309): Ignoring {WorkSpec: c12f0afa-3c1f-4855-92ad-48cc1fb7ed01}. Requires device idle.
+09-01 02:39:11.273 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:11.274 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:11.275 W/BestClock(  599): java.time.DateTimeException: Missing network time fix
+09-01 02:39:11.334 I/logd    (    0): logdr: UID=2000 GID=2000 PID=5745 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns

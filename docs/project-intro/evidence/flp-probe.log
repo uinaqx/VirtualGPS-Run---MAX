@@ -1,0 +1,10 @@
+--------- beginning of main
+09-01 02:38:23.103 I/FLP_PROBE( 5476): seq=1 lat=39.9137709 lon=116.4019849 speed=2.747 mock=true elapsed=356905373100
+09-01 02:38:23.595 I/FLP_PROBE( 5476): seq=2 lat=39.9137580 lon=116.4020182 speed=2.752 mock=true elapsed=357942471100
+09-01 02:38:24.616 I/FLP_PROBE( 5476): seq=3 lat=39.9137453 lon=116.4020489 speed=2.756 mock=true elapsed=358968265700
+09-01 02:38:25.643 I/FLP_PROBE( 5476): seq=4 lat=39.9137295 lon=116.4020762 speed=2.755 mock=true elapsed=359994488100
+09-01 02:38:26.672 I/FLP_PROBE( 5476): seq=5 lat=39.9137158 lon=116.4021020 speed=2.756 mock=true elapsed=361022269300
+09-01 02:38:27.695 I/FLP_PROBE( 5476): seq=6 lat=39.9137044 lon=116.4021316 speed=2.748 mock=true elapsed=362047745000
+09-01 02:38:28.708 I/FLP_PROBE( 5476): seq=7 lat=39.9136930 lon=116.4021613 speed=2.745 mock=true elapsed=363059866000
+09-01 02:38:29.731 I/FLP_PROBE( 5476): seq=8 lat=39.9136794 lon=116.4021906 speed=2.740 mock=true elapsed=364083070400
+09-01 02:38:30.740 I/FLP_PROBE( 5476): seq=9 lat=39.9136668 lon=116.4022189 speed=2.746 mock=true elapsed=365093857100
