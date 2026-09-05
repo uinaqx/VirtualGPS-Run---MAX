@@ -16,6 +16,8 @@ import android.os.Process
 import android.os.SystemClock
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
@@ -24,6 +26,7 @@ import com.virtualrun.app.R
 import com.virtualrun.app.algorithm.TrajectoryInterpolator
 import com.virtualrun.app.model.Route
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.tasks.await
 import java.util.Locale
 import kotlin.math.cos
@@ -50,6 +53,8 @@ class MockLocationService : Service() {
         private const val WAKELOCK_TIMEOUT_MS = 10 * 60 * 60 * 1000L
         private const val SERVICE_WATCHDOG_MS = 15_000L
         private const val PLATFORM_FUSED_PROVIDER = "fused"
+        private const val FLP_TIMEOUT_MS = 2_000L
+        private const val FLP_RETRY_MS = 15_000L
 
         const val ACTION_START_MOCK = "com.virtualrun.action.START_MOCK"
         const val ACTION_STOP_MOCK = "com.virtualrun.action.STOP_MOCK"
@@ -99,6 +104,8 @@ class MockLocationService : Service() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var trajectoryInterpolator: TrajectoryInterpolator? = null
     private var updateJob: Job? = null
+    private var fusedDeliveryJob: Job? = null
+    private var fusedLocations: Channel<Location>? = null
     private var wakeLock: android.os.PowerManager.WakeLock? = null
     private var workerThread: HandlerThread? = null
     private var workerHandler: Handler? = null
@@ -200,8 +207,11 @@ class MockLocationService : Service() {
             try {
                 try { locationManager.removeTestProvider(provider) } catch (e: Exception) {}
                 locationManager.addTestProvider(
-                    provider, false, false, false, false, true, true, true,
-                    ProviderProperties.POWER_USAGE_LOW,
+                    provider, provider == LocationManager.NETWORK_PROVIDER,
+                    provider == LocationManager.GPS_PROVIDER,
+                    provider == LocationManager.NETWORK_PROVIDER, false, true, true, true,
+                    if (provider == LocationManager.GPS_PROVIDER) ProviderProperties.POWER_USAGE_HIGH
+                    else ProviderProperties.POWER_USAGE_LOW,
                     ProviderProperties.ACCURACY_FINE
                 )
                 locationManager.setTestProviderEnabled(provider, true)
@@ -222,9 +232,11 @@ class MockLocationService : Service() {
         fusedMockModeEnabled = false
         fusedDeliveryFailureCount = 0
         try {
-            fusedLocationClient.setMockMode(true).await()
-            fusedMockModeEnabled = true
-            Log.i(TAG, "Google Play FLP mock mode enabled")
+            fusedMockModeEnabled = withTimeoutOrNull(FLP_TIMEOUT_MS) {
+                fusedLocationClient.setMockMode(true).await()
+                true
+            } ?: false
+            Log.i(TAG, "Google Play FLP mock mode enabled=$fusedMockModeEnabled")
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -245,9 +257,9 @@ class MockLocationService : Service() {
 
     private fun startLoop() {
         updateJob?.cancel()
+        startFusedDelivery()
         updateJob = serviceScope.launch {
             setupMockProviders()
-            enableFusedMockMode()
 
             if (activeProviders.isEmpty() && !fusedMockModeEnabled) {
                 Log.e(TAG, "No mock-location delivery channel could be enabled")
@@ -276,6 +288,7 @@ class MockLocationService : Service() {
     private fun stopMockImmediately() {
         updateJob?.cancel()
         updateJob = null
+        stopFusedDelivery()
         workerHandler?.removeCallbacksAndMessages(null)
         removeMockProviders()
         disableFusedMockMode()
@@ -287,7 +300,7 @@ class MockLocationService : Service() {
     }
 
     @SuppressLint("MissingPermission")
-    private suspend fun pushLocation(result: com.virtualrun.app.algorithm.PositionResult) {
+    private fun pushLocation(result: com.virtualrun.app.algorithm.PositionResult) {
         if (activeProviders.isEmpty() && !fusedMockModeEnabled) return
 
         val now = System.currentTimeMillis()
@@ -311,7 +324,7 @@ class MockLocationService : Service() {
             }
         }
 
-        if (fusedMockModeEnabled) {
+        if (fusedLocations != null) {
             val fusedAccuracy = (metadata.horizontalAccuracyMeters + 0.35f).coerceAtMost(6.0f)
             val fusedLocation = buildMockLocation(
                 PLATFORM_FUSED_PROVIDER,
@@ -321,18 +334,56 @@ class MockLocationService : Service() {
                 now,
                 elapsedNanos
             )
-            try {
-                fusedLocationClient.setMockLocation(fusedLocation).await()
-                fusedDeliveryFailureCount = 0
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                fusedDeliveryFailureCount++
-                if (fusedDeliveryFailureCount <= 3 || fusedDeliveryFailureCount % 30 == 0) {
-                    Log.e(TAG, "Error pushing location to Google Play FLP", e)
+            fusedLocations?.trySend(fusedLocation)
+        }
+    }
+
+    /** FLP failures must never suspend the GPS/Network clock. Keep only the newest fix. */
+    @SuppressLint("MissingPermission") // SecurityException is handled per channel below.
+    private fun startFusedDelivery() {
+        stopFusedDelivery()
+        val locations = Channel<Location>(Channel.CONFLATED)
+        fusedLocations = locations
+        fusedDeliveryJob = serviceScope.launch {
+            var nextRetryAt = 0L
+            for (location in locations) {
+                if (!fusedMockModeEnabled) {
+                    if (SystemClock.elapsedRealtime() < nextRetryAt) continue
+                    nextRetryAt = SystemClock.elapsedRealtime() + FLP_RETRY_MS
+                    val availability = GoogleApiAvailability.getInstance()
+                        .isGooglePlayServicesAvailable(this@MockLocationService)
+                    if (availability != ConnectionResult.SUCCESS) {
+                        Log.w(TAG, "FLP unavailable ($availability); GPS/Network updates continue")
+                        continue
+                    }
+                    enableFusedMockMode()
+                    // Enabling can take seconds: consume a fresh fix on the next iteration.
+                    continue
+                }
+                try {
+                    val delivered = withTimeoutOrNull(FLP_TIMEOUT_MS) {
+                        fusedLocationClient.setMockLocation(location).await()
+                        true
+                    } ?: false
+                    if (!delivered) error("FLP delivery timed out")
+                    fusedDeliveryFailureCount = 0
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    fusedDeliveryFailureCount++
+                    fusedMockModeEnabled = false
+                    nextRetryAt = SystemClock.elapsedRealtime() + FLP_RETRY_MS
+                    Log.e(TAG, "FLP delivery failed; retry scheduled, platform updates continue", e)
                 }
             }
         }
+    }
+
+    private fun stopFusedDelivery() {
+        fusedDeliveryJob?.cancel()
+        fusedDeliveryJob = null
+        fusedLocations?.close()
+        fusedLocations = null
     }
 
     private fun buildMockLocation(
@@ -462,6 +513,7 @@ class MockLocationService : Service() {
     override fun onDestroy() {
         Log.d(TAG, "Service Destroyed")
         if (!terminalStateBroadcast) broadcastTerminalState()
+        stopFusedDelivery()
         removeMockProviders()
         disableFusedMockMode()
         releaseWakeLock()
