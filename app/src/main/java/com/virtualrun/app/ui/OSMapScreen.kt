@@ -31,6 +31,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -41,8 +43,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
@@ -60,6 +65,7 @@ import com.virtualrun.app.map.ChinaMapTileSource
 import com.virtualrun.app.map.MapMode
 import com.virtualrun.app.map.CoordinateConverter
 import com.virtualrun.app.service.MockLocationService
+import com.virtualrun.app.model.PaceMode
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
@@ -90,23 +96,31 @@ private data class RunUiError(
 @Composable
 fun OSMapScreen(viewModel: MainViewModel) {
     val context = LocalContext.current
+    val density = LocalDensity.current
+    val compactControls = LocalConfiguration.current.screenHeightDp < 500
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val routePoints by viewModel.routePoints.collectAsState()
     val isRunning by viewModel.isRunning.collectAsState()
     val basePace by viewModel.basePace.collectAsState()
+    val currentSpeed by viewModel.speed.collectAsState()
+    val motionSettings by viewModel.motionSettings.collectAsState()
     val currentLocation by viewModel.currentLocation.collectAsState()
     val progress by viewModel.progress.collectAsState()
     val lapCount by viewModel.lapCount.collectAsState()
     val isLoopMode by viewModel.isLoopMode.collectAsState()
-    val currentSpeed by viewModel.speed.collectAsState()
+    val simulationProfile by viewModel.simulationProfile.collectAsState()
+    val simulationMetrics by viewModel.simulationMetrics.collectAsState()
+    val deliverySummary by viewModel.deliverySummary.collectAsState()
+    val deliveryDetails by viewModel.deliveryDetails.collectAsState()
+    val deliveryWarning by viewModel.deliveryWarning.collectAsState()
     val latestIsRunning by rememberUpdatedState(isRunning)
     val latestIsLoopMode by rememberUpdatedState(isLoopMode)
 
     var mapView by remember { mutableStateOf<MapView?>(null) }
+    var sliderPace by remember(basePace) { mutableFloatStateOf(basePace) }
     val mapPreferences = remember(context) { context.getSharedPreferences("map_display", Context.MODE_PRIVATE) }
     var mapMode by remember { mutableStateOf(MapMode.fromPreference(mapPreferences.getString("mode", null))) }
-    var sliderPace by remember(basePace) { mutableFloatStateOf(basePace) }
     var routePolyline by remember { mutableStateOf<Polyline?>(null) }
     var routeMarkers by remember { mutableStateOf<FolderOverlay?>(null) }
     var actualTrail by remember { mutableStateOf<Polyline?>(null) }
@@ -117,6 +131,11 @@ fun OSMapScreen(viewModel: MainViewModel) {
     var lastCameraFollowAt by remember { mutableLongStateOf(0L) }
     var wasRunning by remember { mutableStateOf(false) }
     var uiError by remember { mutableStateOf<RunUiError?>(null) }
+    var showSimulationMetrics by remember { mutableStateOf(false) }
+    var showMotionSettings by remember { mutableStateOf(false) }
+    var showDeliveryDetails by remember { mutableStateOf(false) }
+    var routeDetailsExpanded by remember(compactControls) { mutableStateOf(false) }
+    var bottomControlsHeightPx by remember { mutableIntStateOf(0) }
 
     val animatedProgress = remember { Animatable(0f) }
     var animatedProgressLap by remember { mutableIntStateOf(0) }
@@ -131,7 +150,11 @@ fun OSMapScreen(viewModel: MainViewModel) {
         label = "run action color"
     )
     val locationButtonOffset by animateDpAsState(
-        targetValue = if (routePoints.size >= 2) (-300).dp else (-210).dp,
+        targetValue = if (bottomControlsHeightPx > 0) {
+            with(density) { -bottomControlsHeightPx.toDp() + 8.dp }
+        } else {
+            (-258).dp
+        },
         animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
         label = "location button offset"
     )
@@ -478,24 +501,38 @@ fun OSMapScreen(viewModel: MainViewModel) {
                     pendingLocationListener?.let { runCatching { locationManager.removeUpdates(it) } }
                     pendingLocationListener = null
                     animateToDeviceLocation(location)
-                } else {
+                }
+                run {
                     pendingLocationListener?.let { runCatching { locationManager.removeUpdates(it) } }
                     val listener = object : LocationListener {
                             override fun onLocationChanged(location: Location) {
+                                if (pendingLocationListener !== this) return
                                 animateToDeviceLocation(location)
-                                runCatching { locationManager.removeUpdates(this) }
-                                pendingLocationListener = null
+                                // A network fix may arrive first and be less recent than GPS.
+                                // Keep the GPS request alive until its own first fix is delivered.
+                                if (location.provider == LocationManager.GPS_PROVIDER ||
+                                    !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                                    runCatching { locationManager.removeUpdates(this) }
+                                    pendingLocationListener = null
+                                }
                             }
                             override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) = Unit
                             override fun onProviderEnabled(provider: String) = Unit
                             override fun onProviderDisabled(provider: String) = Unit
                         }
                     pendingLocationListener = listener
-                    locationManager.requestSingleUpdate(
-                        LocationManager.NETWORK_PROVIDER,
-                        listener,
-                        Looper.getMainLooper()
-                    )
+                    // Refresh cached fixes too; a fresh GPS callback releases both requests.
+                    val requested = listOf(LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER)
+                        .filter { locationManager.isProviderEnabled(it) }
+                        .map { provider ->
+                            runCatching {
+                                locationManager.requestSingleUpdate(provider, listener, Looper.getMainLooper())
+                            }.isSuccess
+                        }.any { it }
+                    if (!requested) {
+                        pendingLocationListener = null
+                        uiError = RunUiError("未能请求定位，请检查系统定位设置", RunUiErrorAction.DISMISS)
+                    }
                 }
             },
             modifier = Modifier.padding(16.dp).align(Alignment.BottomStart).offset(y = locationButtonOffset),
@@ -503,11 +540,13 @@ fun OSMapScreen(viewModel: MainViewModel) {
         ) { Icon(Icons.Default.MyLocation, "定位") }
 
         Column(
-            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).padding(16.dp),
+            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter)
+                .onSizeChanged { bottomControlsHeightPx = it.height }
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AnimatedVisibility(
-                visible = routePoints.size >= 2,
+                visible = routePoints.size >= 2 && (!compactControls || routeDetailsExpanded),
                 enter = fadeIn(tween(180)) + slideInVertically(tween(260)) { it / 3 },
                 exit = fadeOut(tween(140)) + slideOutVertically(tween(220)) { it / 3 }
             ) {
@@ -535,6 +574,11 @@ fun OSMapScreen(viewModel: MainViewModel) {
                             val distanceKm = viewModel.getCurrentRouteDistance() / 1000
                             Text("距离: ${"%.2f".format(distanceKm)} km")
                             Text("预计: ${formatDuration(viewModel.getCurrentRouteDuration())}")
+                        }
+                        if (!isRunning) {
+                            TextButton(onClick = { viewModel.reverseRouteDirection() }) {
+                                Text("反转跑步方向")
+                            }
                         }
                         AnimatedVisibility(visible = isRunning, enter = fadeIn(tween(220)), exit = fadeOut(tween(150))) {
                             Column {
@@ -567,24 +611,60 @@ fun OSMapScreen(viewModel: MainViewModel) {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("目标配速: ${"%.1f".format(sliderPace)} 分/km", fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                        if (isRunning && animatedSpeed >= MIN_CURRENT_PACE_DISPLAY_SPEED_MPS) {
-                            val currentPace = 1000f / (animatedSpeed.coerceAtLeast(0.1f) * 60f)
-                            Text("当前: ${"%.1f".format(currentPace)} 分/km", fontSize = 14.sp, color = RunGreen)
+                        Text(
+                            if (motionSettings.paceMode == PaceMode.BOUNDED) {
+                                "范围配速: ${motionSettings.fastestSecondsPerKm.toInt()}–${motionSettings.slowestSecondsPerKm.toInt()} 秒/km"
+                            } else "目标配速: ${"%.1f".format(sliderPace)} 分/km",
+                            modifier = Modifier.weight(1f),
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        if (compactControls && routePoints.size >= 2) {
+                            TextButton(onClick = { routeDetailsExpanded = !routeDetailsExpanded }) {
+                                Text(if (routeDetailsExpanded) "收起路线" else "路线详情")
+                                Icon(
+                                    if (routeDetailsExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                                    contentDescription = if (routeDetailsExpanded) "收起路线信息" else "展开路线信息"
+                                )
+                            }
                         }
                     }
-                    Slider(
-                        value = sliderPace,
-                        onValueChange = { sliderPace = it },
-                        onValueChangeFinished = { viewModel.setBasePace(sliderPace, context) },
-                        valueRange = 3f..15f,
-                        steps = 11
+                    if (isRunning && animatedSpeed >= MIN_CURRENT_PACE_DISPLAY_SPEED_MPS) {
+                        val currentPace = 1000f / (animatedSpeed.coerceAtLeast(0.1f) * 60f)
+                        Text("当前: ${"%.1f".format(currentPace)} 分/km", fontSize = 14.sp, color = RunGreen)
+                    }
+                    if (motionSettings.paceMode != PaceMode.BOUNDED) {
+                        Slider(
+                            value = sliderPace,
+                            onValueChange = { sliderPace = it },
+                            onValueChangeFinished = { viewModel.setBasePace(sliderPace, context) },
+                            valueRange = 3f..15f,
+                            steps = 11
+                        )
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text("3'00\"", fontSize = 10.sp, color = Color.Gray)
+                            Text("快", fontSize = 10.sp, color = Color.Gray)
+                            Text("慢", fontSize = 10.sp, color = Color.Gray)
+                            Text("15'00\"", fontSize = 10.sp, color = Color.Gray)
+                        }
+                    }
+                    if (!isRunning) {
+                        TextButton(onClick = { showMotionSettings = true }) {
+                            Text("模拟方式设置")
+                        }
+                    }
+                    SimulationStepSummary(
+                        metrics = simulationMetrics,
+                        onClick = { showSimulationMetrics = true }
                     )
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("3'00\"", fontSize = 10.sp, color = Color.Gray)
-                        Text("快", fontSize = 10.sp, color = Color.Gray)
-                        Text("慢", fontSize = 10.sp, color = Color.Gray)
-                        Text("15'00\"", fontSize = 10.sp, color = Color.Gray)
+                    if (isRunning || deliveryDetails.isNotBlank()) {
+                        TextButton(onClick = { showDeliveryDetails = true }) {
+                            Text(
+                                "$deliverySummary · 查看定位状态",
+                                fontSize = 12.sp,
+                                color = if (deliveryWarning) StopRed else MaterialTheme.colorScheme.primary
+                            )
+                        }
                     }
                 }
             }
@@ -630,6 +710,37 @@ fun OSMapScreen(viewModel: MainViewModel) {
                 }
             }
         }
+    }
+
+    if (showSimulationMetrics) {
+        SimulationMetricsDialog(
+            metrics = simulationMetrics,
+            profile = simulationProfile,
+            isRunning = isRunning,
+            onProfileChanged = viewModel::setSimulationProfile,
+            onDismiss = { showSimulationMetrics = false }
+        )
+    }
+
+    if (showMotionSettings && !isRunning) {
+        SimulationMotionDialog(
+            settings = motionSettings,
+            onSettingsChanged = viewModel::setMotionSettings,
+            onDismiss = { showMotionSettings = false }
+        )
+    }
+
+    if (showDeliveryDetails) {
+        AlertDialog(
+            onDismissRequest = { showDeliveryDetails = false },
+            title = { Text("定位投递状态") },
+            text = {
+                Column(Modifier.verticalScroll(rememberScrollState())) {
+                    Text(deliveryDetails.ifBlank { deliverySummary })
+                }
+            },
+            confirmButton = { TextButton(onClick = { showDeliveryDetails = false }) { Text("关闭") } }
+        )
     }
 
     uiError?.let { error ->

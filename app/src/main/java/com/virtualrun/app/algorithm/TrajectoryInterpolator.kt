@@ -21,7 +21,14 @@ class TrajectoryInterpolator(
     route: Route,
     private var basePace: Float,  // 配速：分钟/公里
     private val isLoopMode: Boolean = false, // 是否循环跑
-    private val random: Random = Random.Default
+    private val random: Random = Random.Default,
+    // Constant-speed route preview: no acceleration, random drift, or observation smoothing.
+    private val uniformPace: Boolean = false,
+    // Optional bounded variation, integrated analytically so complete minutes keep the target average.
+    private val paceVariationRatio: Float = 0f,
+    private val paceProfile: BoundedPaceProfile? = null,
+    // Local route changes are independent of the selected pace model and disabled by default.
+    localManeuvers: Boolean = false
 ) {
     // 基础速度：米/秒
     private var baseSpeed: Float = calculateBaseSpeed(basePace)
@@ -30,10 +37,13 @@ class TrajectoryInterpolator(
     private data class DensePoint(val lat: Double, val lng: Double, val distanceFromStart: Float)
     private val densePoints: List<DensePoint>
     private val totalDistance: Float
+    private val routeManeuvers: SparseRouteManeuvers?
 
     // 当前状态
     private var currentDistance: Float = 0f
     private var totalTravelDistance: Float = 0f
+    private var uniformTravelDistance: Double = 0.0
+    private var controlledElapsedSeconds: Double = 0.0
     private var isCompleted: Boolean = false
     private var lastLatitude: Double = 0.0
     private var lastLongitude: Double = 0.0
@@ -47,6 +57,7 @@ class TrajectoryInterpolator(
     private var hasSmoothedBearing = false
     private var smoothedBearing: Float = 0f
     private var lastUpdateTimeMs: Long? = null
+    private var sessionStartTimeMs: Long? = null
     private var currentSpeed: Float = 0f
     private var currentAcceleration: Float = 0f
     private var rapidSpeedResponse = true
@@ -65,12 +76,20 @@ class TrajectoryInterpolator(
     private var lapCount: Int = 0
 
     init {
+        require(paceVariationRatio.isFinite() && paceVariationRatio in 0f..0.1f)
+        require(!uniformPace || basePace.isFinite() && basePace > 0f && baseSpeed.isFinite()) {
+            "Uniform pace must be finite and positive."
+        }
         val result = generateSmoothedPoints(route.points, isLoopMode)
         densePoints = result
         totalDistance = result.lastOrNull()?.distanceFromStart ?: 0f
+        routeManeuvers = if (localManeuvers) SparseRouteManeuvers(totalDistance.toDouble(), random) else null
     }
 
     fun updatePace(newPace: Float) {
+        require(!uniformPace || newPace.isFinite() && newPace > 0f && calculateBaseSpeed(newPace).isFinite()) {
+            "Uniform pace must be finite and positive."
+        }
         basePace = newPace
         baseSpeed = calculateBaseSpeed(newPace)
         rapidSpeedResponse = true
@@ -105,10 +124,12 @@ class TrajectoryInterpolator(
             previousResult?.let { return it }
         }
         val deltaSeconds = calculateDeltaSeconds(nowMs)
-        if (!isCompleted) advanceMotion(deltaSeconds)
+        if (!isCompleted) {
+            if (uniformPace) advanceUniformMotion(deltaSeconds) else advanceMotion(deltaSeconds)
+        }
 
         val reachedOpenRouteEnd = !isLoopMode && currentDistance >= totalDistance - END_POSITION_TOLERANCE_METERS
-        if (reachedOpenRouteEnd && currentSpeed <= STATIONARY_SPEED_THRESHOLD_MPS) {
+        if (!uniformPace && reachedOpenRouteEnd && currentSpeed <= STATIONARY_SPEED_THRESHOLD_MPS) {
             currentSpeed = 0f
             currentAcceleration = 0f
             stationarySeconds += deltaSeconds
@@ -127,15 +148,23 @@ class TrajectoryInterpolator(
             estimatePathBearing(currentDistance)
         }
 
-        val naturalPosition = applyNaturalTrackVariation(basePos, movementBearing, nowMs)
-        val smoothedPosition = smoothPathPosition(naturalPosition.latitude, naturalPosition.longitude, deltaSeconds)
-        val noisyObservedPosition = applyGpsMeasurementNoise(smoothedPosition, deltaSeconds)
-        val observedPosition = constrainCruiseObservationSpeed(
+        val naturalTrack = !uniformPace || paceProfile != null || routeManeuvers != null
+        val naturalPosition = when {
+            routeManeuvers != null -> applySparseRouteManeuver(basePos, movementBearing)
+            paceProfile != null -> basePos
+            !naturalTrack -> basePos
+            else -> applyNaturalTrackVariation(basePos, movementBearing, nowMs)
+        }
+        val smoothedPosition = if (paceProfile != null || routeManeuvers != null || !naturalTrack) naturalPosition else
+            smoothPathPosition(naturalPosition.latitude, naturalPosition.longitude, deltaSeconds)
+        val noisyObservedPosition = if (paceProfile != null || routeManeuvers != null || !naturalTrack) smoothedPosition else
+            applyGpsMeasurementNoise(smoothedPosition, deltaSeconds)
+        val observedPosition = if (!naturalTrack) basePos else constrainCruiseObservationSpeed(
             noisyObservedPosition,
             movementBearing,
             deltaSeconds
         )
-        val targetBearing = if (hasObservedPosition && currentSpeed >= BEARING_FROM_OBSERVATION_MIN_SPEED_MPS) {
+        val targetBearing = if (naturalTrack && hasObservedPosition && currentSpeed >= BEARING_FROM_OBSERVATION_MIN_SPEED_MPS) {
             val observedBearing = calculateBearing(
                 observedLatitude,
                 observedLongitude,
@@ -146,7 +175,7 @@ class TrajectoryInterpolator(
         } else {
             movementBearing
         }
-        val finalBearing = smoothBearing(targetBearing, deltaSeconds)
+        val finalBearing = if (!naturalTrack) targetBearing else smoothBearing(targetBearing, deltaSeconds)
 
         smoothedPathLatitude = smoothedPosition.latitude
         smoothedPathLongitude = smoothedPosition.longitude
@@ -170,7 +199,9 @@ class TrajectoryInterpolator(
                     (currentDistance / totalDistance).coerceIn(0f, 0.999f)
                 else -> (currentDistance / totalDistance).coerceIn(0f, 1f)
             },
-            lapCount = lapCount
+            lapCount = lapCount,
+            distanceMeters = totalTravelDistance,
+            elapsedMillis = (nowMs - (sessionStartTimeMs ?: nowMs)).coerceAtLeast(0L)
         ).also { previousResult = it }
     }
 
@@ -178,8 +209,11 @@ class TrajectoryInterpolator(
         val last = lastUpdateTimeMs
         if (last != null && now <= last) return 0f
         lastUpdateTimeMs = now
+        if (sessionStartTimeMs == null) sessionStartTimeMs = now
         if (last == null) return 0f
-        return ((now - last) / 1000f).coerceIn(0f, MAX_ELAPSED_SECONDS)
+        val elapsedSeconds = (now - last) / 1000f
+        // A constant-speed preview must account for the full elapsed time after a delayed tick.
+        return if (uniformPace) elapsedSeconds else elapsedSeconds.coerceIn(0f, MAX_ELAPSED_SECONDS)
     }
 
     // ==================== 路线平滑 ====================
@@ -358,6 +392,36 @@ class TrajectoryInterpolator(
     }
 
     // ==================== 速度与轨迹扰动 ====================
+
+    private fun advanceUniformMotion(deltaSeconds: Float) {
+        val angularFrequency = 2.0 * Math.PI / 60.0
+        val previousSeconds = controlledElapsedSeconds
+        controlledElapsedSeconds += deltaSeconds.toDouble()
+        currentSpeed = (baseSpeed * (1.0 + paceVariationRatio *
+            sin(angularFrequency * controlledElapsedSeconds))).toFloat()
+        val boundedSample = paceProfile?.sample(controlledElapsedSeconds)
+        if (boundedSample != null) currentSpeed = boundedSample.speed
+        currentAcceleration = 0f
+        if (deltaSeconds <= 0f) return
+
+        // Accumulate in Double to avoid frame-frequency drift from repeated Float additions.
+        val variationSeconds = paceVariationRatio / angularFrequency *
+            (cos(angularFrequency * previousSeconds) - cos(angularFrequency * controlledElapsedSeconds))
+        uniformTravelDistance = boundedSample?.distanceMeters ?: (uniformTravelDistance +
+            baseSpeed.toDouble() * (deltaSeconds.toDouble() + variationSeconds))
+        if (isLoopMode) {
+            lapCount = floor(uniformTravelDistance / totalDistance.toDouble()).toInt()
+            currentDistance = (uniformTravelDistance % totalDistance.toDouble()).toFloat()
+        } else {
+            if (uniformTravelDistance >= totalDistance.toDouble()) {
+                uniformTravelDistance = totalDistance.toDouble()
+                isCompleted = true
+                currentSpeed = 0f
+            }
+            currentDistance = uniformTravelDistance.toFloat()
+        }
+        totalTravelDistance = uniformTravelDistance.toFloat()
+    }
 
     /**
      * 使用不超过 250ms 的内部步长积分。即使服务某一帧延迟，速度也不会跨越加速度约束。
@@ -615,6 +679,13 @@ class TrajectoryInterpolator(
         return shifted
     }
 
+    private fun applySparseRouteManeuver(position: TargetPosition, bearing: Float): TargetPosition {
+        val offset = routeManeuvers?.lateralOffset(totalTravelDistance.toDouble()) ?: return position
+        if (abs(offset) < 0.001) return position
+        return calculateLocationOffset(position.latitude, position.longitude, abs(offset),
+            if (offset >= 0.0) bearing + 90.0 else bearing - 90.0)
+    }
+
     /**
      * GNSS 误差不是逐点白噪声，而是会在数秒内保持方向后缓慢回归。
      * 使用二维 Ornstein-Uhlenbeck 过程生成连续的米级观测漂移。
@@ -664,9 +735,11 @@ class TrajectoryInterpolator(
         ) {
             return candidate
         }
+        // A long GPS gap can span several turns or laps. Its endpoint is not a straight-line cruise step.
+        if (paceProfile != null && deltaSeconds > 3f) return candidate
 
-        val minimumCruiseSpeed = baseSpeed * MIN_CRUISE_SPEED_RATIO
-        val maximumCruiseSpeed = baseSpeed * MAX_CRUISE_SPEED_RATIO
+        val minimumCruiseSpeed = paceProfile?.minimumSpeed ?: (baseSpeed * MIN_CRUISE_SPEED_RATIO)
+        val maximumCruiseSpeed = paceProfile?.maximumSpeed ?: (baseSpeed * MAX_CRUISE_SPEED_RATIO)
         if (currentSpeed !in minimumCruiseSpeed..maximumCruiseSpeed) return candidate
 
         val observedStepMeters = haversineDistance(
@@ -677,10 +750,13 @@ class TrajectoryInterpolator(
         )
         // Keep a tiny guard inside the public band to absorb the difference between the spherical
         // distance formula and the WGS-84 radius used when applying the offset.
-        val minimumStepMeters = minimumCruiseSpeed * deltaSeconds * (1f + OBSERVATION_BAND_GUARD_RATIO)
-        val maximumStepMeters = maximumCruiseSpeed * deltaSeconds * (1f - OBSERVATION_BAND_GUARD_RATIO)
+        val guardRatio = min(OBSERVATION_BAND_GUARD_RATIO,
+            (maximumCruiseSpeed - minimumCruiseSpeed) / (maximumCruiseSpeed + minimumCruiseSpeed) * 0.5f)
+        val minimumStepMeters = minimumCruiseSpeed * deltaSeconds * (1f + guardRatio)
+        val maximumStepMeters = maximumCruiseSpeed * deltaSeconds * (1f - guardRatio)
         val boundedStepMeters = observedStepMeters.coerceIn(minimumStepMeters, maximumStepMeters)
-        if (abs(boundedStepMeters - observedStepMeters) < 0.001f) return candidate
+        if (boundedStepMeters == observedStepMeters ||
+            paceProfile == null && abs(boundedStepMeters - observedStepMeters) < 0.001f) return candidate
 
         val stepBearing = if (observedStepMeters >= MIN_BEARING_STEP_METERS) {
             calculateBearing(
@@ -791,6 +867,10 @@ class TrajectoryInterpolator(
     fun reset() {
         currentDistance = 0f
         totalTravelDistance = 0f
+        uniformTravelDistance = 0.0
+        controlledElapsedSeconds = 0.0
+        paceProfile?.reset()
+        routeManeuvers?.reset()
         isCompleted = false
         lastLatitude = 0.0
         lastLongitude = 0.0
@@ -804,6 +884,7 @@ class TrajectoryInterpolator(
         hasSmoothedBearing = false
         smoothedBearing = 0f
         lastUpdateTimeMs = null
+        sessionStartTimeMs = null
         previousResult = null
         currentSpeed = 0f
         currentAcceleration = 0f
@@ -875,7 +956,10 @@ data class PositionResult(
     val bearing: Float = 0f,
     val isCompleted: Boolean,
     val progress: Float = 0f,
-    val lapCount: Int = 0
+    val lapCount: Int = 0,
+    // Local simulation totals, independent of GPS observation noise and lap wrapping.
+    val distanceMeters: Float = 0f,
+    val elapsedMillis: Long = 0L
 )
 
 data class TargetPosition(

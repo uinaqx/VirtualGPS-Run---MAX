@@ -6,11 +6,19 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
 import androidx.core.content.ContextCompat
+import androidx.core.content.IntentCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.virtualrun.app.algorithm.TrajectoryUtils
 import com.virtualrun.app.model.Route
+import com.virtualrun.app.model.reverseRoute
+import com.virtualrun.app.model.PaceMode
+import com.virtualrun.app.model.SimulationMotionSettings
+import com.virtualrun.app.model.SimulationMetrics
+import com.virtualrun.app.model.SimulationMetricsCalculator
+import com.virtualrun.app.model.SimulationProfile
+import com.virtualrun.app.model.SimulationStorage
 import com.virtualrun.app.service.MockLocationService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +35,9 @@ class MainViewModel : ViewModel() {
     private val _basePace = MutableStateFlow(6.0f)
     val basePace: StateFlow<Float> = _basePace.asStateFlow()
 
+    private val _motionSettings = MutableStateFlow(SimulationMotionSettings())
+    val motionSettings: StateFlow<SimulationMotionSettings> = _motionSettings.asStateFlow()
+
     private val _currentLocation = MutableStateFlow<LatLng?>(null)
     val currentLocation: StateFlow<LatLng?> = _currentLocation.asStateFlow()
 
@@ -42,8 +53,27 @@ class MainViewModel : ViewModel() {
     private val _speed = MutableStateFlow(0f)
     val speed: StateFlow<Float> = _speed.asStateFlow()
 
+    private val _simulationProfile = MutableStateFlow(SimulationProfile())
+    val simulationProfile: StateFlow<SimulationProfile> = _simulationProfile.asStateFlow()
+    private val _simulationMetrics = MutableStateFlow(SimulationMetrics())
+    val simulationMetrics: StateFlow<SimulationMetrics> = _simulationMetrics.asStateFlow()
+    private val _deliverySummary = MutableStateFlow("尚未开始定位")
+    val deliverySummary: StateFlow<String> = _deliverySummary.asStateFlow()
+    private val _deliveryDetails = MutableStateFlow("")
+    val deliveryDetails: StateFlow<String> = _deliveryDetails.asStateFlow()
+    private val _deliveryWarning = MutableStateFlow(false)
+    val deliveryWarning: StateFlow<Boolean> = _deliveryWarning.asStateFlow()
+    private var applicationContext: Context? = null
+    private var stopRequested = false
+
     private val stateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == MockLocationService.BROADCAST_ACTION_DELIVERY_HEALTH) {
+                _deliverySummary.value = intent.getStringExtra(MockLocationService.EXTRA_DELIVERY_SUMMARY).orEmpty()
+                _deliveryDetails.value = intent.getStringExtra(MockLocationService.EXTRA_DELIVERY_DETAILS).orEmpty()
+                _deliveryWarning.value = intent.getBooleanExtra(MockLocationService.EXTRA_DELIVERY_WARNING, false)
+                return
+            }
             if (intent?.action == MockLocationService.BROADCAST_ACTION_STATE_UPDATE) {
                 val hasLocation = intent.getBooleanExtra(MockLocationService.BROADCAST_EXTRA_HAS_LOCATION, true)
                 val prog = intent.getFloatExtra(MockLocationService.BROADCAST_EXTRA_PROGRESS, 0f)
@@ -51,6 +81,21 @@ class MainViewModel : ViewModel() {
                 val spd = intent.getFloatExtra(MockLocationService.BROADCAST_EXTRA_SPEED, 0f)
                 val completed = intent.getBooleanExtra(MockLocationService.BROADCAST_EXTRA_COMPLETED, false)
                 val running = intent.getBooleanExtra(MockLocationService.BROADCAST_EXTRA_RUNNING, !completed)
+
+                if (intent.hasExtra(MockLocationService.BROADCAST_EXTRA_DISTANCE_METERS)) {
+                    runCatching {
+                        val activeProfile = SimulationProfile(
+                            intent.getDoubleExtra(MockLocationService.EXTRA_STRIDE_CM, 100.0),
+                            intent.getDoubleExtra(MockLocationService.EXTRA_CALORIES_PER_KM, 60.0)
+                        )
+                        _simulationMetrics.value = SimulationMetricsCalculator.calculate(
+                            intent.getDoubleExtra(MockLocationService.BROADCAST_EXTRA_DISTANCE_METERS, 0.0),
+                            intent.getLongExtra(MockLocationService.BROADCAST_EXTRA_ELAPSED_MILLIS, 0L),
+                            activeProfile
+                        )
+                        if (running) _simulationProfile.value = activeProfile
+                    }.onFailure { Log.w("MainViewModel", "Invalid local simulation statistics", it) }
+                }
 
                 if (hasLocation) {
                     val lat = intent.getDoubleExtra(MockLocationService.BROADCAST_EXTRA_LAT, 0.0)
@@ -61,21 +106,24 @@ class MainViewModel : ViewModel() {
                     _speed.value = spd
                 }
 
-                val restoredPoints = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                    intent.getParcelableArrayListExtra(MockLocationService.EXTRA_ROUTE_POINTS, LatLng::class.java)
-                } else {
-                    @Suppress("DEPRECATION")
-                    intent.getParcelableArrayListExtra(MockLocationService.EXTRA_ROUTE_POINTS)
-                }
+                // Android 13's typed Parcelable-list reader can crash for LatLng's CREATOR.
+                // IntentCompat uses the legacy reader there and the fixed API on Android 14+.
+                val restoredPoints = IntentCompat.getParcelableArrayListExtra(
+                    intent, MockLocationService.EXTRA_ROUTE_POINTS, LatLng::class.java
+                )
                 restoredPoints?.let { _routePoints.value = it }
                 if (intent.hasExtra(MockLocationService.EXTRA_PACE)) {
                     _basePace.value = intent.getFloatExtra(MockLocationService.EXTRA_PACE, _basePace.value)
+                }
+                if (intent.hasExtra(MockLocationService.EXTRA_PACE_MODE)) {
+                    _motionSettings.value = MockLocationService.readMotionSettings(intent)
                 }
                 if (intent.hasExtra(MockLocationService.EXTRA_IS_LOOP)) {
                     _isLoopMode.value = intent.getBooleanExtra(MockLocationService.EXTRA_IS_LOOP, false)
                 }
 
                 _isRunning.value = running
+                if (!running || completed) stopRequested = false
 
                 if (completed) {
                     _speed.value = 0f
@@ -86,7 +134,12 @@ class MainViewModel : ViewModel() {
     }
 
     fun registerReceiver(context: Context) {
-        val filter = IntentFilter(MockLocationService.BROADCAST_ACTION_STATE_UPDATE)
+        applicationContext = context.applicationContext
+        _simulationProfile.value = SimulationStorage.loadProfile(context)
+        _simulationMetrics.value = SimulationStorage.loadSnapshot(context)
+        val filter = IntentFilter(MockLocationService.BROADCAST_ACTION_STATE_UPDATE).apply {
+            addAction(MockLocationService.BROADCAST_ACTION_DELIVERY_HEALTH)
+        }
         ContextCompat.registerReceiver(
             context,
             stateReceiver,
@@ -143,18 +196,35 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun reverseRouteDirection() {
+        if (_isRunning.value || stopRequested) return
+        _routePoints.value = reverseRoute(_routePoints.value, _isLoopMode.value)
+    }
+
     fun clearRoute() {
+        if (_isRunning.value || stopRequested) return
         _routePoints.value = emptyList()
         _progress.value = 0f
         _lapCount.value = 0
         _isLoopMode.value = false
         _currentLocation.value = null
         _speed.value = 0f
+        _simulationMetrics.value = SimulationMetrics()
+        _deliverySummary.value = "尚未开始定位"
+        _deliveryDetails.value = ""
+        _deliveryWarning.value = false
+        applicationContext?.let { SimulationStorage.clearSnapshot(it) }
+    }
+
+    fun setSimulationProfile(profile: SimulationProfile) {
+        if (_isRunning.value) return
+        _simulationProfile.value = profile
+        applicationContext?.let { SimulationStorage.saveProfile(it, profile) }
     }
 
     fun setBasePace(pace: Float, context: Context? = null) {
+        if (!pace.isFinite() || pace !in 3f..15f || _motionSettings.value.paceMode == PaceMode.BOUNDED) return
         _basePace.value = pace
-        Log.d("MainViewModel", "配速调整为: $pace 分/km")
         // 如果正在运行，实时更新服务中的配速
         if (_isRunning.value && context != null) {
             try {
@@ -170,6 +240,11 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun setMotionSettings(settings: SimulationMotionSettings) {
+        if (_isRunning.value || stopRequested) return
+        _motionSettings.value = settings
+    }
+
     fun startRunning(context: Context) {
         if (_routePoints.value.size < 2) return
 
@@ -178,6 +253,9 @@ class MainViewModel : ViewModel() {
                 action = MockLocationService.ACTION_START_MOCK
                 putExtra(MockLocationService.EXTRA_PACE, _basePace.value)
                 putExtra(MockLocationService.EXTRA_IS_LOOP, _isLoopMode.value)
+                MockLocationService.putMotionSettings(this, _motionSettings.value)
+                putExtra(MockLocationService.EXTRA_STRIDE_CM, _simulationProfile.value.strideLengthCm)
+                putExtra(MockLocationService.EXTRA_CALORIES_PER_KM, _simulationProfile.value.caloriesPerKm)
                 putParcelableArrayListExtra(MockLocationService.EXTRA_ROUTE_POINTS, ArrayList(_routePoints.value))
             }
             context.startForegroundService(serviceIntent)
@@ -185,7 +263,12 @@ class MainViewModel : ViewModel() {
             _currentLocation.value = null
             _speed.value = 0f
             _isRunning.value = true
+            stopRequested = false
             _lapCount.value = 0
+            _simulationMetrics.value = SimulationMetrics()
+            _deliverySummary.value = "正在准备定位"
+            _deliveryDetails.value = ""
+            _deliveryWarning.value = false
         } catch (e: Exception) {
             Log.e("MainViewModel", "Error starting run", e)
             _isRunning.value = false
@@ -193,8 +276,9 @@ class MainViewModel : ViewModel() {
     }
 
     fun stopRunning(context: Context) {
-        if (!_isRunning.value) return
-        _isRunning.value = false
+        if (!_isRunning.value || stopRequested) return
+        // Keep Clear/Start disabled until the service has saved and acknowledged its final totals.
+        stopRequested = true
         _speed.value = 0f
         try {
             val serviceIntent = Intent(context, MockLocationService::class.java).apply {
@@ -203,7 +287,11 @@ class MainViewModel : ViewModel() {
             context.startService(serviceIntent)
         } catch (e: Exception) {
             Log.e("MainViewModel", "Error stopping service", e)
-            context.stopService(Intent(context, MockLocationService::class.java))
+            val wasActive = context.stopService(Intent(context, MockLocationService::class.java))
+            if (!wasActive) {
+                _isRunning.value = false
+                stopRequested = false
+            }
         }
     }
 
@@ -213,6 +301,10 @@ class MainViewModel : ViewModel() {
 
     fun getCurrentRouteDuration(): Long {
         val distance = getCurrentRouteDistance()
-        return TrajectoryUtils.calculateDuration(distance, _basePace.value)
+        val settings = _motionSettings.value
+        val referencePace = if (settings.paceMode == PaceMode.BOUNDED) {
+            ((settings.fastestSecondsPerKm + settings.slowestSecondsPerKm) / 120.0).toFloat()
+        } else _basePace.value
+        return TrajectoryUtils.calculateDuration(distance, referencePace)
     }
 }

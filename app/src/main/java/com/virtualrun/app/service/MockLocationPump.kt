@@ -13,6 +13,10 @@ import android.util.Log
 import com.virtualrun.app.algorithm.PositionResult
 import com.virtualrun.app.algorithm.TrajectoryInterpolator
 import com.virtualrun.app.model.Route
+import com.virtualrun.app.model.SimulationMotionSettings
+import com.virtualrun.app.model.DeliveryChannelHealth
+import com.virtualrun.app.model.DeliveryChannelTracker
+import com.virtualrun.app.model.DeliveryHealthSnapshot
 import java.util.concurrent.atomic.AtomicLong
 
 /**
@@ -34,20 +38,29 @@ internal class MockLocationPump(context: Context, private val intervalMs: Long =
     private var samples = LocationSampleFactory()
     private var nextDeadline = 0L
     private var lastTickNanos = 0L
-    private var count = 0L
+    @Volatile private var count = 0L
+    @Volatile private var startedAtElapsedMillis: Long? = null
+    @Volatile private var lastTickElapsedMillis: Long? = null
     private var activeGeneration = 0L
+    private var lastLoggedLap: Int? = null
 
-    fun start(route: Route, pace: Float, loop: Boolean, onPosition: (PositionResult) -> Unit) {
+    fun start(route: Route, pace: Float, loop: Boolean, settings: SimulationMotionSettings = SimulationMotionSettings(), onPosition: (PositionResult) -> Unit) {
         val id = generation.incrementAndGet()
+        startedAtElapsedMillis = SystemClock.elapsedRealtime()
+        lastTickElapsedMillis = null
+        count = 0L
         handler.post {
             handler.removeCallbacks(tick)
             if (id != generation.get()) return@post
             activeGeneration = id
-            trajectory = TrajectoryInterpolator(route, pace, loop)
+            trajectory = settings.createInterpolator(route, pace, loop)
             listener = onPosition
             samples = LocationSampleFactory()
             count = 0
             lastTickNanos = 0
+            lastLoggedLap = null
+            gps.resetHealth()
+            network.resetHealth()
             platformFused.start()
             flp.start()
             nextDeadline = SystemClock.uptimeMillis()
@@ -61,17 +74,31 @@ internal class MockLocationPump(context: Context, private val intervalMs: Long =
         handler.post { if (id == activeGeneration) trajectory?.updatePace(pace) }
     }
 
+    /** Reads only published values; it never posts onto the potentially blocked delivery looper. */
+    fun healthSnapshot(nowElapsedMillis: Long): DeliveryHealthSnapshot = DeliveryHealthSnapshot(
+        nowElapsedMillis = nowElapsedMillis,
+        startedAtElapsedMillis = startedAtElapsedMillis,
+        lastTickElapsedMillis = lastTickElapsedMillis,
+        tickCount = count,
+        channels = listOf(gps.healthSnapshot(), network.healthSnapshot(), platformFused.healthSnapshot(), flp.healthSnapshot())
+    )
+
     private val tick = object : Runnable {
         override fun run() {
             if (activeGeneration != generation.get()) return
             val interpolator = trajectory ?: return
             try {
                 val nanos = SystemClock.elapsedRealtimeNanos()
+                lastTickElapsedMillis = nanos / 1_000_000L
+                count++
                 val result = interpolator.calculateNextPosition(nanos / 1_000_000L)
                 val location = samples.create(result, System.currentTimeMillis(), nanos)
                 val gap = if (lastTickNanos == 0L) 0.0 else (nanos - lastTickNanos) / 1e6
                 lastTickNanos = nanos
-                count++
+                if (lastLoggedLap != result.lapCount || result.isCompleted) {
+                    lastLoggedLap = result.lapCount
+                    Log.i(TAG, "route lap=${result.lapCount} progress=${result.progress} completed=${result.isCompleted} timeMs=${result.elapsedMillis} distanceMeters=${result.distanceMeters}")
+                }
                 if (activeGeneration != generation.get()) return
                 gps.push(location)
                 if (activeGeneration != generation.get()) return
@@ -85,7 +112,7 @@ internal class MockLocationPump(context: Context, private val intervalMs: Long =
                 if (result.isCompleted) return
             } catch (error: Exception) {
                 // An output failure must not terminate the run or its clock.
-                Log.e(TAG, "tick failure; continuing", error)
+                Log.e(TAG, "tick failure type=${error.javaClass.simpleName}; continuing")
             }
             nextDeadline += intervalMs
             val now = SystemClock.uptimeMillis()
@@ -96,6 +123,7 @@ internal class MockLocationPump(context: Context, private val intervalMs: Long =
 
     fun stop() {
         generation.incrementAndGet() // Prevent the next send immediately, without waiting for the UI/looper.
+        startedAtElapsedMillis = null
         platformFused.stop()
         flp.stop()
         handler.post {
@@ -120,19 +148,27 @@ internal class MockLocationPump(context: Context, private val intervalMs: Long =
 
 /** Primary adapters are independent: recovery failure in one never skips the other. */
 @SuppressLint("MissingPermission", "InlinedApi")
-internal class PlatformLocationAdapter(private val manager: LocationManager, private val provider: String) {
+internal class PlatformLocationAdapter(
+    private val manager: LocationManager,
+    private val provider: String,
+    healthChannel: String = provider
+) {
     private val lease = ProviderLease.slots.computeIfAbsent(provider) { ProviderLease() }
     private var initialized = false
     private var owned = false
     private var retryAt = 0L
     private val backoff = DeliveryBackoff()
-    var pushCount = 0L
-        private set
+    private val health = DeliveryChannelTracker(healthChannel)
+    val pushCount: Long get() = health.snapshot().count
     private var lastNanos = 0L
+
+    fun resetHealth() { health.reset() }
+    fun healthSnapshot(): DeliveryChannelHealth = health.snapshot()
 
     fun push(sample: Location): Unit = synchronized(lease) {
         val now = SystemClock.elapsedRealtime()
         if (now < retryAt) return
+        health.beginOperation(now, "定位接口")
         try {
             if (!initialized || !manager.isProviderEnabled(provider)) recover()
             val location = Location(sample).apply {
@@ -144,13 +180,14 @@ internal class PlatformLocationAdapter(private val manager: LocationManager, pri
                 }
             }
             manager.setTestProviderLocation(provider, location)
-            pushCount++
+            health.recordSuccess(SystemClock.elapsedRealtime())
             lastNanos = DeliveryLog.success(provider, pushCount, location, lastNanos)
             backoff.reset()
         } catch (error: Exception) {
             initialized = false
             retryAt = now + backoff.nextDelayMs()
-            Log.e("MockLocationPump", "provider=$provider push failed; recoverAt=$retryAt", error)
+            health.recordError(SystemClock.elapsedRealtime(), "push: ${error.javaClass.simpleName}", "等待重试，retryAt=$retryAt")
+            Log.e("MockLocationPump", "provider=$provider push failed type=${error.javaClass.simpleName}; recoverAt=$retryAt")
         }
     }
 
@@ -179,8 +216,10 @@ internal class PlatformLocationAdapter(private val manager: LocationManager, pri
         if (owned) try {
             manager.removeTestProvider(provider)
         } catch (error: Exception) {
-            Log.e("MockLocationPump", "provider=$provider cleanup failed", error)
+            health.recordError(SystemClock.elapsedRealtime(), "cleanup: ${error.javaClass.simpleName}", "停止清理失败")
+            Log.e("MockLocationPump", "provider=$provider cleanup failed type=${error.javaClass.simpleName}")
         }
+        health.finishOperation("已停止")
         owned = false
         initialized = false
         retryAt = 0
@@ -201,7 +240,9 @@ internal object DeliveryLog {
     fun success(channel: String, count: Long, location: Location, previousNanos: Long): Long {
         val sendNanos = SystemClock.elapsedRealtimeNanos()
         val gap = if (previousNanos == 0L) 0.0 else (sendNanos - previousNanos) / 1e6
-        Log.d("MockLocationPush", "channel=$channel count=$count intervalMs=$gap lat=${location.latitude} lon=${location.longitude} speed=${location.speed} bearing=${location.bearing} accuracy=${location.accuracy} altitude=${location.altitude} satellites=${location.extras?.getInt("satellites")} time=${location.time} elapsedRealtimeNanos=${location.elapsedRealtimeNanos} sendElapsedNanos=$sendNanos")
+        if (count == 1L || count % 25L == 0L || gap > 1_000.0) {
+            Log.d("MockLocationPush", "channel=$channel count=$count intervalMs=$gap speed=${location.speed} time=${location.time} elapsedRealtimeNanos=${location.elapsedRealtimeNanos} sendElapsedNanos=$sendNanos")
+        }
         return sendNanos
     }
 }

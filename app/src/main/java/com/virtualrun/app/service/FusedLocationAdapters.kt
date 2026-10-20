@@ -13,6 +13,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.tasks.Task
+import com.virtualrun.app.model.DeliveryChannelHealth
+import com.virtualrun.app.model.DeliveryChannelTracker
 import java.util.concurrent.Executor
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
@@ -21,11 +23,12 @@ import java.util.concurrent.atomic.AtomicReference
 internal class PlatformFusedAdapter(manager: LocationManager) {
     private val thread = HandlerThread("mock-platform-fused", Process.THREAD_PRIORITY_FOREGROUND).apply { start() }
     private val handler = Handler(thread.looper)
-    private val adapter = PlatformLocationAdapter(manager, "fused")
+    private val adapter = PlatformLocationAdapter(manager, "fused", "platform-fused")
     private val latest = AtomicReference<Location?>()
     private val queued = AtomicBoolean()
     private val enabled = AtomicBoolean()
-    fun start() { enabled.set(true) }
+    fun start() { adapter.resetHealth(); enabled.set(true) }
+    fun healthSnapshot(): DeliveryChannelHealth = adapter.healthSnapshot()
     fun offer(location: Location) {
         if (!enabled.get()) return
         latest.set(location)
@@ -65,13 +68,17 @@ internal class GoogleFlpAdapter(private val context: Context) {
     private var token = 0L
     private var retryAt = 0L
     private val backoff = DeliveryBackoff()
-    private var count = 0L
     private var lastNanos = 0L
     private var closing = false
+    private val health = DeliveryChannelTracker("google-flp")
+
+    fun healthSnapshot(): DeliveryChannelHealth = health.snapshot()
 
     fun start() {
         owner.set(this)
         enabled.set(true)
+        health.reset("GMS 正在准备")
+        health.setNote("GMS 状态尚未检查")
         handler.post { retryAt = 0; drain() }
     }
     fun offer(location: Location) {
@@ -94,6 +101,7 @@ internal class GoogleFlpAdapter(private val context: Context) {
         }
         if (!mockMode) {
             val availability = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context)
+            health.setNote("GMS=${availabilityDescription(availability)} ($availability)")
             if (availability != ConnectionResult.SUCCESS) {
                 failed("availability", IllegalStateException("Google Play Services status=$availability"))
                 return
@@ -101,12 +109,14 @@ internal class GoogleFlpAdapter(private val context: Context) {
             requested = true
             operation("setMockMode(true)", { client.setMockMode(true) }) {
                 mockMode = true
+                health.finishOperation("GMS mock 模式已启用，等待样本")
                 Log.i(TAG, "mockMode=true")
             }
         } else {
             val location = latest.getAndSet(null) ?: return
             operation("setMockLocation", { client.setMockLocation(Location(location).apply { provider = "fused" }) }) {
-                count++
+                health.recordSuccess(SystemClock.elapsedRealtime())
+                val count = health.snapshot().count
                 backoff.reset()
                 lastNanos = DeliveryLog.success("google-flp", count, location, lastNanos)
             }
@@ -115,13 +125,14 @@ internal class GoogleFlpAdapter(private val context: Context) {
 
     private fun operation(name: String, call: () -> Task<Void>, success: () -> Unit) {
         busy = true
+        health.beginOperation(SystemClock.elapsedRealtime(), name)
         val id = ++token
         val timeout = Runnable {
             if (id == token && busy) {
                 // Google Task cannot be cancelled. Keep the single-flight fence rather
                 // than enqueueing more stale locations inside Play Services.
-                Log.e(TAG, "$name pending over 2000ms; retaining only latest fix, GPS/Network unaffected",
-                    java.util.concurrent.TimeoutException("$name exceeded 2000ms"))
+                health.recordError(SystemClock.elapsedRealtime(), "$name: Timeout", "GMS 调用等待超时，保留单次调用", keepPending = true)
+                Log.e(TAG, "$name pending over 2000ms; retaining only latest fix, GPS/Network unaffected")
             }
         }
         handler.postDelayed(timeout, 2000L)
@@ -137,6 +148,7 @@ internal class GoogleFlpAdapter(private val context: Context) {
                 }
                 handler.removeCallbacks(timeout)
                 busy = false
+                health.finishOperation(if (task.isSuccessful) "$name 已完成" else "$name 失败")
                 if (!enabled.get()) {
                     if (name == "setMockMode(true)" && task.isSuccessful) requested = true
                     disable()
@@ -156,7 +168,8 @@ internal class GoogleFlpAdapter(private val context: Context) {
         mockMode = false
         val delay = backoff.nextDelayMs()
         retryAt = SystemClock.elapsedRealtime() + delay
-        Log.e(TAG, "$name failed mockMode=false retryMs=$delay; GPS/Network unaffected", error)
+        health.recordError(SystemClock.elapsedRealtime(), "$name: ${error.javaClass.simpleName}", "GMS 等待重试 ${delay}ms")
+        Log.e(TAG, "$name failed type=${error.javaClass.simpleName} mockMode=false retryMs=$delay; GPS/Network unaffected")
         handler.removeCallbacks(retry)
         if (enabled.get()) handler.postDelayed(retry, delay)
         else disable()
@@ -165,6 +178,7 @@ internal class GoogleFlpAdapter(private val context: Context) {
     fun stop() {
         enabled.set(false)
         latest.set(null)
+        health.finishOperation("已停止，等待 GMS 清理")
         handler.post {
             handler.removeCallbacks(retry)
             mockMode = false
@@ -179,12 +193,19 @@ internal class GoogleFlpAdapter(private val context: Context) {
         requested = false
         try {
             client.setMockMode(false).addOnCompleteListener(executor) {
-                if (it.isSuccessful) Log.i(TAG, "mockMode=false")
-                else Log.e(TAG, "disable mock mode failed", it.exception)
+                if (it.isSuccessful) {
+                    health.finishOperation("已停止，GMS mock 模式已关闭")
+                    Log.i(TAG, "mockMode=false")
+                } else {
+                    val type = it.exception?.javaClass?.simpleName ?: "UnknownFailure"
+                    health.recordError(SystemClock.elapsedRealtime(), "disable: $type", "停止 GMS mock 模式失败")
+                    Log.e(TAG, "disable mock mode failed type=$type")
+                }
                 finishClose()
             }
         } catch (error: Exception) {
-            Log.e(TAG, "disable mock mode failed", error)
+            health.recordError(SystemClock.elapsedRealtime(), "disable: ${error.javaClass.simpleName}", "停止 GMS mock 模式失败")
+            Log.e(TAG, "disable mock mode failed type=${error.javaClass.simpleName}")
             finishClose()
         }
     }
@@ -200,6 +221,15 @@ internal class GoogleFlpAdapter(private val context: Context) {
     private fun finishClose() {
         // The bounded grace period also covers an enable Task completing after a timeout.
         if (closing) Log.d(TAG, "closed delivery; waiting for late callbacks")
+    }
+    private fun availabilityDescription(code: Int): String = when (code) {
+        ConnectionResult.SUCCESS -> "可用"
+        ConnectionResult.SERVICE_MISSING -> "未安装"
+        ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED -> "需要更新"
+        ConnectionResult.SERVICE_DISABLED -> "已停用"
+        ConnectionResult.SERVICE_INVALID -> "服务无效"
+        ConnectionResult.SERVICE_UPDATING -> "正在更新"
+        else -> "不可用"
     }
     private companion object {
         const val TAG = "MockGoogleFlp"
