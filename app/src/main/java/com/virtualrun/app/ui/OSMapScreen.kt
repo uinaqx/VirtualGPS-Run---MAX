@@ -6,10 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
 import android.net.Uri
-import android.os.Bundle
+import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.provider.Settings
@@ -78,6 +77,7 @@ private const val MIN_CURRENT_PACE_DISPLAY_SPEED_MPS = 0.6f
 private enum class RunUiErrorAction {
     DISMISS,
     APP_SETTINGS,
+    LOCATION_SETTINGS,
     DEVELOPER_SETTINGS
 }
 
@@ -113,7 +113,7 @@ fun OSMapScreen(viewModel: MainViewModel) {
     val rawTrailPoints = remember { mutableListOf<GeoPoint>() }
     var currentMarker by remember { mutableStateOf<Marker?>(null) }
     var markerAnimator by remember { mutableStateOf<ValueAnimator?>(null) }
-    var pendingLocationListener by remember { mutableStateOf<LocationListener?>(null) }
+    val locateRequest = remember { DeviceLocateRequest(Handler(Looper.getMainLooper())) }
     var lastCameraFollowAt by remember { mutableLongStateOf(0L) }
     var wasRunning by remember { mutableStateOf(false) }
     var uiError by remember { mutableStateOf<RunUiError?>(null) }
@@ -180,13 +180,10 @@ fun OSMapScreen(viewModel: MainViewModel) {
         }
     }
 
-    DisposableEffect(pendingLocationListener) {
-        val listener = pendingLocationListener
+    DisposableEffect(locateRequest) {
         onDispose {
-            if (listener != null) {
-                val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                runCatching { locationManager.removeUpdates(listener) }
-            }
+            val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            locateRequest.cancel(locationManager)
         }
     }
 
@@ -472,30 +469,59 @@ fun OSMapScreen(viewModel: MainViewModel) {
                     return@FloatingActionButton
                 }
                 val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                    ?: locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                if (location != null) {
-                    pendingLocationListener?.let { runCatching { locationManager.removeUpdates(it) } }
-                    pendingLocationListener = null
-                    animateToDeviceLocation(location)
-                } else {
-                    pendingLocationListener?.let { runCatching { locationManager.removeUpdates(it) } }
-                    val listener = object : LocationListener {
-                            override fun onLocationChanged(location: Location) {
-                                animateToDeviceLocation(location)
-                                runCatching { locationManager.removeUpdates(this) }
-                                pendingLocationListener = null
-                            }
-                            override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) = Unit
-                            override fun onProviderEnabled(provider: String) = Unit
-                            override fun onProviderDisabled(provider: String) = Unit
+                val known = knownDeviceLocateProviders(locationManager)
+                val enabled = enabledDeviceLocateProviders(locationManager, known)
+                val locationEnabled = isSystemLocationEnabled(context, locationManager)
+                fun showFailure(failure: LocateFailure) {
+                    uiError = when (failure) {
+                        LocateFailure.NO_PROVIDER -> RunUiError("设备无可用定位服务", RunUiErrorAction.DISMISS)
+                        LocateFailure.LOCATION_OFF -> RunUiError("请先开启系统定位", RunUiErrorAction.LOCATION_SETTINGS)
+                    }
+                }
+                fun requestFix(provider: String) {
+                    try {
+                        locateRequest.requestSingleUpdate(
+                            locationManager,
+                            provider,
+                            onFix = { animateToDeviceLocation(it) },
+                            onProviderDisabled = { showFailure(LocateFailure.LOCATION_OFF) },
+                            onTimeout = { uiError = RunUiError("定位超时，请稍后重试", RunUiErrorAction.DISMISS) },
+                        )
+                    } catch (_: IllegalArgumentException) {
+                        uiError = RunUiError("定位服务不可用", RunUiErrorAction.DISMISS)
+                    } catch (_: SecurityException) {
+                        uiError = RunUiError("请先授予位置权限", RunUiErrorAction.APP_SETTINGS)
+                    }
+                }
+                val plan = planDeviceLocate(known, enabled, locationEnabled) { provider ->
+                    lastKnownDeviceLocation(locationManager, provider) != null
+                }
+                when (plan) {
+                    is LocatePlan.LastKnown -> {
+                        val location = lastKnownDeviceLocation(locationManager, plan.provider)
+                        if (location != null) {
+                            locateRequest.cancel(locationManager)
+                            animateToDeviceLocation(location)
+                            return@FloatingActionButton
                         }
-                    pendingLocationListener = listener
-                    locationManager.requestSingleUpdate(
-                        LocationManager.NETWORK_PROVIDER,
-                        listener,
-                        Looper.getMainLooper()
-                    )
+                    }
+                    is LocatePlan.SingleUpdate -> {
+                        requestFix(plan.provider)
+                        return@FloatingActionButton
+                    }
+                    is LocatePlan.Unavailable -> {
+                        locateRequest.cancel(locationManager)
+                        showFailure(plan.failure)
+                        return@FloatingActionButton
+                    }
+                }
+                when (val retry = planDeviceLocate(known, enabled, locationEnabled) { false }) {
+                    is LocatePlan.SingleUpdate -> requestFix(retry.provider)
+                    is LocatePlan.Unavailable -> {
+                        locateRequest.cancel(locationManager)
+                        showFailure(retry.failure)
+                    }
+                    is LocatePlan.LastKnown -> locateRequest.cancel(locationManager)
                 }
             },
             modifier = Modifier.padding(16.dp).align(Alignment.BottomStart).offset(y = locationButtonOffset),
@@ -651,6 +677,11 @@ fun OSMapScreen(viewModel: MainViewModel) {
                             )
                         } catch (_: Exception) {
                             Toast.makeText(context, "请手动打开应用权限设置", Toast.LENGTH_SHORT).show()
+                        }
+                        RunUiErrorAction.LOCATION_SETTINGS -> try {
+                            context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                        } catch (_: Exception) {
+                            Toast.makeText(context, "请手动打开系统定位设置", Toast.LENGTH_SHORT).show()
                         }
                         RunUiErrorAction.DEVELOPER_SETTINGS -> try {
                             context.startActivity(Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))
